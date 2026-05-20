@@ -32,19 +32,19 @@ function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: str
 
   useEffect(() => {
     if (!started) return;
-    let start = 0;
-    const duration = 1500;
-    const step = Math.max(1, Math.floor(target / 60));
-    const interval = setInterval(() => {
-      start += step;
-      if (start >= target) {
-        setCount(target);
-        clearInterval(interval);
-      } else {
-        setCount(start);
-      }
-    }, duration / (target / step));
-    return () => clearInterval(interval);
+    const duration = 1400;
+    const startTime = performance.now();
+    let raf = 0;
+
+    const tick = (now: number) => {
+      const t = Math.min((now - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
+      setCount(Math.round(target * eased));
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
   }, [started, target]);
 
   return (
