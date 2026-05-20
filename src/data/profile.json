@@ -1,0 +1,61 @@
+{
+  "personal": {
+    "name": "ZAINUL ARKAAN AL INSI",
+    "title": "Full-Stack Web & Mobile Developer",
+    "location": "Bekasi Regency, Indonesia",
+    "phone": "+62 852 8254 0833",
+    "email": "zainaril13@gmail.com",
+    "profileSummary": "Student at IDN Boarding School focused on full-stack web development. Currently deepening skills in Flutter for mobile development. Committed to writing efficient code and delivering impactful technological solutions.",
+    "avatar": "/arkan.png"
+  },
+  "skills": ["PHP", "Laravel", "React.js", "Next.js", "Tailwind CSS", "Flutter", "Firebase", "Responsive Design"],
+  "languages": [
+    { "name": "Arabic", "level": "Fluent" },
+    { "name": "English", "level": "Intermediate" }
+  ],
+  "experiences": [
+    {
+      "year": "2024 - 2025",
+      "role": "Technology & Programming Workshop Instructor",
+      "company": "Ar Rasyad School & Al Kahfi School",
+      "description": "Taught basic HTML, CSS, and JS. Engaged students through hands-on coding activities and real-time project building."
+    }
+  ],
+  "certifications": [
+    {
+      "year": "2025",
+      "title": "Flexible Kickstart Fullstack Web Development Journal",
+      "grade": "Excellent",
+      "description": "Mastered frontend and backend development with modern technology.",
+      "link": "https://www.linkedin.com/in/zainul-arkaan-3bb51731a/details/certifications/"
+    },
+    {
+      "year": "2025",
+      "title": "Certified Flutter & Firebase Developer",
+      "description": "Completed intensive project-based course building ride-sharing clones (inDrive & Uber).",
+      "link": "https://www.linkedin.com/in/zainul-arkaan-3bb51731a/details/certifications/"
+    },
+    {
+      "year": "2025",
+      "title": "Dicoding - Belajar Dasar Pemrograman Web",
+      "description": "Completed web programming fundamentals with HTML, CSS, and JavaScript.",
+      "link": "https://www.linkedin.com/in/zainul-arkaan-3bb51731a/details/certifications/"
+    },
+    {
+      "year": "2024",
+      "title": "Dicoding - Belajar Membuat Front-End Web",
+      "description": "Mastered DOM manipulation, responsive design, and frontend best practices.",
+      "link": "https://www.linkedin.com/in/zainul-arkaan-3bb51731a/details/certifications/"
+    }
+  ],
+  "stats": {
+    "hoursCoding": 1200,
+    "projectsCompleted": 18,
+    "technologiesMastered": 12
+  },
+  "social": {
+    "github": "https://github.com/zainularkaan",
+    "linkedin": "https://linkedin.com/in/zainul-arkaan-3bb51731a",
+    "website": "https://zainularkaan.dev"
+  }
+}
