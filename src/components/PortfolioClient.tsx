@@ -23,7 +23,7 @@ import {
   ChevronDown,
   Zap,
   Cpu,
-  Globe,
+
   Terminal,
   Rocket,
   Target,
@@ -32,6 +32,7 @@ import { Project, GitHubUserStats } from "@/lib/github";
 import GitHubCalendar from "@/components/gitstats/GitHubCalendar";
 import GitHubLangChart from "@/components/gitstats/GitHubLangChart";
 import StatsTracker from "@/components/gitstats/StatsTracker";
+import AnimatedCounter from "@/components/AnimatedCounter";
 import {
   profile,
   education,
@@ -44,6 +45,7 @@ import {
   certifications,
   stats,
 } from "@/data/portfolio";
+
 
 /* ===== Inline brand icons (lucide@1.16 has no Github/Linkedin) ===== */
 const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -140,56 +142,6 @@ const handleTiltLeave = (e: React.MouseEvent<HTMLElement>) => {
     "perspective(900px) rotateY(0) rotateX(0) translateY(0)";
 };
 
-/* ===== Animated counter ===== */
-function AnimatedCounter({
-  target,
-  suffix = "",
-}: {
-  target: number;
-  suffix?: string;
-}) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const [value, setValue] = useState(0);
-  const [started, setStarted] = useState(false);
-
-  useEffect(() => {
-    if (!ref.current) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setStarted(true);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.4 }
-    );
-    obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!started) return;
-    const duration = 1400;
-    const start = performance.now();
-    let raf = 0;
-    const tick = (now: number) => {
-      const t = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - t, 3);
-      setValue(Math.round(target * eased));
-      if (t < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [started, target]);
-
-  return (
-    <span ref={ref} className="tabular-nums">
-      {value.toLocaleString()}
-      {suffix}
-    </span>
-  );
-}
-
 export default function PortfolioClient({
   initialProjects,
   initialGitHubStats,
@@ -201,7 +153,11 @@ export default function PortfolioClient({
   const progressRef = useRef<HTMLDivElement>(null);
 
   const [menuOpen, setMenuOpen] = useState(false);
-  const [isClient, setIsClient] = useState(false);
+  // Client component: treat as client-side for effects.
+  const isClient = true;
+
+
+
   const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
   const [typedText, setTypedText] = useState("");
   const [cursorHover, setCursorHover] = useState(false);
@@ -220,21 +176,32 @@ export default function PortfolioClient({
     totalCommits,
   } = initialGitHubStats;
 
-  useEffect(() => setIsClient(true), []);
+
+  // (Intentionally no mount-only setState; GSAP-like behaviors run in effects below.)
+
+
+
+
+
 
   /* Typing effect */
   useEffect(() => {
     if (!isClient) return;
+
     let idx = 0;
-    setTypedText("");
+    // Avoid sync setState in effect body
+    queueMicrotask(() => setTypedText(""));
+
     const interval = setInterval(() => {
       if (idx <= fullTitle.length) {
         setTypedText(fullTitle.slice(0, idx));
         idx++;
       } else clearInterval(interval);
     }, 55);
+
     return () => clearInterval(interval);
   }, [isClient, fullTitle]);
+
 
   /* Cursor */
   const handleMouseMove = useCallback((e: MouseEvent) => {

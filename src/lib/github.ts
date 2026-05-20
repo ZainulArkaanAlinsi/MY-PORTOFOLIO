@@ -81,9 +81,22 @@ export async function getGithubProjects(): Promise<Project[]> {
     }
 
     const mapped = repos
-      .filter((repo: any) => !repo.fork)
-      .map((repo: any) => ({
+      .filter((repo: { fork: boolean }) => !repo.fork)
+      .map((repo: {
+        id: number;
+        name: string;
+        description: string | null;
+        language: string | null;
+        stargazers_count: number;
+        forks_count: number;
+        html_url: string;
+        homepage: string | null;
+        topics: string[];
+        fork: boolean;
+      }) => ({
+
         id: repo.id,
+
         name: repo.name,
         description: repo.description || 'No description provided.',
         language: repo.language || 'TypeScript',
@@ -211,10 +224,12 @@ export async function getGithubUserStats(): Promise<GitHubUserStats> {
 
     // Get languages from repos
     const langPromises = repos
-      .filter((r: any) => r.language)
-      .map(async (repo: any) => {
+.filter((r: { language: string | null }) => r.language)
+      .map(async (repo: { language: string; languages_url: string | null }) => {
         try {
+          if (!repo.languages_url) return;
           const lres = await fetch(repo.languages_url, { headers, signal: AbortSignal.timeout(3000) });
+
           const langData = await lres.json();
           for (const [lang, bytes] of Object.entries(langData)) {
             langBytes[lang] = (langBytes[lang] || 0) + (bytes as number);
