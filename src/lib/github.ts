@@ -94,9 +94,7 @@ export async function getGithubProjects(): Promise<Project[]> {
         topics: string[];
         fork: boolean;
       }) => ({
-
         id: repo.id,
-
         name: repo.name,
         description: repo.description || 'No description provided.',
         language: repo.language || 'TypeScript',

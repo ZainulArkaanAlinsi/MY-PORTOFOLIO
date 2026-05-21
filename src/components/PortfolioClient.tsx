@@ -1260,6 +1260,54 @@ const ACCENT_TEXT: Record<string, string> = {
   pink: "text-pink-300",
 };
 
+const SECTION_BG: Record<
+  string,
+  { light: string; dark: string; textLight: string; textDark: string }
+> = {
+  hero: {
+    light: "bg-gradient-to-b from-blue-50 via-white/60 to-white/0",
+    dark: "bg-gradient-to-b from-blue-600/25 via-[#0b1120] to-[#0b1120]",
+    textLight: "text-zinc-900",
+    textDark: "text-white",
+  },
+  about: {
+    light: "bg-gradient-to-br from-cyan-50/70 via-white to-white",
+    dark: "bg-gradient-to-br from-cyan-400/10 via-[#0b1120] to-[#0b1120]",
+    textLight: "text-zinc-900",
+    textDark: "text-white",
+  },
+  experience: {
+    light: "bg-gradient-to-br from-violet-50/70 via-white to-white",
+    dark: "bg-gradient-to-br from-purple-500/10 via-[#0b1120] to-[#0b1120]",
+    textLight: "text-zinc-900",
+    textDark: "text-white",
+  },
+  github: {
+    light: "bg-gradient-to-br from-emerald-50/70 via-white to-white",
+    dark: "bg-gradient-to-br from-emerald-400/10 via-[#0b1120] to-[#0b1120]",
+    textLight: "text-zinc-900",
+    textDark: "text-white",
+  },
+  projects: {
+    light: "bg-gradient-to-br from-pink-50/70 via-white to-white",
+    dark: "bg-gradient-to-br from-pink-400/10 via-[#0b1120] to-[#0b1120]",
+    textLight: "text-zinc-900",
+    textDark: "text-white",
+  },
+  certifications: {
+    light: "bg-gradient-to-br from-amber-50/70 via-white to-white",
+    dark: "bg-gradient-to-br from-amber-400/10 via-[#0b1120] to-[#0b1120]",
+    textLight: "text-zinc-900",
+    textDark: "text-white",
+  },
+  contact: {
+    light: "bg-gradient-to-br from-blue-50/70 via-white to-white",
+    dark: "bg-gradient-to-br from-blue-400/10 via-[#0b1120] to-[#0b1120]",
+    textLight: "text-zinc-900",
+    textDark: "text-white",
+  },
+};
+
 function Section({
   id,
   eyebrow,
@@ -1273,8 +1321,22 @@ function Section({
   children: React.ReactNode;
   accent?: "blue" | "purple" | "cyan" | "amber" | "pink";
 }) {
+  const bg =
+    SECTION_BG[id] ??
+    ({
+      light: "bg-white",
+      dark: "bg-[#0b1120]",
+      textLight: "text-zinc-900",
+      textDark: "text-white",
+    } as const);
+
   return (
     <section id={id} className="relative scroll-mt-24">
+      {/* section background (beda per id) */}
+      <div
+        aria-hidden="true"
+        className={`absolute inset-0 -z-20 rounded-[1.5rem] ${bg.light} dark:${bg.dark}`}
+      />
       {/* decorative orb */}
       <div
         className={`absolute -z-10 -top-20 right-0 w-72 h-72 rounded-full blur-[100px] pointer-events-none ${ACCENT_ORB[accent]}`}
@@ -1287,12 +1349,14 @@ function Section({
             <span className="w-6 h-px bg-current" />
             {eyebrow}
           </div>
-          <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-[1.05]">
+          <h2
+            className={`text-3xl sm:text-5xl font-black tracking-tight leading-[1.05] ${bg.textLight} dark:${bg.textDark}`}
+          >
             {title}
           </h2>
         </div>
       </div>
-      {children}
+      <div className="relative z-0">{children}</div>
     </section>
   );
 }
