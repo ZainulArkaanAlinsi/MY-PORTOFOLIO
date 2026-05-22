@@ -229,7 +229,39 @@ body::before {
     scroll-behavior: auto;
   }
 
-  .animated-gradient-text {
-    animation: none;
+  .animated-gradient-text,
+  .shimmer-bar::after,
+  .animate-float,
+  .animate-bounce,
+  .animate-ping,
+  .animate-pulse {
+    animation: none !important;
+  }
+
+  .shine-card::before {
+    transition: none !important;
+    display: none;
+  }
+
+  .glow-card,
+  .glow-card:hover {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .img-glow,
+  .img-glow:hover {
+    transition: none !important;
+    filter: none !important;
+  }
+
+  .custom-cursor,
+  .custom-cursor-dot {
+    display: none !important;
+  }
+
+  .cursor-none,
+  .cursor-none * {
+    cursor: auto !important;
   }
 }
