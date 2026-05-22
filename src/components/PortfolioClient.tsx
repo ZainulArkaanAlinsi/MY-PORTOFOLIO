@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import React, { useRef, useState, useEffect, useCallback } from "react";
+
 import {
   Mail,
   Phone,
