@@ -19,13 +19,12 @@ import {
   Wrench,
   Layers,
   Languages,
-  Sparkles,
   ChevronDown,
   Zap,
   Cpu,
-
   Terminal,
   Rocket,
+  Sparkles,
   Target,
 } from "lucide-react";
 import { Project, GitHubUserStats } from "@/lib/github";
@@ -85,22 +84,22 @@ const GROUP_ACCENTS: Record<
   { from: string; to: string; icon: React.ReactNode; ring: string }
 > = {
   Frontend: {
-    from: "from-blue-500/15",
+    from: "from-blue-500/10",
     to: "to-cyan-500/5",
     icon: <Code2 className="w-4 h-4" />,
-    ring: "border-blue-400/30",
+    ring: "border-blue-400/20",
   },
   Backend: {
-    from: "from-rose-500/15",
+    from: "from-rose-500/10",
     to: "to-orange-500/5",
     icon: <Terminal className="w-4 h-4" />,
-    ring: "border-rose-400/30",
+    ring: "border-rose-400/20",
   },
   "Mobile & Cloud": {
-    from: "from-purple-500/15",
+    from: "from-purple-500/10",
     to: "to-pink-500/5",
     icon: <Cpu className="w-4 h-4" />,
-    ring: "border-purple-400/30",
+    ring: "border-purple-400/20",
   },
 };
 
