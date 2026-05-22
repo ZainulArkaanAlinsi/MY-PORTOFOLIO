@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import React, { useRef, useState, useEffect, useCallback } from "react";
+
 import {
   Mail,
   Phone,
@@ -129,14 +130,37 @@ const NAV_LINKS = [
   { id: "projects", label: "Projects" },
 ] as const;
 
-/* ===== Tilt handlers ===== */
+/* ===== Derive LinkedIn slug from full profile URL (single source of truth) ===== */
+const linkedinSlug = (() => {
+  try {
+    const path = new URL(profile.social.linkedin).pathname.replace(/\/+$/, "");
+    return path.split("/").filter(Boolean).pop() ?? "linkedin";
+  } catch {
+    return "linkedin";
+  }
+})();
+
+/* Lazy-cached motion preference (touch device OR prefers-reduced-motion → skip heavy effects) */
+let _motionDisabledCache: boolean | null = null;
+const isMotionDisabled = (): boolean => {
+  if (_motionDisabledCache !== null) return _motionDisabledCache;
+  if (typeof window === "undefined") return false;
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const coarse = window.matchMedia("(pointer: coarse)").matches;
+  _motionDisabledCache = reduced || coarse;
+  return _motionDisabledCache;
+};
+
+/* ===== Tilt handlers — no-op when motion is disabled (touch / reduced-motion) ===== */
 const handleTilt = (e: React.MouseEvent<HTMLElement>, factor = 8) => {
+  if (isMotionDisabled()) return;
   const rect = e.currentTarget.getBoundingClientRect();
   const x = (e.clientX - rect.left) / rect.width - 0.5;
   const y = (e.clientY - rect.top) / rect.height - 0.5;
   e.currentTarget.style.transform = `perspective(900px) rotateY(${x * factor}deg) rotateX(${-y * factor}deg) translateY(-4px)`;
 };
 const handleTiltLeave = (e: React.MouseEvent<HTMLElement>) => {
+  if (isMotionDisabled()) return;
   e.currentTarget.style.transform =
     "perspective(900px) rotateY(0) rotateX(0) translateY(0)";
 };
@@ -152,16 +176,28 @@ export default function PortfolioClient({
   const progressRef = useRef<HTMLDivElement>(null);
 
   const [menuOpen, setMenuOpen] = useState(false);
-  // Client component: treat as client-side for effects.
-  const isClient = true;
-
-
+  /* motionEnabled starts false so SSR + first paint match; flips true after mount on fine-pointer, motion-allowed clients */
+  const [motionEnabled, setMotionEnabled] = useState(false);
 
   const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
   const [typedText, setTypedText] = useState("");
   const [cursorHover, setCursorHover] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
   const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const reducedQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const coarseQuery = window.matchMedia("(pointer: coarse)");
+    const apply = () =>
+      setMotionEnabled(!(reducedQuery.matches || coarseQuery.matches));
+    queueMicrotask(apply);
+    reducedQuery.addEventListener("change", apply);
+    coarseQuery.addEventListener("change", apply);
+    return () => {
+      reducedQuery.removeEventListener("change", apply);
+      coarseQuery.removeEventListener("change", apply);
+    };
+  }, []);
 
   const fullTitle = profile.title;
 
@@ -185,10 +221,7 @@ export default function PortfolioClient({
 
   /* Typing effect */
   useEffect(() => {
-    if (!isClient) return;
-
     let idx = 0;
-    // Avoid sync setState in effect body
     queueMicrotask(() => setTypedText(""));
 
     const interval = setInterval(() => {
@@ -199,49 +232,72 @@ export default function PortfolioClient({
     }, 55);
 
     return () => clearInterval(interval);
-  }, [isClient, fullTitle]);
+  }, [fullTitle]);
 
 
-  /* Cursor */
+  /* Cursor + mousePos (rAF-throttled, single listener with event delegation for hover) */
   const handleMouseMove = useCallback((e: MouseEvent) => {
-    setMousePos({
-      x: e.clientX / window.innerWidth,
-      y: e.clientY / window.innerHeight,
-    });
+    const x = e.clientX;
+    const y = e.clientY;
     if (cursorRef.current)
-      cursorRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+      cursorRef.current.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
     if (cursorDotRef.current)
-      cursorDotRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+      cursorDotRef.current.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
   }, []);
 
   useEffect(() => {
-    if (!isClient) return;
-    window.addEventListener("mousemove", handleMouseMove);
-    const enter = () => setCursorHover(true);
-    const leave = () => setCursorHover(false);
-    const els = document.querySelectorAll(
-      "a, button, .hoverable, .hero-badge, .tilt-card"
-    );
-    els.forEach((el) => {
-      el.addEventListener("mouseenter", enter);
-      el.addEventListener("mouseleave", leave);
-    });
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      els.forEach((el) => {
-        el.removeEventListener("mouseenter", enter);
-        el.removeEventListener("mouseleave", leave);
+    if (!motionEnabled) return;
+
+    let rafId = 0;
+    let pendingX = 0;
+    let pendingY = 0;
+    let dirty = false;
+
+    const onMove = (e: MouseEvent) => {
+      pendingX = e.clientX;
+      pendingY = e.clientY;
+      handleMouseMove(e);
+      if (dirty) return;
+      dirty = true;
+      rafId = requestAnimationFrame(() => {
+        dirty = false;
+        setMousePos({
+          x: pendingX / window.innerWidth,
+          y: pendingY / window.innerHeight,
+        });
       });
     };
-  }, [handleMouseMove, isClient]);
 
-  /* Particles */
+    const HOVER_SELECTOR = "a, button, .hoverable, .hero-badge, .tilt-card";
+    const onOver = (e: MouseEvent) => {
+      const target = e.target as Element | null;
+      if (target?.closest?.(HOVER_SELECTOR)) setCursorHover(true);
+    };
+    const onOut = (e: MouseEvent) => {
+      const target = e.target as Element | null;
+      if (target?.closest?.(HOVER_SELECTOR)) setCursorHover(false);
+    };
+
+    window.addEventListener("mousemove", onMove, { passive: true });
+    document.addEventListener("mouseover", onOver, { passive: true });
+    document.addEventListener("mouseout", onOut, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseover", onOver);
+      document.removeEventListener("mouseout", onOut);
+    };
+  }, [motionEnabled, handleMouseMove]);
+
+  /* Particles — skip entirely on reduced-motion / touch; pause when tab is hidden */
   useEffect(() => {
-    if (!isClient || !canvasRef.current) return;
+    if (!motionEnabled || !canvasRef.current) return;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     let animId = 0;
+    let running = true;
     const particles: {
       x: number;
       y: number;
@@ -258,7 +314,8 @@ export default function PortfolioClient({
     resize();
     window.addEventListener("resize", resize);
 
-    for (let i = 0; i < 60; i++) {
+    const count = window.innerWidth < 768 ? 30 : 60;
+    for (let i = 0; i < count; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
@@ -270,6 +327,7 @@ export default function PortfolioClient({
     }
 
     const animate = () => {
+      if (!running) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       particles.forEach((p) => {
         p.x += p.vx;
@@ -285,19 +343,48 @@ export default function PortfolioClient({
       });
       animId = requestAnimationFrame(animate);
     };
+
+    const onVisibility = () => {
+      if (document.hidden) {
+        running = false;
+        cancelAnimationFrame(animId);
+      } else if (!running) {
+        running = true;
+        animate();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
     animate();
+
     return () => {
+      running = false;
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", resize);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [isClient]);
+  }, [motionEnabled]);
 
-  /* Scroll progress + active + reveal */
+  /* Scroll progress + active section — rAF-throttled, cached section refs */
   useEffect(() => {
-    if (!isClient) return;
-    const onScroll = () => {
+    const ids = ["hero", "about", "experience", "github", "projects"];
+    const sectionEls = ids
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+
+    let rafId = 0;
+    let dirty = false;
+    let lastScrolled = false;
+    let lastActive = "hero";
+
+    const update = () => {
+      dirty = false;
       const y = window.scrollY;
-      setScrolled(y > 80);
+
+      const nextScrolled = y > 80;
+      if (nextScrolled !== lastScrolled) {
+        lastScrolled = nextScrolled;
+        setScrolled(nextScrolled);
+      }
 
       const doc = document.documentElement;
       const max = doc.scrollHeight - window.innerHeight;
@@ -305,34 +392,62 @@ export default function PortfolioClient({
         progressRef.current.style.transform = `scaleX(${Math.min(y / max, 1)})`;
       }
 
-      const ids = ["hero", "about", "experience", "github", "projects"];
       let current = "hero";
-      for (const id of ids) {
-        const el = document.getElementById(id);
-        if (!el) continue;
-        if (el.getBoundingClientRect().top <= 140) current = id;
+      for (const el of sectionEls) {
+        if (el.getBoundingClientRect().top <= 140) current = el.id;
       }
-      setActiveSection(current);
-
-      document.querySelectorAll<HTMLElement>(".reveal").forEach((el) => {
-        if (el.getBoundingClientRect().top < window.innerHeight - 80) {
-          el.classList.add("is-visible");
-        }
-      });
+      if (current !== lastActive) {
+        lastActive = current;
+        setActiveSection(current);
+      }
     };
-    onScroll();
+
+    const onScroll = () => {
+      if (dirty) return;
+      dirty = true;
+      rafId = requestAnimationFrame(update);
+    };
+    update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [isClient]);
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  /* Reveal on scroll — IntersectionObserver replaces per-scroll querySelectorAll */
+  useEffect(() => {
+    const els = document.querySelectorAll<HTMLElement>(".reveal");
+    if (els.length === 0) return;
+
+    if (typeof IntersectionObserver === "undefined") {
+      els.forEach((el) => el.classList.add("is-visible"));
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            io.unobserve(entry.target);
+          }
+        }
+      },
+      { rootMargin: "0px 0px -80px 0px" }
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
 
   return (
     <div
       className={`min-h-screen bg-[#0b1120] text-zinc-100 font-sans selection:bg-blue-500/30 selection:text-white ${
-        isClient ? "cursor-none" : ""
+        motionEnabled ? "cursor-none" : ""
       }`}
     >
-      {/* CURSOR */}
-      {isClient && (
+      {/* CURSOR — only on fine-pointer + motion allowed */}
+      {motionEnabled && (
         <>
           <div
             ref={cursorRef}
@@ -1139,15 +1254,10 @@ export default function PortfolioClient({
           title="Let's build something."
           accent="blue"
         >
-          <div className="reveal relative rounded-3xl border border-white/10 overflow-hidden">
-            {/* gradient background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-purple-600/10 to-pink-500/10" />
+          <div className="reveal relative rounded-3xl border border-white/10 overflow-hidden bg-gradient-to-br from-white/3 to-transparent">
             <div
-              className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-blue-500/30 blur-3xl animate-float"
-            />
-            <div
-              className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-purple-500/20 blur-3xl animate-float"
-              style={{ animationDelay: "2s" }}
+              aria-hidden="true"
+              className="absolute -top-32 -right-32 w-72 h-72 rounded-full bg-blue-500/15 blur-3xl pointer-events-none"
             />
 
             <div className="relative grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-10 items-center p-8 sm:p-12">
@@ -1163,61 +1273,56 @@ export default function PortfolioClient({
                   Have a project <br className="hidden sm:block" />
                   in mind?
                 </h3>
-                <p className="text-zinc-300 mt-4 leading-relaxed max-w-md">
+                <p className="text-zinc-400 text-sm sm:text-base mt-4 leading-relaxed max-w-md">
                   Whether it&apos;s a marketing site, a dashboard, or a mobile
                   app — I&apos;d love to hear about it.
                 </p>
                 <div className="flex flex-wrap gap-3 mt-7">
                   <a
                     href={`mailto:${profile.email}`}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white text-zinc-900 text-sm font-bold hover:bg-zinc-100 hover:scale-105 transition-all shadow-xl shadow-blue-500/10"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-blue-500 text-white text-sm font-semibold hover:bg-blue-400 transition-colors"
                   >
                     <Mail className="w-4 h-4" /> Send an email
                   </a>
                   <a
                     href={profile.cv}
                     download
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-white/20 bg-white/5 text-zinc-100 text-sm font-bold hover:bg-white/10 transition-colors"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-white/15 bg-white/5 text-zinc-100 text-sm font-semibold hover:bg-white/10 transition-colors"
                   >
                     <Download className="w-4 h-4" /> Download CV
                   </a>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2.5">
+              <div className="flex flex-col gap-2">
                 <ContactRow
                   icon={<Mail className="w-4 h-4" />}
                   label="Email"
                   value={profile.email}
                   href={`mailto:${profile.email}`}
-                  accent="#60a5fa"
                 />
                 <ContactRow
                   icon={<Phone className="w-4 h-4" />}
                   label="Phone"
                   value={profile.phone}
                   href={`tel:${profile.phone.replace(/\s+/g, "")}`}
-                  accent="#a78bfa"
                 />
                 <ContactRow
                   icon={<MapPin className="w-4 h-4" />}
                   label="Location"
                   value={profile.location}
-                  accent="#f472b6"
                 />
                 <ContactRow
                   icon={<GithubIcon className="w-4 h-4" />}
                   label="GitHub"
                   value={`@${username}`}
                   href={profile.social.github}
-                  accent="#fff"
                 />
                 <ContactRow
                   icon={<LinkedinIcon className="w-4 h-4" />}
                   label="LinkedIn"
-                  value="zainul-arkaan"
+                  value={linkedinSlug}
                   href={profile.social.linkedin}
-                  accent="#0ea5e9"
                 />
               </div>
             </div>
@@ -1365,24 +1470,15 @@ function ContactRow({
   label,
   value,
   href,
-  accent = "#60a5fa",
 }: {
   icon: React.ReactNode;
   label: string;
   value: string;
   href?: string;
-  accent?: string;
 }) {
   const content = (
     <>
-      <span
-        className="w-10 h-10 rounded-lg border flex items-center justify-center shrink-0"
-        style={{
-          backgroundColor: `${accent}15`,
-          borderColor: `${accent}40`,
-          color: accent,
-        }}
-      >
+      <span className="w-10 h-10 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center shrink-0 text-blue-300">
         {icon}
       </span>
       <div className="flex-1 min-w-0">
@@ -1391,11 +1487,11 @@ function ContactRow({
         </div>
         <div className="text-sm text-white font-semibold truncate">{value}</div>
       </div>
-      {href && <ArrowUpRight className="w-4 h-4 text-zinc-500" />}
+      {href && <ArrowUpRight className="w-4 h-4 text-zinc-500 shrink-0" />}
     </>
   );
   const base =
-    "flex items-center gap-3 rounded-xl border border-white/10 bg-white/3 backdrop-blur px-4 py-3 hover:border-white/20 hover:bg-white/5 transition-colors";
+    "flex items-center gap-3 rounded-xl border border-white/10 bg-white/3 px-4 py-3 hover:border-blue-400/30 hover:bg-white/5 transition-colors";
   return href ? (
     <a
       href={href}
