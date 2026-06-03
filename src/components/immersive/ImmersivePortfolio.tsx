@@ -129,10 +129,20 @@ function TiltCard({
 
 export default function ImmersivePortfolio({ projects }: { projects: Project[] }) {
   const [ready, setReady] = useState(false);
+  const [fancyFx, setFancyFx] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const dispRef = useRef<SVGFEDisplacementMapElement | null>(null);
   const moreReposCount = Math.max(projects.length - featuredProjects.length, 0);
   const [spotlight, ...restProjects] = featuredProjects;
+
+  // Enable GPU-heavy flourishes (the liquid hero-title filter) only on
+  // capable, non-touch, wide screens — keeps phones smooth.
+  useEffect(() => {
+    const fine = window.matchMedia('(pointer: fine)').matches;
+    const wide = window.matchMedia('(min-width: 768px)').matches;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setFancyFx(fine && wide && !reduced);
+  }, []);
 
   // GSAP scroll reveals + light parallax
   useEffect(() => {
@@ -281,13 +291,13 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
         {/* decorative outlined statement words */}
         <span
           aria-hidden="true"
-          className="font-display text-stroke pointer-events-none absolute -left-4 top-[12%] -rotate-6 text-[14vw] font-black leading-none opacity-40 sm:left-6"
+          className="font-display text-stroke pointer-events-none absolute -left-4 top-[12%] hidden -rotate-6 text-[14vw] font-black leading-none opacity-40 sm:left-6 sm:block"
         >
           FULL-STACK
         </span>
         <span
           aria-hidden="true"
-          className="font-display text-stroke pointer-events-none absolute -right-2 bottom-[14%] rotate-6 text-[14vw] font-black leading-none opacity-40 sm:right-8"
+          className="font-display text-stroke pointer-events-none absolute -right-2 bottom-[14%] hidden rotate-6 text-[14vw] font-black leading-none opacity-40 sm:right-8 sm:block"
         >
           MOBILE
         </span>
@@ -314,7 +324,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
             onMouseEnter={() => liquify(22)}
             onMouseLeave={() => liquify(6)}
             className="hero-title liquid-target font-display text-[clamp(44px,10vw,116px)] font-black leading-[0.92] tracking-[-0.03em]"
-            style={{ filter: 'url(#liquid)' }}
+            style={fancyFx ? { filter: 'url(#liquid)' } : undefined}
           >
             {profile.name}
           </h1>
@@ -323,7 +333,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
             <h2 className="animated-gradient-text font-display text-[clamp(20px,4vw,44px)] font-black tracking-tight">
               {profile.title}
             </h2>
-            <span className="sticker glass absolute -right-10 -top-6 rotate-6 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-600 sm:-right-16">
+            <span className="sticker glass absolute -right-10 -top-6 hidden rotate-6 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-600 sm:-right-16 sm:block">
               ★ 2026
             </span>
           </div>
@@ -378,7 +388,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
           </div>
         </div>
 
-        <div className="absolute bottom-7 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-slate-400">
+        <div className="absolute bottom-7 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 text-slate-400 sm:flex">
           <span className="font-body text-[9px] uppercase tracking-[0.4em]">Scroll</span>
           <ArrowDown className="h-4 w-4 animate-bounce" />
         </div>
@@ -456,7 +466,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
             <TiltCard className="mb-6" max={4}>
               <article
                 data-reveal
-                className="glass glow-card shine-card group relative grid overflow-hidden rounded-[1.75rem] p-8 sm:p-10 md:grid-cols-[1.2fr_1fr] md:gap-10"
+                className="glass glow-card shine-card group relative grid overflow-hidden rounded-[1.75rem] p-6 sm:p-10 md:grid-cols-[1.2fr_1fr] md:gap-10"
               >
                 <span className="section-watermark pointer-events-none absolute -top-6 right-2 text-[10rem] sm:text-[12rem]">
                   01

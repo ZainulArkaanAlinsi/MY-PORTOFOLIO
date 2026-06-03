@@ -16,7 +16,7 @@ export const profile = {
   cv: "/cv.pdf",
   avatar: "/arkan.png",
   social: {
-    github: "https://github.com/zainularkaan",
+    github: "https://github.com/ZainulArkaanAlinsi",
     linkedin:
       "https://www.linkedin.com/in/zainul-arkaan-3bb51731a/",
     website: "https://zainularkaan.dev",
@@ -178,8 +178,8 @@ export const stats = {
 } as const;
 
 // Curated, production-style projects — the headline work shown on the site.
-// `github` points to the real repos under github.com/zainularkaan.
-const GH = "https://github.com/zainularkaan";
+// `github` points to the real repos under github.com/ZainulArkaanAlinsi.
+const GH = "https://github.com/ZainulArkaanAlinsi";
 
 export type FeaturedProject = {
   name: string;

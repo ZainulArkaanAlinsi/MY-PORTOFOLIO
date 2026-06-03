@@ -20,6 +20,12 @@ export default function ThreeScene() {
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    // Lighten the scene on phones/tablets: fewer particles, lower pixel
+    // ratio, no MSAA — keeps the 3D backdrop smooth instead of janky.
+    const isMobile =
+      typeof window !== 'undefined' &&
+      (window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768);
+
     const width = mount.clientWidth;
     const height = mount.clientHeight;
 
@@ -32,8 +38,8 @@ export default function ThreeScene() {
     camera.position.z = 6;
 
     // --- Renderer ---
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const renderer = new THREE.WebGLRenderer({ antialias: !isMobile, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
     renderer.setSize(width, height);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.15;
@@ -111,7 +117,7 @@ export default function ThreeScene() {
     group.add(tinySphere);
 
     // --- Particles ---
-    const PARTICLES = prefersReduced ? 600 : 1800;
+    const PARTICLES = prefersReduced || isMobile ? 600 : 1800;
     const positions = new Float32Array(PARTICLES * 3);
     for (let i = 0; i < PARTICLES; i++) {
       const r = 8 + Math.random() * 9;
