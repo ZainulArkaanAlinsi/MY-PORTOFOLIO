@@ -201,6 +201,7 @@ export async function getGithubUserStats(): Promise<GitHubUserStats> {
   try {
     // Fetch user info
     const userRes = await fetch(`https://api.github.com/users/${username}`, { headers, next: { revalidate: 3600 } });
+    if (!userRes.ok) throw new Error(`GitHub user endpoint returned ${userRes.status}`);
     const userData = await userRes.json();
 
     // Fetch all repos to compute language breakdown
@@ -208,7 +209,10 @@ export async function getGithubUserStats(): Promise<GitHubUserStats> {
       headers,
       next: { revalidate: 3600 },
     });
+    if (!reposRes.ok) throw new Error(`GitHub repos endpoint returned ${reposRes.status}`);
     const repos = await reposRes.json();
+
+    if (!Array.isArray(repos)) throw new Error('GitHub repos response is not an array');
 
     // Calculate total stars & forks
     let totalStars = 0;

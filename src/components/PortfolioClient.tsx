@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import React, { useRef, useState, useEffect, useCallback } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 
 import {
   Mail,
@@ -13,17 +14,12 @@ import {
   ArrowUpRight,
   GitFork,
   Star,
-  GraduationCap,
   Briefcase,
   Award,
-  Code2,
-  Wrench,
   Layers,
-  Languages,
   ChevronDown,
-  Zap,
-  Cpu,
-  Terminal,
+  Copy,
+  Check,
   Rocket,
   Sparkles,
   Target,
@@ -33,17 +29,18 @@ import GitHubCalendar from "@/components/gitstats/GitHubCalendar";
 import GitHubLangChart from "@/components/gitstats/GitHubLangChart";
 import StatsTracker from "@/components/gitstats/StatsTracker";
 import AnimatedCounter from "@/components/AnimatedCounter";
+import { CinematicFooter } from "@/components/ui/motion-footer";
+import SkillsShowcase from "@/components/ui/skills-showcase";
+import ExpertiseGrid from "@/components/ui/expertise-grid";
+import WorkShowcase from "@/components/ui/work-showcase";
+
 import {
   profile,
-  education,
   experience,
-  skillGroups,
-  tools,
-  expertise,
   softSkills,
-  languages as spokenLanguages,
   certifications,
   stats,
+  tools,
 } from "@/data/portfolio";
 
 
@@ -60,49 +57,10 @@ const LinkedinIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
-/* ===== Tool brand meta ===== */
-const TOOL_META: Record<
-  string,
-  { color: string; glyph: string; tone: "light" | "dark" }
-> = {
-  "Next.js":      { color: "#0f172a", glyph: "▲",  tone: "dark" },
-  React:          { color: "#0ea5e9", glyph: "⚛",  tone: "dark" },
-  TypeScript:     { color: "#1d4ed8", glyph: "TS", tone: "dark" },
-  "Tailwind CSS": { color: "#22d3ee", glyph: "✦",  tone: "light" },
-  Laravel:        { color: "#ef4444", glyph: "⚡", tone: "dark" },
-  PHP:            { color: "#6366f1", glyph: "🐘", tone: "dark" },
-  Flutter:        { color: "#3b82f6", glyph: "◆",  tone: "dark" },
-  Dart:           { color: "#0ea5e9", glyph: "◆",  tone: "dark" },
-  Firebase:       { color: "#f59e0b", glyph: "🔥", tone: "light" },
-  "Node.js":      { color: "#16a34a", glyph: "●",  tone: "dark" },
-  Git:            { color: "#f97316", glyph: "≠",  tone: "dark" },
-  Figma:          { color: "#ec4899", glyph: "◆",  tone: "dark" },
-};
+/* Tool meta removed — tools are shown in SkillsShowcase now */
 
 /* ===== Skill group accent palettes ===== */
-const GROUP_ACCENTS: Record<
-  string,
-  { from: string; to: string; icon: React.ReactNode; ring: string }
-> = {
-  Frontend: {
-    from: "from-blue-500/10",
-    to: "to-cyan-500/5",
-    icon: <Code2 className="w-4 h-4" />,
-    ring: "border-blue-400/20",
-  },
-  Backend: {
-    from: "from-rose-500/10",
-    to: "to-orange-500/5",
-    icon: <Terminal className="w-4 h-4" />,
-    ring: "border-rose-400/20",
-  },
-  "Mobile & Cloud": {
-    from: "from-purple-500/10",
-    to: "to-pink-500/5",
-    icon: <Cpu className="w-4 h-4" />,
-    ring: "border-purple-400/20",
-  },
-};
+/* GROUP_ACCENTS removed — skills cards replaced by `SkillsGrid` component */
 
 const CERT_ACCENTS = [
   { color: "#10b981", badge: "🏆" },
@@ -111,11 +69,52 @@ const CERT_ACCENTS = [
   { color: "#a855f7", badge: "🎨" },
 ];
 
-const LANG_FLAGS: Record<string, string> = {
-  Indonesian: "🇮🇩",
-  Arabic: "🇸🇦",
-  English: "🇬🇧",
-};
+
+
+/* ===== GLSL Shader Sources ===== */
+const VERTEX_SHADER = `
+  attribute vec2 position;
+  void main() {
+    gl_Position = vec4(position, 0.0, 1.0);
+  }
+`;
+
+const FRAGMENT_SHADER = `
+  precision mediump float;
+  uniform float u_time;
+  uniform vec2 u_resolution;
+  uniform vec2 u_mouse;
+
+  float random(vec2 st) {
+    return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+  }
+
+  void main() {
+    vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+    float ratio = u_resolution.x / u_resolution.y;
+    vec2 centeredUv = (uv - 0.5) * vec2(ratio, 1.0);
+    
+    // Base color (Matches #0b1120)
+    vec3 color = vec3(0.043, 0.067, 0.125);
+
+    // Dynamic Aurora effect
+    float liquid = sin(centeredUv.x * 3.0 + u_time * 0.5) * cos(centeredUv.y * 2.0 + u_time * 0.4);
+    float swirl = sin(distance(uv, u_mouse) * 5.0 - u_time * 0.8);
+    
+    // Color layers
+    vec3 blue = vec3(0.145, 0.388, 0.922);   // #2563eb
+    vec3 purple = vec3(0.545, 0.271, 0.965); // #8b5cf6
+    
+    color = mix(color, blue, liquid * 0.5 + 0.2);
+    color = mix(color, purple, swirl * 0.15);
+    
+    // Cinematic Noise Grain
+    float grain = (random(uv + u_time * 0.01) - 0.5) * 0.04;
+    color += grain;
+
+    gl_FragColor = vec4(color, 1.0);
+  }
+`;
 
 interface PortfolioClientProps {
   initialProjects: Project[];
@@ -125,6 +124,7 @@ interface PortfolioClientProps {
 const NAV_LINKS = [
   { id: "hero", label: "Home" },
   { id: "about", label: "About" },
+  { id: "expertise", label: "Expertise" },
   { id: "experience", label: "Experience" },
   { id: "github", label: "GitHub" },
   { id: "projects", label: "Projects" },
@@ -170,6 +170,16 @@ export default function PortfolioClient({
   initialGitHubStats,
 }: PortfolioClientProps) {
   const heroRef = useRef<HTMLElement>(null);
+  const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
+
+  const copyToClipboard = useCallback((text: string, label: string) => {
+    if (typeof window === "undefined") return;
+    navigator.clipboard.writeText(text).then(() => {
+      setCopyFeedback(label);
+      setTimeout(() => setCopyFeedback(null), 2000);
+    });
+  }, []);
+
   const cursorRef = useRef<HTMLDivElement>(null);
   const cursorDotRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -182,8 +192,10 @@ export default function PortfolioClient({
   const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
   const [typedText, setTypedText] = useState("");
   const [cursorHover, setCursorHover] = useState(false);
+  const [scrollParallaxY, setScrollParallaxY] = useState(0); // New state for parallax effect
   const [activeSection, setActiveSection] = useState("hero");
   const [scrolled, setScrolled] = useState(false);
+  const [userInteracted, setUserInteracted] = useState(false);
 
   useEffect(() => {
     const reducedQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -198,6 +210,50 @@ export default function PortfolioClient({
       coarseQuery.removeEventListener("change", apply);
     };
   }, []);
+
+  /* Prayer-on-section-enter (optional): overlay + audio */
+  const [prayerEnabled, setPrayerEnabled] = useState(false);
+  const [prayerVisible, setPrayerVisible] = useState(false);
+  const [prayerText, setPrayerText] = useState("");
+  const prayerAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const id = requestAnimationFrame(() => {
+      const v = localStorage.getItem("prayerEnabled");
+      setPrayerEnabled(v === "1");
+    });
+    // Avoid NotSupportedError when asset is missing/unavailable
+    try {
+      prayerAudioRef.current = new Audio("/assets/prayer.mp3");
+      // Some browsers throw on play/load; we'll just keep a ref if it exists
+    } catch {
+      prayerAudioRef.current = null;
+    }
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  useEffect(() => {
+    if (!prayerEnabled) return;
+    if (!activeSection) return;
+    const label = `Praying for ${activeSection}`;
+    requestAnimationFrame(() => {
+      setPrayerText(label);
+      setPrayerVisible(true);
+    });
+    const audio = prayerAudioRef.current;
+    if (audio && userInteracted) {
+      try {
+        audio.currentTime = 0;
+        void audio.play();
+      } catch {
+        // ignore playback errors (autoplay restrictions)
+      }
+    }
+    const t = setTimeout(() => setPrayerVisible(false), 3000);
+    return () => clearTimeout(t);
+  // Keep dependency array size/order stable (Next.js dev hot reload can otherwise warn)
+  }, [activeSection, prayerEnabled, userInteracted] as const);
 
   const fullTitle = profile.title;
 
@@ -234,6 +290,21 @@ export default function PortfolioClient({
     return () => clearInterval(interval);
   }, [fullTitle]);
 
+  /* Track first user interaction to enable audio playback (browser autoplay policy) */
+  useEffect(() => {
+    if (userInteracted) return;
+    const onInteract = () => {
+      setUserInteracted(true);
+      document.removeEventListener("click", onInteract);
+      document.removeEventListener("keydown", onInteract);
+    };
+    document.addEventListener("click", onInteract);
+    document.addEventListener("keydown", onInteract);
+    return () => {
+      document.removeEventListener("click", onInteract);
+      document.removeEventListener("keydown", onInteract);
+    };
+  }, [userInteracted]);
 
   /* Cursor + mousePos (rAF-throttled, single listener with event delegation for hover) */
   const handleMouseMove = useCallback((e: MouseEvent) => {
@@ -290,83 +361,82 @@ export default function PortfolioClient({
     };
   }, [motionEnabled, handleMouseMove]);
 
-  /* Particles — skip entirely on reduced-motion / touch; pause when tab is hidden */
+  /* WebGL Shader Background */
   useEffect(() => {
     if (!motionEnabled || !canvasRef.current) return;
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    let animId = 0;
-    let running = true;
-    const particles: {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      r: number;
-      alpha: number;
-    }[] = [];
+    const gl = canvas.getContext("webgl");
+    if (!gl) return;
 
-    const resize = () => {
+    const createShader = (gl: WebGLRenderingContext, type: number, source: string) => {
+      const shader = gl.createShader(type);
+      if (!shader) return null;
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      return shader;
+    };
+
+    const program = gl.createProgram()!;
+    const vs = createShader(gl, gl.VERTEX_SHADER, VERTEX_SHADER)!;
+    const fs = createShader(gl, gl.FRAGMENT_SHADER, FRAGMENT_SHADER)!;
+    gl.attachShader(program, vs);
+    gl.attachShader(program, fs);
+    gl.linkProgram(program);
+    gl.useProgram(program);
+
+    const vertices = new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]);
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+    const positionLocation = gl.getAttribLocation(program, "position");
+    gl.enableVertexAttribArray(positionLocation);
+    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+    const timeLoc = gl.getUniformLocation(program, "u_time");
+    const resLoc = gl.getUniformLocation(program, "u_resolution");
+    const mouseLoc = gl.getUniformLocation(program, "u_mouse");
+
+    let animFrame = 0;
+    let running = true;
+
+    const handleResize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      gl.viewport(0, 0, canvas.width, canvas.height);
     };
-    resize();
-    window.addEventListener("resize", resize);
 
-    const count = window.innerWidth < 768 ? 30 : 60;
-    for (let i = 0; i < count; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        r: Math.random() * 1.8 + 0.4,
-        alpha: Math.random() * 0.5 + 0.1,
-      });
-    }
+    handleResize();
+    window.addEventListener("resize", handleResize);
 
-    const animate = () => {
+    const render = (time: number) => {
       if (!running) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach((p) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width) p.x = 0;
-        if (p.y < 0) p.y = canvas.height;
-        if (p.y > canvas.height) p.y = 0;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(96, 165, 250, ${p.alpha})`;
-        ctx.fill();
-      });
-      animId = requestAnimationFrame(animate);
+      gl.uniform1f(timeLoc, time * 0.001);
+      gl.uniform2f(resLoc, canvas.width, canvas.height);
+      gl.uniform2f(mouseLoc, mousePos.x, 1.0 - mousePos.y);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      animFrame = requestAnimationFrame(render);
     };
 
     const onVisibility = () => {
-      if (document.hidden) {
-        running = false;
-        cancelAnimationFrame(animId);
-      } else if (!running) {
-        running = true;
-        animate();
-      }
+      running = !document.hidden;
+      if (running) render(performance.now());
     };
+
     document.addEventListener("visibilitychange", onVisibility);
-    animate();
+    render(0);
 
     return () => {
       running = false;
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", resize);
+      cancelAnimationFrame(animFrame);
+      window.removeEventListener("resize", handleResize);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [motionEnabled]);
+  }, [motionEnabled, mousePos]);
 
   /* Scroll progress + active section — rAF-throttled, cached section refs */
   useEffect(() => {
-    const ids = ["hero", "about", "experience", "github", "projects"];
+    const ids = ["hero", "about", "expertise", "experience", "github", "projects"];
     const sectionEls = ids
       .map((id) => document.getElementById(id))
       .filter((el): el is HTMLElement => el !== null);
@@ -375,6 +445,7 @@ export default function PortfolioClient({
     let dirty = false;
     let lastScrolled = false;
     let lastActive = "hero";
+    let lastParallaxY = 0; // Track last parallax Y to avoid excessive state updates
 
     const update = () => {
       dirty = false;
@@ -390,6 +461,17 @@ export default function PortfolioClient({
       const max = doc.scrollHeight - window.innerHeight;
       if (progressRef.current && max > 0) {
         progressRef.current.style.transform = `scaleX(${Math.min(y / max, 1)})`;
+      }
+
+      // Calculate and update parallax for badges
+      if (motionEnabled) {
+        const newParallaxY = -y * 0.3; // Adjust 0.3 for desired parallax strength
+        if (newParallaxY !== lastParallaxY) {
+          lastParallaxY = newParallaxY;
+          setScrollParallaxY(newParallaxY);
+        }
+      } else if (scrollParallaxY !== 0) {
+        setScrollParallaxY(0); // Reset if motion is disabled
       }
 
       let current = "hero";
@@ -413,7 +495,8 @@ export default function PortfolioClient({
       cancelAnimationFrame(rafId);
       window.removeEventListener("scroll", onScroll);
     };
-  }, []);
+  }, [motionEnabled, scrollParallaxY]); // include scrollParallaxY to satisfy lint (used in effect)
+  
 
   /* Reveal on scroll — IntersectionObserver replaces per-scroll querySelectorAll */
   useEffect(() => {
@@ -465,7 +548,34 @@ export default function PortfolioClient({
         />
       </div>
 
-      {/* ===== HERO (original style preserved) ===== */}
+      {/* Prayer overlay (shows briefly when entering a section if enabled) */}
+      {prayerVisible && (
+        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/60 pointer-events-none transition-opacity duration-300">
+          <div className="text-center px-6 py-4 bg-white/5 rounded-md backdrop-blur-sm">
+            <p className="text-2xl font-semibold text-white">{prayerText}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Prayer toggle button */}
+      <div className="fixed bottom-6 right-6 z-[95]">
+        <button
+          onClick={() => {
+            const next = !prayerEnabled;
+            setPrayerEnabled(next);
+            try {
+              localStorage.setItem("prayerEnabled", next ? "1" : "0");
+            } catch {}
+          }}
+          className="px-3 py-2 rounded-lg bg-white/8 backdrop-blur-sm hover:bg-white/12 transition text-sm"
+          aria-pressed={prayerEnabled}
+          title="Toggle prayer overlay"
+        >
+          {prayerEnabled ? "Prayer: On" : "Prayer: Off"}
+        </button>
+      </div>
+
+      {/* ===== HERO ===== */}
       <header
         id="hero"
         ref={heroRef}
@@ -587,7 +697,7 @@ export default function PortfolioClient({
         <div
           className="hero-badge absolute top-[12%] right-[5%] md:right-[10%] z-20 hidden sm:block"
           style={{
-            transform: `translate(${(mousePos.x - 0.5) * -20}px, ${(mousePos.y - 0.5) * -20}px)`,
+            transform: `translate(${(mousePos.x - 0.5) * -20}px, ${(mousePos.y - 0.5) * -20 + scrollParallaxY}px)`,
             transition: "transform 1.2s cubic-bezier(0.16, 1, 0.3, 1)",
           }}
         >
@@ -599,7 +709,7 @@ export default function PortfolioClient({
         <div
           className="hero-badge absolute bottom-[20%] left-[3%] md:left-[8%] z-20 hidden sm:block"
           style={{
-            transform: `translate(${(mousePos.x - 0.5) * -25}px, ${(mousePos.y - 0.5) * -25}px)`,
+            transform: `translate(${(mousePos.x - 0.5) * -25}px, ${(mousePos.y - 0.5) * -25 + scrollParallaxY}px)`,
             transition: "transform 1.4s cubic-bezier(0.16, 1, 0.3, 1)",
           }}
         >
@@ -613,7 +723,7 @@ export default function PortfolioClient({
         <div
           className="hero-badge absolute top-[30%] left-[4%] md:left-[8%] z-20 hidden sm:block"
           style={{
-            transform: `translate(${(mousePos.x - 0.5) * -15}px, ${(mousePos.y - 0.5) * -15}px)`,
+            transform: `translate(${(mousePos.x - 0.5) * -15}px, ${(mousePos.y - 0.5) * -15 + scrollParallaxY}px)`,
             transition: "transform 1s cubic-bezier(0.16, 1, 0.3, 1)",
           }}
         >
@@ -625,7 +735,7 @@ export default function PortfolioClient({
         <div
           className="hero-badge absolute bottom-[35%] right-[4%] md:right-[8%] z-20 hidden sm:block"
           style={{
-            transform: `translate(${(mousePos.x - 0.5) * -18}px, ${(mousePos.y - 0.5) * -18}px)`,
+            transform: `translate(${(mousePos.x - 0.5) * -18}px, ${(mousePos.y - 0.5) * -18 + scrollParallaxY}px)`,
             transition: "transform 1.1s cubic-bezier(0.16, 1, 0.3, 1)",
           }}
         >
@@ -637,7 +747,7 @@ export default function PortfolioClient({
         <div
           className="hero-badge absolute top-[50%] right-[3%] md:right-[6%] z-20 hidden sm:block"
           style={{
-            transform: `translate(${(mousePos.x - 0.5) * -22}px, ${(mousePos.y - 0.5) * -22}px)`,
+            transform: `translate(${(mousePos.x - 0.5) * -22}px, ${(mousePos.y - 0.5) * -22 + scrollParallaxY}px)`,
             transition: "transform 1.3s cubic-bezier(0.16, 1, 0.3, 1)",
           }}
         >
@@ -683,158 +793,77 @@ export default function PortfolioClient({
           }}
         />
 
-        {/* ===== ABOUT ===== */}
-        <Section
-          id="about"
-          eyebrow="01 — About"
-          title="A bit about me."
-          accent="blue"
-        >
-          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-16 items-start">
-            <div className="reveal">
+        {/* ===== ABOUT (Updated layout) ===== */}
+        <Section id="about" eyebrow="01 — About" title="A bit about me." accent="blue">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            <div className="flex flex-col items-center lg:items-start">
+              <div className="w-44 h-44 rounded-full overflow-hidden border border-white/6">
+                <Image src={profile.avatar} alt={profile.name} width={176} height={176} className="object-cover" />
+              </div>
+              <h2 className="mt-4 text-xl font-extrabold">{profile.name}</h2>
+              <div className="text-zinc-400 mt-1 text-sm">{profile.title}</div>
+              <div className="text-zinc-400 mt-2 text-sm">{profile.location}</div>
+            </div>
+
+            <div className="lg:col-span-2">
               <p className="text-zinc-200 text-base sm:text-lg leading-relaxed">
                 {profile.bio}
               </p>
-              <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mt-4">
-                Outside of shipping side projects, I teach programming to
-                younger students and contribute to open-source. I believe in
-                clean code, measured architecture, and design that respects the
-                reader.
-              </p>
 
-              {/* Stats row */}
-              <div className="grid grid-cols-3 gap-3 mt-8">
-                {[
-                  { value: stats.hoursCoding, suffix: "+", label: "Hours coding" },
-                  { value: stats.projectsCompleted, suffix: "", label: "Projects shipped" },
-                  { value: stats.technologiesMastered, suffix: "", label: "Technologies" },
-                ].map((s) => (
-                  <div
-                    key={s.label}
-                    className="tilt-card rounded-2xl border border-white/10 bg-gradient-to-br from-blue-500/10 to-white/2 p-4 glow-card"
-                    onMouseMove={(e) => handleTilt(e, 6)}
-                    onMouseLeave={handleTiltLeave}
-                  >
-                    <div className="text-2xl sm:text-3xl font-black bg-gradient-to-br from-blue-300 to-cyan-200 bg-clip-text text-transparent">
-                      <AnimatedCounter target={s.value} suffix={s.suffix} />
-                    </div>
-                    <div className="text-[10px] uppercase tracking-wider text-zinc-400 mt-1.5 font-semibold">
-                      {s.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Expertise mini-bars */}
-              <div className="mt-6 grid grid-cols-3 gap-3">
-                {expertise.map((e) => (
-                  <div
-                    key={e.label}
-                    className="rounded-xl border border-white/5 bg-white/2 p-4 hover:border-blue-400/30 hover:bg-white/4 transition-colors"
-                  >
-                    <div className="flex items-baseline justify-between">
-                      <span className="text-[11px] uppercase tracking-wider text-zinc-400 font-semibold">
-                        {e.label}
-                      </span>
-                      <span className="text-sm font-bold text-blue-300 tabular-nums">
-                        {e.value}%
-                      </span>
-                    </div>
-                    <div className="mt-2 h-1 bg-white/5 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full"
-                        style={{ width: `${e.value}%` }}
-                      />
-                    </div>
-                    <div className="text-[9px] text-zinc-500 mt-2">{e.stack}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-5 reveal">
-              {/* Education */}
-              <div
-                className="tilt-card rounded-2xl border border-white/10 bg-gradient-to-br from-white/3 to-transparent p-6 glow-card"
-                onMouseMove={(e) => handleTilt(e, 4)}
-                onMouseLeave={handleTiltLeave}
-              >
-                <div className="flex items-center justify-between mb-5">
-                  <div className="inline-flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-lg bg-blue-500/15 border border-blue-400/20 flex items-center justify-center text-blue-300">
-                      <GraduationCap className="w-4 h-4" />
-                    </div>
-                    <h4 className="font-bold text-white text-sm uppercase tracking-wider">
-                      Education
-                    </h4>
-                  </div>
+              <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="bg-white/3 p-4 rounded-lg">
+                  <div className="text-xs text-zinc-300 font-semibold">Hours Coding</div>
+                  <div className="text-2xl font-bold"><AnimatedCounter target={stats.hoursCoding} suffix="+" /></div>
                 </div>
-                {education.map((ed) => (
-                  <div key={ed.school} className="relative pl-5 border-l-2 border-blue-500/40">
-                    <span className="absolute -left-1.5 top-1.5 w-2.5 h-2.5 rounded-full bg-blue-400 ring-4 ring-[#0b1120]" />
-                    <span className="inline-block text-[10px] font-bold text-blue-300 uppercase tracking-wider bg-blue-500/10 px-2 py-0.5 rounded">
-                      {ed.period}
-                    </span>
-                    <h5 className="font-bold text-white text-base mt-2">
-                      {ed.school}
-                    </h5>
-                    <p className="text-zinc-400 text-xs mt-1">{ed.program}</p>
-                    <p className="text-zinc-500 text-xs mt-3 leading-relaxed">
-                      {ed.description}
-                    </p>
-                  </div>
-                ))}
+                <div className="bg-white/3 p-4 rounded-lg">
+                  <div className="text-xs text-zinc-300 font-semibold">Projects</div>
+                  <div className="text-2xl font-bold"><AnimatedCounter target={stats.projectsCompleted} /></div>
+                </div>
+                <div className="bg-white/3 p-4 rounded-lg">
+                  <div className="text-xs text-zinc-300 font-semibold">Technologies</div>
+                  <div className="text-2xl font-bold"><AnimatedCounter target={stats.technologiesMastered} /></div>
+                </div>
               </div>
 
-              {/* Languages */}
-              <div
-                className="tilt-card rounded-2xl border border-white/10 bg-gradient-to-br from-emerald-500/8 to-transparent p-6 glow-card"
-                onMouseMove={(e) => handleTilt(e, 4)}
-                onMouseLeave={handleTiltLeave}
-              >
-                <div className="flex items-center justify-between mb-5">
-                  <div className="inline-flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-lg bg-emerald-500/15 border border-emerald-400/20 flex items-center justify-center text-emerald-300">
-                      <Languages className="w-4 h-4" />
-                    </div>
-                    <h4 className="font-bold text-white text-sm uppercase tracking-wider">
-                      Languages
-                    </h4>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-4">
-                  {spokenLanguages.map((lang) => (
-                    <div key={lang.name}>
-                      <div className="flex items-baseline justify-between mb-1.5">
-                        <span className="text-sm font-semibold text-zinc-100 inline-flex items-center gap-2">
-                          <span className="text-base">
-                            {LANG_FLAGS[lang.name] ?? "🌐"}
-                          </span>
-                          {lang.name}
-                        </span>
-                        <span className="text-[10px] uppercase tracking-wider text-zinc-500 font-semibold bg-white/5 px-2 py-0.5 rounded">
-                          {lang.proficiency}
-                        </span>
-                      </div>
-                      <div className="relative h-1.5 bg-white/5 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full relative shimmer-bar"
-                          style={{ width: `${lang.level}%` }}
-                        />
-                      </div>
-                    </div>
+              <div className="mt-6">
+                <h3 className="text-sm font-semibold text-zinc-300">Tools & Skills</h3>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {tools.map((t) => (
+                    <span key={t} className="px-2 py-1 bg-white/5 rounded text-sm text-zinc-200">{t}</span>
                   ))}
                 </div>
+              </div>
+
+              <div className="mt-6">
+                <h3 className="text-sm font-semibold text-zinc-300">Certifications</h3>
+                <ul className="mt-2 space-y-2">
+                  {certifications.map((c) => (
+                    <li key={c.title} className="bg-white/3 p-3 rounded">
+                      <div className="font-semibold">{c.title} <span className="text-xs text-zinc-400">{c.year}</span></div>
+                      <div className="text-sm text-zinc-300">{c.issuer ?? ''}</div>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
         </Section>
 
+        {/* ===== EXPERTISE / WHAT I DO ===== */}
+        <Section
+          id="expertise"
+          eyebrow="02 — What I do"
+          title="Areas of expertise."
+          accent="cyan"
+        >
+          <ExpertiseGrid />
+        </Section>
+
         {/* ===== EXPERIENCE & SKILLS ===== */}
         <Section
           id="experience"
-          eyebrow="02 — Work"
-          title="Experience & expertise."
+          eyebrow="03 — Work"
+          title="Experience & journey."
           accent="purple"
         >
           <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-16">
@@ -853,7 +882,7 @@ export default function PortfolioClient({
                 {/* gradient line */}
                 <span className="absolute left-0 top-2 bottom-2 w-px bg-gradient-to-b from-blue-400/60 via-purple-400/40 to-pink-400/20" />
 
-                {experience.map((item, i) => (
+                {experience.slice(0, 4).map((item, i) => (
                   <li
                     key={i}
                     className="relative pb-7 last:pb-0 tilt-card"
@@ -891,103 +920,11 @@ export default function PortfolioClient({
               </ol>
             </div>
 
-            {/* Skills (category cards) */}
-            <div className="flex flex-col gap-7 reveal">
-              <div className="inline-flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-lg bg-blue-500/15 border border-blue-400/20 flex items-center justify-center text-blue-300">
-                  <Zap className="w-4 h-4" />
-                </div>
-                <h3 className="font-bold text-white text-sm uppercase tracking-wider">
-                  Skills
-                </h3>
-              </div>
-
-              {skillGroups.map((group) => {
-                const accent = GROUP_ACCENTS[group.label] ?? {
-                  from: "from-blue-500/15",
-                  to: "to-cyan-500/5",
-                  icon: <Code2 className="w-4 h-4" />,
-                  ring: "border-blue-400/30",
-                };
-                return (
-                  <div
-                    key={group.label}
-                    className={`tilt-card rounded-2xl border border-white/10 bg-gradient-to-br ${accent.from} ${accent.to} p-5 glow-card`}
-                    onMouseMove={(e) => handleTilt(e, 3)}
-                    onMouseLeave={handleTiltLeave}
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="inline-flex items-center gap-2 text-zinc-200 text-sm font-bold uppercase tracking-wider">
-                        <span className={`w-6 h-6 rounded-md border ${accent.ring} bg-white/5 flex items-center justify-center text-zinc-200`}>
-                          {accent.icon}
-                        </span>
-                        {group.label}
-                      </div>
-                      <span className="text-[10px] text-zinc-500 font-mono uppercase tracking-wider">
-                        {group.items.length} skills
-                      </span>
-                    </div>
-                    <div className="flex flex-col gap-2.5">
-                      {group.items.map((skill) => (
-                        <div key={skill.name}>
-                          <div className="flex items-baseline justify-between mb-1">
-                            <span className="text-sm font-medium text-zinc-200">
-                              {skill.name}
-                            </span>
-                            <span className="text-[10px] text-zinc-400 tabular-nums font-mono">
-                              {skill.level}%
-                            </span>
-                          </div>
-                          <div className="relative h-1 bg-white/5 rounded-full overflow-hidden">
-                            <div
-                              className="h-full rounded-full relative shimmer-bar bg-gradient-to-r from-blue-400 to-cyan-300"
-                              style={{ width: `${skill.level}%` }}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            {/* Skills cards removed — using `SkillsGrid` to avoid duplicate UI */}
           </div>
 
           {/* Tools row (branded badges, full width) */}
-          <div className="mt-10 reveal">
-            <div className="inline-flex items-center gap-2.5 mb-5">
-              <div className="w-9 h-9 rounded-lg bg-amber-500/15 border border-amber-400/20 flex items-center justify-center text-amber-300">
-                <Wrench className="w-4 h-4" />
-              </div>
-              <h3 className="font-bold text-white text-sm uppercase tracking-wider">
-                Tools I use daily
-              </h3>
-            </div>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5">
-              {tools.map((name) => {
-                const meta = TOOL_META[name];
-                const bg = meta ? meta.color : "#475569";
-                const textDark = meta?.tone === "light";
-                return (
-                  <div
-                    key={name}
-                    className="tilt-card group flex flex-col items-center gap-1.5 px-3 py-3.5 rounded-xl border border-white/10 font-bold text-[10px] uppercase tracking-wider transition-all duration-200 cursor-default"
-                    style={{
-                      backgroundColor: `${bg}CC`,
-                      color: textDark ? "#0f172a" : "#fff",
-                    }}
-                    onMouseMove={(e) => handleTilt(e, 8)}
-                    onMouseLeave={handleTiltLeave}
-                  >
-                    <span className="text-lg group-hover:scale-110 transition-transform">
-                      {meta?.glyph ?? "●"}
-                    </span>
-                    {name}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          {/* Tools row removed — unified in SkillsShowcase */}
 
           {/* Soft skills */}
           <div className="mt-10 reveal">
@@ -1019,10 +956,13 @@ export default function PortfolioClient({
           </div>
         </Section>
 
+        {/* ===== SKILLS SHOWCASE (replaces cards & tools) ===== */}
+        <SkillsShowcase />
+
         {/* ===== GITHUB ===== */}
         <Section
           id="github"
-          eyebrow="03 — Activity"
+          eyebrow="04 — Activity"
           title="Live from GitHub."
           accent="cyan"
         >
@@ -1084,7 +1024,7 @@ export default function PortfolioClient({
         {/* ===== CERTIFICATIONS ===== */}
         <Section
           id="certifications"
-          eyebrow="04 — Credentials"
+          eyebrow="05 — Credentials"
           title="Certifications."
           accent="amber"
         >
@@ -1150,17 +1090,17 @@ export default function PortfolioClient({
         {/* ===== PROJECTS ===== */}
         <Section
           id="projects"
-          eyebrow="05 — Work"
-          title="Selected projects."
+          eyebrow="06 — Work"
+          title="Work, by category."
           accent="pink"
         >
           <div className="flex items-end justify-between mb-6 reveal flex-wrap gap-3">
             <div>
               <p className="text-zinc-400 text-sm">
-                Pulled live from GitHub. Sorted by recent stars.
+                Explore my work by discipline — hover to preview, click to open.
               </p>
               <p className="text-zinc-600 text-xs mt-1 inline-flex items-center gap-1.5">
-                <Target className="w-3 h-3" /> Showing top {Math.min(initialProjects.length, 9)} of {totalPublicRepos}.
+                <Target className="w-3 h-3" /> {totalPublicRepos} repositories, grouped across 7 areas.
               </p>
             </div>
             <a
@@ -1173,84 +1113,15 @@ export default function PortfolioClient({
             </a>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 reveal">
-            {initialProjects.slice(0, 9).map((project) => (
-              <a
-                key={project.id}
-                href={project.htmlUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="tilt-card group relative rounded-2xl border border-white/10 bg-gradient-to-br from-white/3 to-transparent p-5 hover:border-blue-400/40 transition-colors flex flex-col overflow-hidden glow-card"
-                onMouseMove={(e) => handleTilt(e, 5)}
-                onMouseLeave={handleTiltLeave}
-              >
-                <div
-                  className="absolute -top-12 -right-12 w-32 h-32 rounded-full opacity-20 blur-2xl group-hover:opacity-40 transition-opacity"
-                  style={{
-                    background:
-                      "radial-gradient(circle, rgba(96,165,250,0.6), transparent 70%)",
-                  }}
-                />
-                <div className="relative flex items-center justify-between mb-3">
-                  <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-zinc-300 uppercase tracking-wider px-2 py-0.5 rounded border border-white/10 bg-white/5">
-                    <span
-                      className="w-1.5 h-1.5 rounded-full"
-                      style={{
-                        backgroundColor: getLangColor(project.language),
-                      }}
-                    />
-                    {project.language || "Code"}
-                  </span>
-                  <div className="flex items-center gap-2 text-[10px] font-bold text-zinc-400">
-                    {project.stars > 0 && (
-                      <span className="inline-flex items-center gap-1">
-                        <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-                        {project.stars}
-                      </span>
-                    )}
-                    {project.forks > 0 && (
-                      <span className="inline-flex items-center gap-1">
-                        <GitFork className="w-3 h-3" />
-                        {project.forks}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <h3 className="font-bold text-white text-base leading-snug group-hover:text-blue-300 transition-colors break-words capitalize">
-                  {project.name.replace(/[-_]/g, " ")}
-                </h3>
-                <p className="text-zinc-400 text-xs mt-2 leading-relaxed line-clamp-2 flex-1">
-                  {project.description}
-                </p>
-                {project.topics && project.topics.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-3">
-                    {project.topics.slice(0, 3).map((t) => (
-                      <span
-                        key={t}
-                        className="text-[9px] font-medium px-1.5 py-0.5 rounded-full border border-blue-400/20 bg-blue-500/10 text-blue-300"
-                      >
-                        #{t}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                <div className="flex items-center justify-between pt-4 mt-4 border-t border-white/5 relative">
-                  <span className="text-[10px] text-zinc-500 inline-flex items-center gap-1 uppercase tracking-wider font-semibold">
-                    View on GitHub
-                  </span>
-                  <span className="text-blue-300 inline-flex items-center gap-0.5 group-hover:gap-1.5 transition-all">
-                    <ArrowUpRight className="w-4 h-4" />
-                  </span>
-                </div>
-              </a>
-            ))}
+          <div className="reveal">
+            <WorkShowcase projects={initialProjects} />
           </div>
         </Section>
 
         {/* ===== CONTACT ===== */}
         <Section
           id="contact"
-          eyebrow="06 — Get in touch"
+          eyebrow="07 — Get in touch"
           title="Let's build something."
           accent="blue"
         >
@@ -1299,13 +1170,15 @@ export default function PortfolioClient({
                   icon={<Mail className="w-4 h-4" />}
                   label="Email"
                   value={profile.email}
-                  href={`mailto:${profile.email}`}
+                    onCopy={() => copyToClipboard(profile.email, "Email")}
+                    isCopied={copyFeedback === "Email"}
                 />
                 <ContactRow
                   icon={<Phone className="w-4 h-4" />}
                   label="Phone"
                   value={profile.phone}
-                  href={`tel:${profile.phone.replace(/\s+/g, "")}`}
+                    onCopy={() => copyToClipboard(profile.phone.replace(/\s+/g, ""), "Phone")}
+                    isCopied={copyFeedback === "Phone"}
                 />
                 <ContactRow
                   icon={<MapPin className="w-4 h-4" />}
@@ -1330,18 +1203,8 @@ export default function PortfolioClient({
         </Section>
       </main>
 
-      <footer className="border-t border-white/5 py-8">
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-500">
-          <span>
-            © {new Date().getFullYear()} {profile.name}. All rights reserved.
-          </span>
-          <span>
-            Built with <span className="text-zinc-300">Next.js</span>,{" "}
-            <span className="text-zinc-300">Tailwind</span> &amp;{" "}
-            <span className="text-zinc-300">GSAP</span>.
-          </span>
-        </div>
-      </footer>
+      <CinematicFooter />
+
     </div>
   );
 }
@@ -1376,6 +1239,12 @@ const SECTION_BG: Record<
   },
   about: {
     light: "bg-gradient-to-br from-cyan-50/70 via-white to-white",
+    dark: "bg-gradient-to-br from-cyan-400/10 via-[#0b1120] to-[#0b1120]",
+    textLight: "text-zinc-900",
+    textDark: "text-white",
+  },
+  expertise: {
+    light: "bg-gradient-to-br from-sky-50/70 via-white to-white",
     dark: "bg-gradient-to-br from-cyan-400/10 via-[#0b1120] to-[#0b1120]",
     textLight: "text-zinc-900",
     textDark: "text-white",
@@ -1434,8 +1303,17 @@ function Section({
       textDark: "text-white",
     } as const);
 
+  const reduceMotion = useReducedMotion();
+
   return (
-    <section id={id} className="relative scroll-mt-24">
+    <motion.section
+      id={id}
+      className="relative scroll-mt-24"
+      initial={reduceMotion ? false : { opacity: 0, y: 64 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+    >
       {/* section background (beda per id) */}
       <div
         aria-hidden="true"
@@ -1445,7 +1323,13 @@ function Section({
       <div
         className={`absolute -z-10 -top-20 right-0 w-72 h-72 rounded-full blur-[100px] pointer-events-none ${ACCENT_ORB[accent]}`}
       />
-      <div className="mb-10 reveal flex items-end justify-between gap-6 flex-wrap">
+      <motion.div
+        className="mb-10 flex items-end justify-between gap-6 flex-wrap"
+        initial={reduceMotion ? false : { opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.6 }}
+        transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+      >
         <div>
           <div
             className={`inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.3em] font-bold mb-3 ${ACCENT_TEXT[accent]}`}
@@ -1459,9 +1343,9 @@ function Section({
             {title}
           </h2>
         </div>
-      </div>
+      </motion.div>
       <div className="relative z-0">{children}</div>
-    </section>
+    </motion.section>
   );
 }
 
@@ -1470,11 +1354,15 @@ function ContactRow({
   label,
   value,
   href,
+  onCopy,
+  isCopied,
 }: {
   icon: React.ReactNode;
   label: string;
   value: string;
   href?: string;
+  onCopy?: () => void;
+  isCopied?: boolean;
 }) {
   const content = (
     <>
@@ -1487,7 +1375,19 @@ function ContactRow({
         </div>
         <div className="text-sm text-white font-semibold truncate">{value}</div>
       </div>
-      {href && <ArrowUpRight className="w-4 h-4 text-zinc-500 shrink-0" />}
+      {onCopy ? (
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            onCopy();
+          }}
+          className={`p-2 rounded-md transition-all ${isCopied ? "text-emerald-400 bg-emerald-500/10" : "text-zinc-500 hover:text-white hover:bg-white/10"}`}
+        >
+          {isCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+        </button>
+      ) : (
+        href && <ArrowUpRight className="w-4 h-4 text-zinc-500 shrink-0" />
+      )}
     </>
   );
   const base =
@@ -1504,19 +1404,4 @@ function ContactRow({
   ) : (
     <div className={base}>{content}</div>
   );
-}
-
-function getLangColor(lang: string): string {
-  const map: Record<string, string> = {
-    TypeScript: "#3178c6",
-    JavaScript: "#f1e05a",
-    PHP: "#4F5D95",
-    Dart: "#00B4AB",
-    Python: "#3572A5",
-    HTML: "#e34c26",
-    CSS: "#563d7c",
-    Vue: "#41b883",
-    Go: "#00ADD8",
-  };
-  return map[lang] || "#94a3b8";
 }

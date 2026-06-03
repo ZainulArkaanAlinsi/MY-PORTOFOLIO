@@ -6,7 +6,7 @@ export const profile = {
   shortName: "Zainul Arkaan",
   initials: "Z",
   handle: "ZAINUL.DEV",
-  title: "Full-Stack Web & Mobile Developer",
+  title: "Full-Stack & Mobile Developer",
   tagline:
     "I design and ship modern web and mobile products with Next.js, Laravel, and Flutter.",
   bio: "Currently studying at IDN Boarding School's Software Engineering program. I focus on building fast, accessible, and well-architected applications — from polished marketing sites to production-grade dashboards and cross-platform mobile apps.",
@@ -176,3 +176,82 @@ export const stats = {
   projectsCompleted: 18,
   technologiesMastered: 12,
 } as const;
+
+// Curated, production-style projects — the headline work shown on the site.
+// `github` points to the real repos under github.com/zainularkaan.
+const GH = "https://github.com/zainularkaan";
+
+export type FeaturedProject = {
+  name: string;
+  year: string;
+  category: string;
+  summary: string;
+  impact: string;
+  stack: readonly string[];
+  accent: string; // gradient accent per card
+  github: string;
+  demo?: string;
+};
+
+export const featuredProjects: readonly FeaturedProject[] = [
+  {
+    name: "Absensi Karyawan JNT Martapura",
+    year: "2026",
+    category: "Mobile + Admin Dashboard",
+    summary:
+      "Production attendance system for the J&T Martapura branch — a Flutter mobile app for staff check-in with geofencing and biometric verification, paired with an admin dashboard for live monitoring and reporting.",
+    impact:
+      "Replaced manual paper attendance with real-time, location-verified check-ins and automated daily recaps for branch management.",
+    stack: ["Flutter", "Firebase", "Geofencing", "REST API"],
+    accent: "from-blue-500 to-cyan-400",
+    github: `${GH}/ABSENSI-KARYAWAN-JNT-MARTAPURA`,
+  },
+  {
+    name: "Booking App",
+    year: "2025",
+    category: "Mobile App",
+    summary:
+      "A cross-platform booking and reservation app with real-time availability, scheduling, and a clean booking flow from selection to confirmation.",
+    impact:
+      "Streamlined the full reservation journey into a few taps, with instant status updates backed by Firebase.",
+    stack: ["Flutter", "Firebase", "Realtime DB"],
+    accent: "from-cyan-400 to-emerald-400",
+    github: `${GH}/Booking_App`,
+  },
+  {
+    name: "E-libro",
+    year: "2025",
+    category: "Digital Library",
+    summary:
+      "A digital library platform to browse, search, and read e-books with categorized collections and a focused reading experience.",
+    impact:
+      "Made a full catalog of titles discoverable and readable on any device with a fast, distraction-free UI.",
+    stack: ["Flutter", "Firebase", "REST API"],
+    accent: "from-violet-400 to-blue-500",
+    github: `${GH}/E-libro`,
+  },
+  {
+    name: "News App",
+    year: "2025",
+    category: "Mobile App",
+    summary:
+      "A modern news reader consuming a live REST news API — category feeds, search, article detail views, and pull-to-refresh.",
+    impact:
+      "Delivered fresh, categorized headlines in real time with smooth infinite scrolling and offline-friendly caching.",
+    stack: ["Flutter", "REST API", "Dart"],
+    accent: "from-emerald-400 to-cyan-400",
+    github: `${GH}/NEWS_APP_2025`,
+  },
+  {
+    name: "Qur'an App",
+    year: "2025",
+    category: "Mobile App",
+    summary:
+      "A Qur'an companion app with full surah text, audio recitation, translations, and bookmarking — built on an open Qur'an REST API.",
+    impact:
+      "Combined reading, listening, and bookmarking into one calm, well-typeset experience for daily use.",
+    stack: ["Flutter", "REST API", "Audio"],
+    accent: "from-violet-400 to-emerald-400",
+    github: `${GH}/Qur-an_App`,
+  },
+] as const;

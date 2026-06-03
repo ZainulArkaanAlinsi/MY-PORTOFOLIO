@@ -45,3 +45,7 @@ build_output.txt
 next-env.d.ts
 
 .vercel
+
+# local tooling artifacts
+settings.local.json
+.deepcode/
