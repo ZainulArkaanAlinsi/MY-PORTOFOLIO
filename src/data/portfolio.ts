@@ -197,48 +197,48 @@ export const featuredProjects: readonly FeaturedProject[] = [
   {
     name: "Absensi Karyawan JNT Martapura",
     year: "2026",
-    category: "Mobile + Admin Dashboard",
+    category: "Web · Admin Dashboard",
     summary:
-      "Production attendance system for the J&T Martapura branch — a Flutter mobile app for staff check-in with geofencing and biometric verification, paired with an admin dashboard for live monitoring and reporting.",
+      "A web-based employee attendance system for the J&T Martapura branch. Staff attendance across working days is recorded and monitored by admins through a real-time dashboard.",
     impact:
-      "Replaced manual paper attendance with real-time, location-verified check-ins and automated daily recaps for branch management.",
-    stack: ["Flutter", "Firebase", "Geofencing", "REST API"],
+      "Replaced manual attendance with a monitored dashboard — admins track daily presence and recaps at a glance.",
+    stack: ["Next.js", "TypeScript", "Tailwind CSS", "REST API"],
     accent: "from-blue-500 to-cyan-400",
     github: `${GH}/ABSENSI-KARYAWAN-JNT-MARTAPURA`,
   },
   {
-    name: "Booking App",
+    name: "Hotel Booking Website",
+    year: "2025",
+    category: "Web App",
+    summary:
+      "A hotel room-booking platform built with Laravel — detailed room info, online and offline reservations, and tools that help the business reach more customers.",
+    impact:
+      "Turned room booking into a complete online flow while still supporting offline reservations.",
+    stack: ["Laravel", "PHP", "MySQL"],
+    accent: "from-cyan-400 to-emerald-400",
+    github: `${GH}/laravel-booking-website`,
+  },
+  {
+    name: "E-Libro",
     year: "2025",
     category: "Mobile App",
     summary:
-      "A cross-platform booking and reservation app with real-time availability, scheduling, and a clean booking flow from selection to confirmation.",
+      "A Flutter app for a reading room / library — browse the catalogue, borrow books, and keep track of reading in a clean, focused mobile UI.",
     impact:
-      "Streamlined the full reservation journey into a few taps, with instant status updates backed by Firebase.",
-    stack: ["Flutter", "Firebase", "Realtime DB"],
-    accent: "from-cyan-400 to-emerald-400",
-    github: `${GH}/Booking_App`,
-  },
-  {
-    name: "E-libro",
-    year: "2025",
-    category: "Digital Library",
-    summary:
-      "A digital library platform to browse, search, and read e-books with categorized collections and a focused reading experience.",
-    impact:
-      "Made a full catalog of titles discoverable and readable on any device with a fast, distraction-free UI.",
-    stack: ["Flutter", "Firebase", "REST API"],
+      "Made borrowing and tracking books simple straight from a phone.",
+    stack: ["Flutter", "Dart", "Firebase"],
     accent: "from-violet-400 to-blue-500",
-    github: `${GH}/E-libro`,
+    github: `${GH}/peminjaman_tempat_baca-buku`,
   },
   {
     name: "News App",
     year: "2025",
     category: "Mobile App",
     summary:
-      "A modern news reader consuming a live REST news API — category feeds, search, article detail views, and pull-to-refresh.",
+      "A Flutter news reader that pulls the latest headlines from selected countries via a live news API — browse, search, and read full articles.",
     impact:
-      "Delivered fresh, categorized headlines in real time with smooth infinite scrolling and offline-friendly caching.",
-    stack: ["Flutter", "REST API", "Dart"],
+      "Delivered fresh, country-filtered headlines with a smooth, readable flow.",
+    stack: ["Flutter", "Dart", "REST API"],
     accent: "from-emerald-400 to-cyan-400",
     github: `${GH}/NEWS_APP_2025`,
   },
@@ -247,10 +247,10 @@ export const featuredProjects: readonly FeaturedProject[] = [
     year: "2025",
     category: "Mobile App",
     summary:
-      "A Qur'an companion app with full surah text, audio recitation, translations, and bookmarking — built on an open Qur'an REST API.",
+      "A clean Flutter Qur'an app for reading surahs on mobile, with the interface continually being refined for a calmer reading experience.",
     impact:
-      "Combined reading, listening, and bookmarking into one calm, well-typeset experience for daily use.",
-    stack: ["Flutter", "REST API", "Audio"],
+      "A calm, focused Qur'an reading experience for daily use.",
+    stack: ["Flutter", "Dart", "REST API"],
     accent: "from-violet-400 to-emerald-400",
     github: `${GH}/Qur-an_App`,
   },

@@ -159,13 +159,14 @@ body::after {
    GLASSMORPHISM
    =================================================================== */
 .glass {
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-  border: 1px solid rgba(255, 252, 247, 0.75);
+  background: rgba(255, 255, 255, 0.58);
+  backdrop-filter: blur(16px) saturate(145%);
+  -webkit-backdrop-filter: blur(16px) saturate(145%);
+  border: 1px solid rgba(255, 252, 247, 0.82);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.9) inset,
-    0 20px 45px -28px rgba(69, 29, 7, 0.3);
+    0 1px 0 rgba(255, 255, 255, 0.95) inset,
+    0 2px 6px -2px rgba(69, 29, 7, 0.07),
+    0 24px 50px -30px rgba(69, 29, 7, 0.38);
 }
 .glass-soft {
   background: rgba(255, 250, 243, 0.45);
@@ -239,9 +240,11 @@ body::after {
     border-color 0.3s ease, box-shadow 0.4s ease;
 }
 .glow-card:hover {
-  transform: translateY(-5px);
-  border-color: rgba(173, 115, 78, 0.5);
-  box-shadow: 0 28px 55px -30px rgba(69, 29, 7, 0.42);
+  transform: translateY(-6px);
+  border-color: rgba(173, 115, 78, 0.55);
+  box-shadow:
+    0 2px 8px -2px rgba(69, 29, 7, 0.1),
+    0 34px 62px -28px rgba(69, 29, 7, 0.46);
 }
 
 /* Shine sweep for premium cards */
@@ -402,7 +405,9 @@ body::after {
   backdrop-filter: blur(10px) saturate(135%);
   -webkit-backdrop-filter: blur(10px) saturate(135%);
   border: 1px solid rgba(69, 29, 7, 0.12);
-  box-shadow: 0 18px 40px -28px rgba(69, 29, 7, 0.35);
+  box-shadow:
+    0 2px 6px -2px rgba(69, 29, 7, 0.06),
+    0 18px 42px -28px rgba(69, 29, 7, 0.36);
   transition: backdrop-filter 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
 }
 .glass-news:hover {
@@ -577,6 +582,83 @@ body::after {
   background: #0c0805;
   z-index: 10;
 }
+
+/* ===================================================================
+   DARK MODE  (warm, not cold — deep espresso + cream text)
+   Overrides semantic vars, the neutral (slate) ramp, and glass surfaces.
+   Warm accents (copper/gold/cardinal) stay the same.
+   =================================================================== */
+html.dark {
+  --background: #160f0a;
+  --surface: #211710;
+  --surface-2: #2c2017;
+  --foreground: #f5ebe2;
+  --muted: #b89b86;
+  --line: rgba(245, 235, 226, 0.12);
+  --merino: #1c130c;
+  /* "ink" (Rebel) is used as the heading colour — flip it to cream on dark */
+  --rebel: #f5ebe2;
+
+  /* invert the neutral ramp so text/borders read on dark */
+  --color-slate-50: #281c14;
+  --color-slate-100: #362820;
+  --color-slate-200: #4a382b;
+  --color-slate-300: #6b5544;
+  --color-slate-400: #98806a;
+  --color-slate-500: #b29781;
+  --color-slate-600: #c8b09c;
+  --color-slate-700: #dccdbd;
+  --color-slate-800: #ece0d4;
+  --color-slate-900: #f7efe6;
+
+  color-scheme: dark;
+}
+
+html.dark body::after {
+  background:
+    radial-gradient(40% 50% at 12% 8%, rgba(173, 115, 78, 0.2), transparent 70%),
+    radial-gradient(38% 46% at 88% 18%, rgba(219, 210, 148, 0.14), transparent 70%),
+    radial-gradient(45% 55% at 78% 88%, rgba(209, 35, 35, 0.14), transparent 70%),
+    radial-gradient(40% 50% at 20% 92%, rgba(173, 115, 78, 0.16), transparent 70%);
+}
+
+html.dark .glass {
+  background: rgba(44, 32, 23, 0.55);
+  border-color: rgba(245, 235, 226, 0.1);
+  box-shadow: 0 1px 0 rgba(245, 235, 226, 0.05) inset, 0 20px 45px -28px rgba(0, 0, 0, 0.65);
+}
+html.dark .glass-soft {
+  background: rgba(44, 32, 23, 0.4);
+  border-color: rgba(245, 235, 226, 0.08);
+}
+html.dark .glass-news {
+  background: rgba(40, 28, 20, 0.5);
+  border-color: rgba(245, 235, 226, 0.1);
+  box-shadow: 0 18px 40px -28px rgba(0, 0, 0, 0.7);
+}
+html.dark .glass-news:hover {
+  box-shadow: 0 26px 50px -26px rgba(0, 0, 0, 0.8);
+}
+
+html.dark .dot-grid {
+  background-image: radial-gradient(circle, rgba(245, 235, 226, 0.07) 1px, transparent 1px);
+}
+html.dark .line-grid {
+  background-image:
+    linear-gradient(to right, rgba(245, 235, 226, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(245, 235, 226, 0.05) 1px, transparent 1px);
+}
+html.dark .section-watermark {
+  background: linear-gradient(180deg, rgba(245, 235, 226, 0.07), rgba(245, 235, 226, 0));
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+html.dark .text-stroke { -webkit-text-stroke-color: rgba(245, 235, 226, 0.22); }
+
+/* ===================================================================
+   RTL (Arabic)
+   =================================================================== */
+[dir="rtl"] .font-mono { direction: ltr; unicode-bidi: embed; }
 
 /* ===================================================================
    REDUCED MOTION

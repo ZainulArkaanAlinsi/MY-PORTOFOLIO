@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Sora, DM_Sans, Lora } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { AppProviders } from "@/i18n/provider";
 import "./globals.css";
+
+// Runs before paint to apply saved theme + language → avoids a flash.
+const BOOT = `(function(){try{var t=localStorage.getItem('theme');if(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)t='dark';if(t==='dark')document.documentElement.classList.add('dark');var l=localStorage.getItem('lang');if(l==='id'||l==='en'||l==='ar'){document.documentElement.lang=l;document.documentElement.dir=l==='ar'?'rtl':'ltr';}}catch(e){}})();`;
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -43,10 +47,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      dir="ltr"
+      suppressHydrationWarning
       className={`${spaceGrotesk.variable} ${sora.variable} ${dmSans.variable} ${lora.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {children}
+        <script dangerouslySetInnerHTML={{ __html: BOOT }} />
+        <AppProviders>{children}</AppProviders>
         <Analytics />
       </body>
     </html>

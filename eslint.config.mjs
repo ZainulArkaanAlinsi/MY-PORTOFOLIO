@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Local dev/screenshot helper scripts (Node CommonJS) + public SW shim.
+    "scripts/**",
+    "public/**",
   ]),
 ]);
 

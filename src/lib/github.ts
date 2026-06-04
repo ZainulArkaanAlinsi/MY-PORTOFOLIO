@@ -47,7 +47,7 @@ const LANGUAGE_COLORS: Record<string, string> = {
 };
 
 export async function getGithubProjects(): Promise<Project[]> {
-  const username = process.env.GITHUB_USERNAME || 'zainularkaan';
+  const username = process.env.GITHUB_USERNAME || 'ZainulArkaanAlinsi';
   const token = process.env.GITHUB_TOKEN;
 
   const headers: Record<string, string> = {
@@ -187,7 +187,7 @@ function generateMockLanguages(): { name: string; percentage: number; color: str
 }
 
 export async function getGithubUserStats(): Promise<GitHubUserStats> {
-  const username = process.env.GITHUB_USERNAME || 'zainularkaan';
+  const username = process.env.GITHUB_USERNAME || 'ZainulArkaanAlinsi';
   const token = process.env.GITHUB_TOKEN;
 
   const headers: Record<string, string> = {

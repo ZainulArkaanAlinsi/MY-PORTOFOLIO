@@ -32,14 +32,8 @@ import SkillStudio from './SkillStudio';
 import RepoShot from './RepoShot';
 import TechIcon from './TechIcon';
 import ScrollProgress from './ScrollProgress';
-
-const NAV_LINKS = [
-  { label: 'About', href: '#about' },
-  { label: 'Skills', href: '#skills' },
-  { label: 'Work', href: '#work' },
-  { label: 'Journey', href: '#journey' },
-  { label: 'Contact', href: '#contact' },
-];
+import LangThemeControls from './LangThemeControls';
+import { useT } from '@/i18n/provider';
 
 // Brand glyphs (lucide v1 dropped brand icons) — inherit currentColor.
 function Github({ className }: { className?: string }) {
@@ -133,7 +127,15 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
   const rootRef = useRef<HTMLDivElement | null>(null);
   const dispRef = useRef<SVGFEDisplacementMapElement | null>(null);
   const moreReposCount = Math.max(projects.length - featuredProjects.length, 0);
+  const t = useT();
   const [spotlight, ...restProjects] = featuredProjects;
+  const navLinks = [
+    { label: t.nav.about, href: '#about' },
+    { label: t.nav.skills, href: '#skills' },
+    { label: t.nav.work, href: '#work' },
+    { label: t.nav.journey, href: '#journey' },
+    { label: t.nav.contact, href: '#contact' },
+  ];
 
   // Enable GPU-heavy flourishes (the liquid hero-title filter) only on
   // capable, non-touch, wide screens — keeps phones smooth.
@@ -141,7 +143,9 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
     const fine = window.matchMedia('(pointer: fine)').matches;
     const wide = window.matchMedia('(min-width: 768px)').matches;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setFancyFx(fine && wide && !reduced);
+    // defer so we don't setState synchronously in the effect body
+    const id = requestAnimationFrame(() => setFancyFx(fine && wide && !reduced));
+    return () => cancelAnimationFrame(id);
   }, []);
 
   // GSAP scroll reveals + light parallax
@@ -257,8 +261,8 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
           <a href="#top" className="font-display text-sm font-extrabold tracking-tight">
             {profile.handle}
           </a>
-          <div className="hidden items-center gap-7 md:flex">
-            {NAV_LINKS.map((l) => (
+          <div className="hidden items-center gap-7 lg:flex">
+            {navLinks.map((l) => (
               <a
                 key={l.href}
                 href={l.href}
@@ -268,14 +272,17 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
               </a>
             ))}
           </div>
-          <a
-            href={profile.cv}
-            download
-            data-cursor="hover"
-            className="inline-flex items-center gap-1.5 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-blue-500/25 transition-transform hover:scale-105"
-          >
-            <Download className="h-3.5 w-3.5" /> Resume
-          </a>
+          <div className="flex items-center gap-2.5">
+            <LangThemeControls />
+            <a
+              href={profile.cv}
+              download
+              data-cursor="hover"
+              className="hidden items-center gap-1.5 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-blue-500/25 transition-transform hover:scale-105 sm:inline-flex"
+            >
+              <Download className="h-3.5 w-3.5" /> {t.nav.resume}
+            </a>
+          </div>
         </div>
       </nav>
 
@@ -301,7 +308,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
         >
           MOBILE
         </span>
-        <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent via-transparent to-[#f7efe6]" />
+        <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent via-transparent to-[color:var(--background)]" />
 
         <div className="relative z-10 mx-auto max-w-5xl">
           <p
@@ -312,11 +319,11 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
             </span>
-            {profile.availability}
+            {t.availability}
           </p>
 
           <p data-hero-line className="font-body mb-3 text-base text-slate-500 sm:text-lg">
-            Hi, I&apos;m
+            {t.hero.greeting}
           </p>
 
           <h1
@@ -331,7 +338,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
 
           <div data-hero-line className="relative mt-4 inline-block">
             <h2 className="animated-gradient-text font-display text-[clamp(20px,4vw,44px)] font-black tracking-tight">
-              {profile.title}
+              {t.hero.role}
             </h2>
             <span className="sticker glass absolute -right-10 -top-6 hidden rotate-6 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-600 sm:-right-16 sm:block">
               ★ 2026
@@ -342,9 +349,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
             data-hero-line
             className="font-body mx-auto mt-7 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg"
           >
-            I build production-ready mobile and web applications — from Flutter apps with
-            real-time Firebase backends to fast Next.js &amp; Laravel platforms — crafting
-            polished, reliable products from first sketch to deployment.
+            {t.hero.subheadline}
           </p>
 
           <div data-hero-line className="mt-10 flex flex-wrap items-center justify-center gap-4">
@@ -354,7 +359,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
               data-cursor="hover"
               className="inline-flex items-center gap-2 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 px-7 py-3.5 text-sm font-semibold text-white shadow-xl shadow-blue-500/30 transition-shadow hover:shadow-blue-500/50"
             >
-              View Projects <ArrowUpRight className="h-4 w-4" />
+              {t.hero.viewProjects} <ArrowUpRight className="h-4 w-4" />
             </a>
             <a
               href="#contact"
@@ -362,7 +367,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
               data-cursor="hover"
               className="glass inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold text-slate-700 transition-colors hover:text-blue-600"
             >
-              <Mail className="h-4 w-4" /> Contact Me
+              <Mail className="h-4 w-4" /> {t.hero.contactMe}
             </a>
             <a
               href={profile.cv}
@@ -371,14 +376,14 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
               data-cursor="hover"
               className="inline-flex items-center gap-2 rounded-full px-5 py-3.5 text-sm font-semibold text-slate-600 underline-offset-4 transition-colors hover:text-blue-600 hover:underline"
             >
-              <Download className="h-4 w-4" /> Download Resume
+              <Download className="h-4 w-4" /> {t.hero.downloadResume}
             </a>
           </div>
 
           {/* tech logo strip */}
           <div data-hero-line className="mt-12 flex flex-col items-center gap-3">
             <span className="font-body text-[10px] uppercase tracking-[0.35em] text-slate-400">
-              Building with
+              {t.hero.buildingWith}
             </span>
             <div className="flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
               {['Flutter', 'Next.js', 'React', 'Laravel', 'Firebase', 'TypeScript', 'Dart'].map((t) => (
@@ -389,7 +394,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
         </div>
 
         <div className="absolute bottom-7 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 text-slate-400 sm:flex">
-          <span className="font-body text-[9px] uppercase tracking-[0.4em]">Scroll</span>
+          <span className="font-body text-[9px] uppercase tracking-[0.4em]">{t.hero.scroll}</span>
           <ArrowDown className="h-4 w-4 animate-bounce" />
         </div>
       </header>
@@ -404,12 +409,12 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
       {/* ===== 02 · SKILLS — bento grid on a color mesh ===== */}
       <section id="skills" className="bg-mesh relative scroll-mt-24 px-6 py-28 sm:px-12 sm:py-44">
         <div className="mx-auto max-w-6xl">
-          <div data-reveal className="mb-12 text-center">
+          <div data-reveal className="mb-14 text-center">
             <div className="flex justify-center">
-              <Kicker num="02" text="Toolkit" color="#ad734e" />
+              <Kicker num="02" text={t.skills.kicker} color="#ad734e" />
             </div>
-            <h2 className="font-display text-[clamp(30px,5vw,56px)] font-bold tracking-tight text-balance">
-              Skills &amp; <span className="em-serif animated-gradient-text">technologies</span>
+            <h2 className="font-display text-[clamp(32px,5.5vw,64px)] font-bold tracking-tight text-balance">
+              {t.skills.headingPre} <span className="em-serif animated-gradient-text">{t.skills.headingEm}</span>
             </h2>
           </div>
 
@@ -417,16 +422,16 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
           <div data-reveal>
             <SkillStudio />
             <p className="font-body mt-8 text-center text-xs text-slate-400">
-              Pick a category on the laptop — the phone reacts with the top skill.
+              {t.skills.note}
             </p>
           </div>
 
           {/* languages strip */}
           <div data-reveal-stagger className="mx-auto mt-14 grid max-w-3xl gap-4 sm:grid-cols-3">
-            {languages.map((l) => (
+            {languages.map((l, i) => (
               <div key={l.name} data-stagger-item className="glass-news rounded-2xl p-5 text-center">
-                <p className="font-display font-bold text-[color:var(--rebel)]">{l.name}</p>
-                <p className="font-body text-xs text-slate-500">{l.proficiency}</p>
+                <p className="font-display font-bold text-[color:var(--foreground)]">{t.languageNames[i]}</p>
+                <p className="font-body text-xs text-slate-500">{t.proficiency[i]}</p>
                 <div className="mx-auto mt-3 h-1.5 w-3/4 overflow-hidden rounded-full bg-[rgba(69,29,7,0.1)]">
                   <div
                     className="h-full rounded-full bg-linear-to-r from-[#ad734e] to-[#dbd294]"
@@ -442,11 +447,11 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
       {/* ===== 03 · WORK — spotlight + tilt cards + watermark numbers ===== */}
       <section id="work" className="relative scroll-mt-24 px-6 py-28 sm:px-12 sm:py-44">
         <div className="mx-auto max-w-6xl">
-          <div data-reveal className="mb-12 flex flex-wrap items-end justify-between gap-4">
+          <div data-reveal className="mb-14 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <Kicker num="03" text="Selected work" color="#d12323" />
-              <h2 className="font-display text-[clamp(30px,5vw,56px)] font-bold tracking-tight text-balance">
-                Featured <span className="em-serif animated-gradient-text">projects</span>
+              <Kicker num="03" text={t.work.kicker} color="#d12323" />
+              <h2 className="font-display text-[clamp(32px,5.5vw,64px)] font-bold tracking-tight text-balance">
+                {t.work.headingPre} <span className="em-serif animated-gradient-text">{t.work.headingEm}</span>
               </h2>
             </div>
             <a
@@ -456,7 +461,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
               data-cursor="hover"
               className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-blue-600"
             >
-              {moreReposCount > 0 ? `+${moreReposCount} more on GitHub` : 'All on GitHub'}
+              {moreReposCount > 0 ? t.work.more.replace('{n}', String(moreReposCount)) : t.work.all}
               <ArrowUpRight className="h-4 w-4" />
             </a>
           </div>
@@ -475,22 +480,22 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                   <div className={`mb-5 h-1.5 w-20 rounded-full bg-linear-to-r ${spotlight.accent}`} />
                   <div className="mb-3 flex items-center gap-3">
                     <span className="rounded-full bg-blue-500/10 px-3 py-1 text-xs font-semibold text-blue-600">
-                      Spotlight
+                      {t.work.spotlight}
                     </span>
                     <span className="font-body text-xs font-medium uppercase tracking-wider text-slate-400">
-                      {spotlight.category} · {spotlight.year}
+                      {t.work.categories[0]} · {spotlight.year}
                     </span>
                   </div>
                   <h3 className="font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
                     {spotlight.name}
                   </h3>
                   <p className="font-body mt-4 text-base leading-relaxed text-slate-600">
-                    {spotlight.summary}
+                    {t.work.summaries[0]}
                   </p>
                   <div className="glass-soft mt-5 rounded-2xl p-4">
                     <p className="font-body text-sm leading-relaxed text-slate-600">
-                      <span className="font-semibold text-blue-600">Impact — </span>
-                      {spotlight.impact}
+                      <span className="font-semibold text-blue-600">{t.work.impact}</span>
+                      {t.work.impacts[0]}
                     </p>
                   </div>
                   <div className="mt-5 flex flex-wrap gap-2">
@@ -510,7 +515,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                     data-cursor="hover"
                     className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-transform hover:scale-105"
                   >
-                    <Github className="h-4 w-4" /> View Code
+                    <Github className="h-4 w-4" /> {t.work.viewCode}
                   </a>
                 </div>
 
@@ -527,7 +532,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
 
           {/* rest of the grid */}
           <div data-reveal-stagger className="grid gap-6 md:grid-cols-2">
-            {restProjects.map((p) => (
+            {restProjects.map((p, i) => (
               <TiltCard key={p.name}>
                 <article
                   data-stagger-item
@@ -540,7 +545,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                   />
                   <div className="tilt-pop mb-3 flex items-center justify-between px-1">
                     <span className="font-body text-xs font-medium uppercase tracking-wider text-slate-400">
-                      {p.category}
+                      {t.work.categories[i + 1]}
                     </span>
                     <span className="sticker rounded-full bg-linear-to-r from-blue-500 to-cyan-400 px-2.5 py-0.5 text-[11px] font-bold text-white shadow-sm">
                       {p.year}
@@ -549,10 +554,10 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                   <h3 className="tilt-pop font-display px-1 text-2xl font-bold leading-tight tracking-tight">
                     {p.name}
                   </h3>
-                  <p className="font-body mt-3 px-1 text-sm leading-relaxed text-slate-600">{p.summary}</p>
+                  <p className="font-body mt-3 px-1 text-sm leading-relaxed text-slate-600">{t.work.summaries[i + 1]}</p>
                   <p className="font-body mt-3 px-1 text-sm leading-relaxed text-slate-500">
-                    <span className="font-semibold text-blue-600">Impact — </span>
-                    {p.impact}
+                    <span className="font-semibold text-blue-600">{t.work.impact}</span>
+                    {t.work.impacts[i + 1]}
                   </p>
 
                   <div className="mt-5 flex flex-wrap gap-2 px-1">
@@ -574,7 +579,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                       data-cursor="hover"
                       className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
                     >
-                      <Github className="h-4 w-4" /> Code
+                      <Github className="h-4 w-4" /> {t.work.code}
                     </a>
                     {p.demo && (
                       <a
@@ -584,7 +589,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                         data-cursor="hover"
                         className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
                       >
-                        <Globe className="h-4 w-4" /> Live demo
+                        <Globe className="h-4 w-4" /> {t.work.liveDemo}
                       </a>
                     )}
                     <ArrowUpRight className="ml-auto h-5 w-5 text-slate-300 transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-blue-500" />
@@ -604,10 +609,10 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
         <div className="relative mx-auto max-w-6xl">
           <div data-reveal className="mb-14 text-center">
             <div className="flex justify-center">
-              <Kicker num="04" text="The journey" color="#8f823a" />
+              <Kicker num="04" text={t.journey.kicker} color="#8f823a" />
             </div>
-            <h2 className="font-display text-[clamp(30px,5vw,56px)] font-bold tracking-tight text-balance">
-              Experience &amp; <span className="em-serif animated-gradient-text">credentials</span>
+            <h2 className="font-display text-[clamp(32px,5.5vw,64px)] font-bold tracking-tight text-balance">
+              {t.journey.headingPre} <span className="em-serif animated-gradient-text">{t.journey.headingEm}</span>
             </h2>
           </div>
 
@@ -636,19 +641,19 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                   <span className="font-body text-xs font-semibold uppercase tracking-wider text-blue-600">
                     {exp.period}
                   </span>
-                  <h3 className="font-display mt-1 text-lg font-bold">{exp.role}</h3>
+                  <h3 className="font-display mt-1 text-lg font-bold">{t.exp[i]?.role ?? exp.role}</h3>
                   <p className="font-body text-sm font-medium text-slate-500">{exp.company}</p>
                   <p className="font-body mt-2 text-sm leading-relaxed text-slate-600">
-                    {exp.description}
+                    {t.exp[i]?.description ?? exp.description}
                   </p>
                   <div className="mt-3 flex flex-wrap gap-1.5">
-                    {exp.tags.map((t) => (
+                    {exp.tags.map((tag) => (
                       <span
-                        key={t}
+                        key={tag}
                         className="inline-flex items-center gap-1.5 rounded-full bg-slate-900/[0.04] px-2.5 py-0.5 text-[11px] font-medium text-slate-600"
                       >
-                        <TechIcon name={t} size={12} />
-                        {t}
+                        <TechIcon name={tag} size={12} />
+                        {tag}
                       </span>
                     ))}
                   </div>
@@ -660,10 +665,10 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
           {/* certifications */}
           <div className="mt-16">
             <h3 className="font-display mb-6 flex items-center justify-center gap-2 text-xl font-bold">
-              <Award className="h-5 w-5 text-cyan-500" /> Certifications
+              <Award className="h-5 w-5 text-cyan-500" /> {t.journey.certifications}
             </h3>
             <div data-reveal-stagger className="grid gap-4 sm:grid-cols-2">
-              {certifications.map((c) => (
+              {certifications.map((c, i) => (
                 <a
                   key={c.title}
                   href={c.link}
@@ -679,7 +684,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                   <div className="min-w-0">
                     <p className="font-display truncate font-bold">{c.title}</p>
                     <p className="font-body text-sm text-slate-500">
-                      {c.issuer} · {c.year} · {c.grade}
+                      {c.issuer} · {c.year} · {t.journey.grades[i] ?? c.grade}
                     </p>
                   </div>
                   <ArrowUpRight className="ml-auto h-4 w-4 shrink-0 text-slate-300" />
@@ -691,7 +696,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
           {/* education */}
           <div className="mt-12">
             <h3 className="font-display mb-6 flex items-center gap-2 text-xl font-bold">
-              <GraduationCap className="h-5 w-5 text-violet-500" /> Education
+              <GraduationCap className="h-5 w-5 text-violet-500" /> {t.journey.education}
             </h3>
             <div data-reveal-stagger className="space-y-4">
               {education.map((ed) => (
@@ -700,9 +705,9 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                     {ed.period}
                   </span>
                   <h4 className="font-display mt-1 text-lg font-bold">{ed.school}</h4>
-                  <p className="font-body text-sm font-medium text-slate-500">{ed.program}</p>
+                  <p className="font-body text-sm font-medium text-slate-500">{t.edu.program}</p>
                   <p className="font-body mt-2 text-sm leading-relaxed text-slate-600">
-                    {ed.description}
+                    {t.edu.description}
                   </p>
                 </div>
               ))}
@@ -724,15 +729,14 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
 
           <div className="relative">
             <div className="flex justify-center">
-              <Kicker num="05" text="Get in touch" color="#ad734e" />
+              <Kicker num="05" text={t.contact.kicker} color="#ad734e" />
             </div>
             <h2 className="font-display text-[clamp(32px,6vw,72px)] font-black leading-[0.98] tracking-[-0.02em]">
-              Let&apos;s build something
-              <span className="em-serif animated-gradient-text"> great together.</span>
+              {t.contact.headingPre}
+              <span className="em-serif animated-gradient-text"> {t.contact.headingEm}</span>
             </h2>
             <p className="font-body mx-auto mt-6 max-w-xl text-lg text-slate-600">
-              Open to internships, freelance projects, and collaboration. The fastest way to
-              reach me is email — I usually reply within a day.
+              {t.contact.paragraph}
             </p>
 
             <a
@@ -778,7 +782,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                 data-cursor="hover"
                 className="glass inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
               >
-                <Download className="h-4 w-4" /> Resume
+                <Download className="h-4 w-4" /> {t.contact.resume}
               </a>
             </div>
           </div>
@@ -786,7 +790,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
 
         <footer className="font-body mx-auto mt-16 flex max-w-6xl flex-wrap items-center justify-between gap-3 border-t border-slate-900/[0.08] pt-8 text-xs text-slate-400">
           <span>{profile.name}</span>
-          <span>© {new Date().getFullYear()} · Built with Next.js, Three.js &amp; ☕</span>
+          <span>© {new Date().getFullYear()} · {t.contact.footerNote}</span>
         </footer>
       </section>
     </div>

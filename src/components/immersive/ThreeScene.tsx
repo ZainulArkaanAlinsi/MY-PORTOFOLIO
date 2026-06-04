@@ -31,7 +31,9 @@ export default function ThreeScene() {
 
     // --- Scene + fog (light, fades into the airy page background) ---
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0xf7efe6, 0.05);
+    const isDark =
+      typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
+    scene.fog = new THREE.FogExp2(isDark ? 0x160f0a : 0xf7efe6, 0.05);
 
     // --- Camera ---
     const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 100);

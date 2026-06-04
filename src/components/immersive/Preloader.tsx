@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useT } from '@/i18n/provider';
 
 export default function Preloader({ onDone }: { onDone: () => void }) {
   const [count, setCount] = useState(0);
   const [leaving, setLeaving] = useState(false);
+  const t = useT();
 
   useEffect(() => {
     let current = 0;
@@ -26,7 +28,7 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#f7efe6]"
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[color:var(--background)]"
       initial={{ y: 0 }}
       animate={leaving ? { y: '-100%' } : { y: 0 }}
       transition={{ duration: 1, ease: [0.76, 0, 0.24, 1] }}
@@ -44,7 +46,7 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
         />
       </div>
       <p className="font-body mt-5 text-[11px] uppercase tracking-[0.4em] text-slate-400">
-        Loading experience
+        {t.preloader}
       </p>
     </motion.div>
   );

@@ -32,14 +32,14 @@ export default function RepoShot({
 
   return (
     <div
-      className={`overflow-hidden rounded-2xl border border-[rgba(69,29,7,0.14)] bg-white shadow-[0_24px_50px_-30px_rgba(69,29,7,0.5)] ${className}`}
+      className={`overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-[0_24px_50px_-30px_rgba(69,29,7,0.5)] ${className}`}
     >
       {/* browser chrome */}
       <div className="flex items-center gap-1.5 border-b border-[rgba(69,29,7,0.1)] bg-[var(--surface-2)] px-3.5 py-2.5">
         <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--santa-fe)]" />
         <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--deco)]" />
         <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--cardinal)]" />
-        <span className="ml-3 truncate rounded-md bg-white/70 px-2 py-0.5 font-mono text-[10px] text-slate-400">
+        <span className="ml-3 truncate rounded-md bg-[var(--surface)] px-2 py-0.5 font-mono text-[10px] text-slate-400">
           {or ? `github.com/${or.owner}/${or.repo}` : 'preview'}
         </span>
       </div>
@@ -57,7 +57,7 @@ export default function RepoShot({
         <div
           className={`flex w-full items-center justify-center bg-linear-to-br from-[var(--surface-2)] to-[var(--merino)] ${imgClassName}`}
         >
-          <span className="px-6 text-center font-display text-base font-bold capitalize tracking-tight text-[color:var(--rebel)] sm:text-lg">
+          <span className="px-6 text-center font-display text-base font-bold capitalize tracking-tight text-[color:var(--foreground)] sm:text-lg">
             {or ? or.repo.replace(/[-_]/g, ' ') : 'Project preview'}
           </span>
         </div>

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Layers, Server, Smartphone } from 'lucide-react';
 import { skillGroups } from '@/data/portfolio';
 import TechIcon from './TechIcon';
+import { useT } from '@/i18n/provider';
 
 const RADIUS = 46;
 const CIRC = 2 * Math.PI * RADIUS;
@@ -11,8 +12,10 @@ const ICONS = [Layers, Server, Smartphone];
 
 export default function SkillStudio() {
   const [active, setActive] = useState(0);
+  const t = useT();
 
   const group = skillGroups[active];
+  const catLabel = (i: number) => t.skills.categories[i] ?? skillGroups[i].label;
   const items = group.items;
   const top = [...items].sort((a, b) => b.level - a.level)[0];
 
@@ -57,7 +60,7 @@ export default function SkillStudio() {
                       }`}
                     >
                       <Icon className="h-3.5 w-3.5" />
-                      {g.label.replace(' & Cloud', '')}
+                      {catLabel(i)}
                     </button>
                   );
                 })}
@@ -87,7 +90,7 @@ export default function SkillStudio() {
               {/* footer */}
               <div className="mt-5 flex items-center justify-between border-t border-[rgba(69,29,7,0.08)] pt-3">
                 <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-slate-400">
-                  {group.label} · operational
+                  {catLabel(active)} · {t.skills.operational}
                 </span>
                 <span className="flex gap-1">
                   <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
@@ -107,9 +110,9 @@ export default function SkillStudio() {
             style={{ background: 'linear-gradient(165deg, #ad734e, #6d4730 65%, #451d07)' }}
           >
             <p className="font-body text-[10px] uppercase tracking-[0.25em] text-white/55">
-              {group.label}
+              {catLabel(active)}
             </p>
-            <p className="font-display mb-4 text-sm font-bold">Spotlight</p>
+            <p className="font-display mb-4 text-sm font-bold">{t.skills.spotlight}</p>
 
             <div key={active} className="animate-mock-in flex flex-col items-center">
               {/* brand logo badge */}
@@ -143,10 +146,10 @@ export default function SkillStudio() {
               </div>
 
               <p className="font-display mt-4 text-lg font-bold leading-tight">{top.name}</p>
-              <p className="font-body text-[11px] text-white/60">Top skill</p>
+              <p className="font-body text-[11px] text-white/60">{t.skills.topSkill}</p>
 
               <div className="mt-5 w-full rounded-2xl border border-white/15 bg-white/10 p-3 text-center">
-                <p className="font-body text-[9px] uppercase tracking-[0.2em] text-white/55">Tools tracked</p>
+                <p className="font-body text-[9px] uppercase tracking-[0.2em] text-white/55">{t.skills.toolsTracked}</p>
                 <p className="font-display text-lg font-bold">{items.length}</p>
               </div>
             </div>
