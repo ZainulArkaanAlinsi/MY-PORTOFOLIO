@@ -33,6 +33,7 @@ import RepoShot from './RepoShot';
 import TechIcon from './TechIcon';
 import ScrollProgress from './ScrollProgress';
 import LangThemeControls from './LangThemeControls';
+import MobileNav from './MobileNav';
 import { useT } from '@/i18n/provider';
 
 // Brand glyphs (lucide v1 dropped brand icons) — inherit currentColor.
@@ -68,7 +69,7 @@ function StatementBand() {
   const words = ['DESIGN', 'BUILD', 'SHIP', 'REPEAT'];
   const run = [...words, ...words, ...words];
   return (
-    <section aria-hidden="true" className="relative overflow-hidden py-10 sm:py-14">
+    <section data-skew aria-hidden="true" className="relative overflow-hidden py-10 sm:py-14">
       <div className="skew-band">
         <div className="flex w-max animate-marquee-left">
           {run.map((w, i) => (
@@ -201,6 +202,30 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
           scrollTrigger: { trigger: el, start: 'top 80%', end: 'bottom 60%', scrub: true },
         });
       });
+
+      // scroll-velocity skew — the kinetic bands lean into the scroll
+      // direction and spring back, giving that lively "alive" feel.
+      const skewEls = gsap.utils.toArray<HTMLElement>('[data-skew]');
+      if (skewEls.length) {
+        const setters = skewEls.map((el) => gsap.quickSetter(el, 'skewY', 'deg'));
+        const clamp = gsap.utils.clamp(-7, 7);
+        const proxy = { v: 0 };
+        ScrollTrigger.create({
+          onUpdate: (self) => {
+            const sk = clamp(self.getVelocity() / -360);
+            if (Math.abs(sk) > Math.abs(proxy.v)) {
+              proxy.v = sk;
+              gsap.to(proxy, {
+                v: 0,
+                duration: 0.7,
+                ease: 'power3',
+                overwrite: true,
+                onUpdate: () => setters.forEach((set) => set(proxy.v)),
+              });
+            }
+          },
+        });
+      }
     }, rootRef);
 
     return () => ctx.revert();
@@ -213,11 +238,11 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
     if (reduced) return;
     const ctx = gsap.context(() => {
       gsap.from('[data-hero-line]', {
-        y: 110,
-        opacity: 0,
-        duration: 1.2,
+        yPercent: 70,
+        autoAlpha: 0,
+        duration: 1.15,
         ease: 'power4.out',
-        stagger: 0.12,
+        stagger: 0.1,
       });
     }, rootRef);
     return () => ctx.revert();
@@ -237,6 +262,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
       className="font-body relative min-h-screen w-full overflow-x-hidden text-slate-900"
     >
       {!ready && <Preloader onDone={() => setReady(true)} />}
+      <div className="grain" aria-hidden="true" />
       <ScrollProgress />
       <ImmersiveCursor />
 
@@ -282,6 +308,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
             >
               <Download className="h-3.5 w-3.5" /> {t.nav.resume}
             </a>
+            <MobileNav links={navLinks} />
           </div>
         </div>
       </nav>

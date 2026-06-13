@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Sora, DM_Sans, Lora } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { AppProviders } from "@/i18n/provider";
@@ -37,6 +37,15 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: "Zainul Arkaan | Full-Stack Web & Mobile Developer",
   description: "Zainul Arkaan Al Insi's professional portfolio. React, Next.js, Laravel, and Flutter developer based in Bekasi, Indonesia.",
+};
+
+// Tints the mobile browser chrome to match the page surface (warm cream /
+// deep espresso) so the site feels native on phones.
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f7efe6" },
+    { media: "(prefers-color-scheme: dark)", color: "#160f0a" },
+  ],
 };
 
 export default function RootLayout({

@@ -41,6 +41,7 @@ function Row({ reverse }: { reverse?: boolean }) {
 export default function Marquee() {
   return (
     <section
+      data-skew
       aria-hidden="true"
       className="overflow-hidden border-y border-[var(--line)] bg-linear-to-r from-[color:var(--surface)] via-[color:var(--background)] to-[color:var(--surface-2)] py-7"
     >
