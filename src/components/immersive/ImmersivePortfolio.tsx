@@ -231,6 +231,24 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
     return () => ctx.revert();
   }, []);
 
+  // Cursor-tracked spotlight glow on [data-spotlight] cards. One delegated
+  // listener on the root (cheap), fine-pointer only so phones skip it.
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root || !window.matchMedia('(pointer: fine)').matches) return;
+    const onMove = (e: PointerEvent) => {
+      const card = (e.target as Element | null)?.closest?.(
+        '[data-spotlight]'
+      ) as HTMLElement | null;
+      if (!card) return;
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+      card.style.setProperty('--my', `${e.clientY - r.top}px`);
+    };
+    root.addEventListener('pointermove', onMove, { passive: true });
+    return () => root.removeEventListener('pointermove', onMove);
+  }, []);
+
   // hero intro once preloader is gone
   useEffect(() => {
     if (!ready) return;
@@ -384,7 +402,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
               href="#work"
               data-magnetic
               data-cursor="hover"
-              className="inline-flex items-center gap-2 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 px-7 py-3.5 text-sm font-semibold text-white shadow-xl shadow-blue-500/30 transition-shadow hover:shadow-blue-500/50"
+              className="cta-shine inline-flex items-center gap-2 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 px-7 py-3.5 text-sm font-semibold text-white shadow-xl shadow-blue-500/30 transition-shadow hover:shadow-blue-500/50"
             >
               {t.hero.viewProjects} <ArrowUpRight className="h-4 w-4" />
             </a>
@@ -498,7 +516,8 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
             <TiltCard className="mb-6" max={4}>
               <article
                 data-reveal
-                className="glass glow-card shine-card group relative grid overflow-hidden rounded-[1.75rem] p-6 sm:p-10 md:grid-cols-[1.2fr_1fr] md:gap-10"
+                data-spotlight
+                className="glass glow-card shine-card spotlight group relative grid overflow-hidden rounded-[1.75rem] p-6 sm:p-10 md:grid-cols-[1.2fr_1fr] md:gap-10"
               >
                 <span className="section-watermark pointer-events-none absolute -top-6 right-2 text-[10rem] sm:text-[12rem]">
                   01
@@ -563,7 +582,8 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
               <TiltCard key={p.name}>
                 <article
                   data-stagger-item
-                  className="glass glow-card group relative flex h-full flex-col overflow-hidden rounded-3xl p-5"
+                  data-spotlight
+                  className="glass glow-card spotlight group relative flex h-full flex-col overflow-hidden rounded-3xl p-5"
                 >
                   <RepoShot
                     url={p.github}
@@ -664,7 +684,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                 >
                   <Briefcase className="h-2.5 w-2.5" />
                 </span>
-                <div className="glass glow-card rounded-2xl p-5 text-left">
+                <div data-spotlight className="glass glow-card spotlight rounded-2xl p-5 text-left">
                   <span className="font-body text-xs font-semibold uppercase tracking-wider text-blue-600">
                     {exp.period}
                   </span>
@@ -703,7 +723,8 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                   rel="noopener noreferrer"
                   data-stagger-item
                   data-cursor="hover"
-                  className="glass glow-card flex items-center gap-4 rounded-2xl p-5"
+                  data-spotlight
+                  className="glass glow-card spotlight flex items-center gap-4 rounded-2xl p-5"
                 >
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-cyan-400 text-white">
                     <Award className="h-5 w-5" />
@@ -727,7 +748,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
             </h3>
             <div data-reveal-stagger className="space-y-4">
               {education.map((ed) => (
-                <div key={ed.school} data-stagger-item className="glass glow-card rounded-2xl p-6">
+                <div key={ed.school} data-stagger-item data-spotlight className="glass glow-card spotlight rounded-2xl p-6">
                   <span className="font-body text-xs font-semibold uppercase tracking-wider text-violet-600">
                     {ed.period}
                   </span>
@@ -770,7 +791,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
               href={`mailto:${profile.email}`}
               data-magnetic
               data-cursor="hover"
-              className="mt-9 inline-flex items-center gap-2.5 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-blue-500/30 transition-shadow hover:shadow-blue-500/50"
+              className="cta-shine mt-9 inline-flex items-center gap-2.5 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-blue-500/30 transition-shadow hover:shadow-blue-500/50"
             >
               <Mail className="h-5 w-5" /> {profile.email}
             </a>

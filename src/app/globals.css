@@ -266,6 +266,53 @@ html.dark .grain {
     0 34px 62px -28px rgba(69, 29, 7, 0.46);
 }
 
+/* Cursor-tracked spotlight glow — a soft warm light follows the pointer
+   across a card. JS sets --mx/--my; sits under the content (z-index:-1 in an
+   isolated context) so text stays crisp. Pointer-only, so phones ignore it. */
+.spotlight { position: relative; isolation: isolate; }
+.spotlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    230px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(173, 115, 78, 0.18),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+.spotlight:hover::after { opacity: 1; }
+html.dark .spotlight::after {
+  background: radial-gradient(
+    230px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(219, 210, 148, 0.16),
+    transparent 65%
+  );
+}
+
+/* Auto light-sweep for primary call-to-action buttons */
+@keyframes cta-sweep {
+  0% { transform: translateX(-160%) skewX(-18deg); }
+  55%, 100% { transform: translateX(420%) skewX(-18deg); }
+}
+.cta-shine { position: relative; overflow: hidden; }
+.cta-shine::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 38%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  transform: translateX(-160%) skewX(-18deg);
+  animation: cta-sweep 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
 /* Shine sweep for premium cards */
 .shine-card { position: relative; overflow: hidden; }
 .shine-card::before {
@@ -695,6 +742,8 @@ html.dark .text-stroke { -webkit-text-stroke-color: rgba(245, 235, 226, 0.22); }
     animation: none !important;
   }
   .shine-card::before { transition: none !important; display: none; }
+  .cta-shine::after { animation: none !important; display: none; }
+  .spotlight::after { transition: none !important; }
   .glow-card,
   .glow-card:hover { transition: none !important; transform: none !important; }
   .liquid-target { filter: none !important; }
