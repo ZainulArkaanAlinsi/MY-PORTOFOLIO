@@ -267,6 +267,16 @@ html.dark .grain {
 .animate-marquee-left { animation: marquee-left 32s linear infinite; }
 .animate-marquee-right { animation: marquee-right 32s linear infinite; }
 
+/* little nudging arrow that hints the work gallery scrolls sideways */
+@keyframes marquee-hint {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(5px); }
+}
+.animate-marquee-hint {
+  display: inline-block;
+  animation: marquee-hint 1.4s ease-in-out infinite;
+}
+
 /* ===================================================================
    MOTION HELPERS
    =================================================================== */
@@ -774,6 +784,7 @@ html.dark .text-stroke { -webkit-text-stroke-color: rgba(245, 235, 226, 0.22); }
   .animate-float,
   .animate-marquee-left,
   .animate-marquee-right,
+  .animate-marquee-hint,
   .animate-bounce,
   .animate-ping,
   .animate-pulse {

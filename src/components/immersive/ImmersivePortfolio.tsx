@@ -91,47 +91,15 @@ function StatementBand() {
   );
 }
 
-// Pointer-driven 3D tilt wrapper (premium card micro-interaction)
-function TiltCard({
-  children,
-  className = '',
-  max = 7,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  max?: number;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const onMove = (e: React.MouseEvent) => {
-    const el = ref.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width - 0.5;
-    const py = (e.clientY - r.top) / r.height - 0.5;
-    el.style.setProperty('--ry', `${px * max}deg`);
-    el.style.setProperty('--rx', `${-py * max}deg`);
-  };
-  const reset = () => {
-    const el = ref.current;
-    if (!el) return;
-    el.style.setProperty('--rx', '0deg');
-    el.style.setProperty('--ry', '0deg');
-  };
-  return (
-    <div ref={ref} onMouseMove={onMove} onMouseLeave={reset} className={`tilt-card ${className}`}>
-      {children}
-    </div>
-  );
-}
-
 export default function ImmersivePortfolio({ projects }: { projects: Project[] }) {
   const [ready, setReady] = useState(false);
   const [fancyFx, setFancyFx] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
   const dispRef = useRef<SVGFEDisplacementMapElement | null>(null);
+  const galleryRef = useRef<HTMLDivElement | null>(null);
+  const trackRef = useRef<HTMLDivElement | null>(null);
   const moreReposCount = Math.max(projects.length - featuredProjects.length, 0);
   const t = useT();
-  const [spotlight, ...restProjects] = featuredProjects;
   const navLinks = [
     { label: t.nav.about, href: '#about' },
     { label: t.nav.skills, href: '#skills' },
@@ -249,6 +217,38 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
     };
     root.addEventListener('pointermove', onMove, { passive: true });
     return () => root.removeEventListener('pointermove', onMove);
+  }, []);
+
+  // Work → horizontal pinned gallery on desktop. As you scroll vertically the
+  // section pins and the project track translates sideways. Touch / small
+  // screens keep a native horizontal swipe (CSS scroll-snap) — no pin.
+  useEffect(() => {
+    const gallery = galleryRef.current;
+    const track = trackRef.current;
+    if (!gallery || !track) return;
+    gsap.registerPlugin(ScrollTrigger);
+    const mm = gsap.matchMedia();
+    mm.add('(min-width: 1024px)', () => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const amount = () => Math.max(0, track.scrollWidth - window.innerWidth);
+      const tween = gsap.to(track, { x: () => -amount(), ease: 'none' });
+      const st = ScrollTrigger.create({
+        trigger: gallery,
+        start: 'top top',
+        end: () => '+=' + amount(),
+        pin: true,
+        scrub: 0.8,
+        anticipatePin: 1,
+        animation: tween,
+        invalidateOnRefresh: true,
+      });
+      return () => {
+        st.kill();
+        tween.kill();
+        gsap.set(track, { clearProps: 'transform' });
+      };
+    });
+    return () => mm.revert();
   }, []);
 
   // hero intro once preloader is gone
@@ -506,15 +506,19 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
       </section>
 
       {/* ===== 03 · WORK — spotlight + tilt cards + watermark numbers ===== */}
-      <section id="work" className="relative scroll-mt-24 px-6 py-28 sm:px-12 sm:py-44">
-        <div className="mx-auto max-w-6xl">
-          <div data-reveal className="mb-14 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <Kicker num="03" text={t.work.kicker} color="#d12323" />
-              <h2 className="font-display text-[clamp(32px,5.5vw,64px)] font-bold tracking-tight text-balance">
-                {t.work.headingPre} <span className="em-serif animated-gradient-text">{t.work.headingEm}</span>
-              </h2>
-            </div>
+      <section id="work" className="relative scroll-mt-24 pb-28 pt-28 sm:pb-40 sm:pt-44">
+        {/* header */}
+        <div
+          data-reveal
+          className="mx-auto mb-12 flex max-w-6xl flex-wrap items-end justify-between gap-4 px-6 sm:px-12"
+        >
+          <div>
+            <Kicker num="03" text={t.work.kicker} color="#d12323" />
+            <h2 className="font-display text-[clamp(32px,5.5vw,64px)] font-bold tracking-tight text-balance">
+              {t.work.headingPre} <span className="em-serif animated-gradient-text">{t.work.headingEm}</span>
+            </h2>
+          </div>
+          <div className="flex flex-col items-start gap-2.5 sm:items-end">
             <a
               href={profile.social.github}
               target="_blank"
@@ -525,140 +529,101 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
               {moreReposCount > 0 ? t.work.more.replace('{n}', String(moreReposCount)) : t.work.all}
               <ArrowUpRight className="h-4 w-4" />
             </a>
+            <span className="font-body inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-400">
+              {t.nav.work}
+              <span aria-hidden className="animate-marquee-hint text-[color:var(--cardinal)]">→</span>
+            </span>
           </div>
+        </div>
 
-          {/* spotlight project */}
-          {spotlight && (
-            <TiltCard className="mb-6" max={4}>
+        {/* gallery — native swipe on touch, GSAP pinned horizontal on desktop */}
+        <div
+          ref={galleryRef}
+          data-work-gallery
+          className="relative w-full snap-x snap-mandatory overflow-x-auto overscroll-x-contain [-ms-overflow-style:none] [scrollbar-width:none] lg:grid lg:h-screen lg:snap-none lg:place-items-center lg:overflow-hidden [&::-webkit-scrollbar]:hidden"
+        >
+          <div
+            ref={trackRef}
+            data-work-track
+            className="flex w-max items-stretch gap-6 px-6 pb-4 sm:px-12 lg:px-[8vw] lg:pb-0"
+          >
+            {featuredProjects.map((p, i) => (
               <article
-                data-reveal
+                key={p.name}
                 data-spotlight
-                className="glass glow-card shine-card spotlight group relative grid overflow-hidden rounded-[1.75rem] p-6 sm:p-10 md:grid-cols-[1.2fr_1fr] md:gap-10"
+                className="spotlight glass glow-card group relative flex w-[84vw] shrink-0 snap-center flex-col overflow-hidden rounded-3xl p-5 sm:w-[58vw] md:w-[26rem] lg:w-[30rem] lg:p-6"
               >
-                <span className="section-watermark pointer-events-none absolute -top-6 right-2 text-[10rem] sm:text-[12rem]">
-                  01
+                <span className="section-watermark pointer-events-none absolute -top-5 right-3 text-[7rem] leading-none">
+                  {String(i + 1).padStart(2, '0')}
                 </span>
-                <div className="tilt-pop relative flex flex-col justify-center">
-                  <div className={`mb-5 h-1.5 w-20 rounded-full bg-linear-to-r ${spotlight.accent}`} />
-                  <div className="mb-3 flex items-center gap-3">
-                    <span className="rounded-full bg-blue-500/10 px-3 py-1 text-xs font-semibold text-blue-600">
+
+                <RepoShot
+                  url={p.github}
+                  className="mb-5"
+                  imgClassName="aspect-[2/1] transition-transform duration-500 group-hover:scale-105"
+                />
+
+                <div className="mb-3 flex items-center justify-between gap-2 px-1">
+                  <span className="font-body text-xs font-medium uppercase tracking-wider text-slate-400">
+                    {t.work.categories[i]}
+                  </span>
+                  {i === 0 ? (
+                    <span className="rounded-full bg-blue-500/10 px-3 py-1 text-[11px] font-semibold text-blue-600">
                       {t.work.spotlight}
                     </span>
-                    <span className="font-body text-xs font-medium uppercase tracking-wider text-slate-400">
-                      {t.work.categories[0]} · {spotlight.year}
-                    </span>
-                  </div>
-                  <h3 className="font-display text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
-                    {spotlight.name}
-                  </h3>
-                  <p className="font-body mt-4 text-base leading-relaxed text-slate-600">
-                    {t.work.summaries[0]}
-                  </p>
-                  <div className="glass-soft mt-5 rounded-2xl p-4">
-                    <p className="font-body text-sm leading-relaxed text-slate-600">
-                      <span className="font-semibold text-blue-600">{t.work.impact}</span>
-                      {t.work.impacts[0]}
-                    </p>
-                  </div>
-                  <div className="mt-5 flex flex-wrap gap-2">
-                    {spotlight.stack.map((s) => (
-                      <span
-                        key={s}
-                        className="inline-flex items-center gap-1.5 rounded-full bg-slate-900/[0.04] px-3 py-1 text-xs font-medium text-slate-600"
-                      >
-                        <TechIcon name={s} size={14} /> {s}
-                      </span>
-                    ))}
-                  </div>
-                  <a
-                    href={spotlight.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    data-cursor="hover"
-                    className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-transform hover:scale-105"
-                  >
-                    <Github className="h-4 w-4" /> {t.work.viewCode}
-                  </a>
-                </div>
-
-                <div className="tilt-pop relative mt-8 flex items-center md:mt-0">
-                  <RepoShot
-                    url={spotlight.github}
-                    className="w-full"
-                    imgClassName="aspect-[2/1] transition-transform duration-700 group-hover:scale-[1.04]"
-                  />
-                </div>
-              </article>
-            </TiltCard>
-          )}
-
-          {/* rest of the grid */}
-          <div data-reveal-stagger className="grid gap-6 md:grid-cols-2">
-            {restProjects.map((p, i) => (
-              <TiltCard key={p.name}>
-                <article
-                  data-stagger-item
-                  data-spotlight
-                  className="glass glow-card spotlight group relative flex h-full flex-col overflow-hidden rounded-3xl p-5"
-                >
-                  <RepoShot
-                    url={p.github}
-                    className="tilt-pop mb-5"
-                    imgClassName="aspect-[2/1] transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="tilt-pop mb-3 flex items-center justify-between px-1">
-                    <span className="font-body text-xs font-medium uppercase tracking-wider text-slate-400">
-                      {t.work.categories[i + 1]}
-                    </span>
+                  ) : (
                     <span className="sticker rounded-full bg-linear-to-r from-blue-500 to-cyan-400 px-2.5 py-0.5 text-[11px] font-bold text-white shadow-sm">
                       {p.year}
                     </span>
-                  </div>
-                  <h3 className="tilt-pop font-display px-1 text-2xl font-bold leading-tight tracking-tight">
-                    {p.name}
-                  </h3>
-                  <p className="font-body mt-3 px-1 text-sm leading-relaxed text-slate-600">{t.work.summaries[i + 1]}</p>
-                  <p className="font-body mt-3 px-1 text-sm leading-relaxed text-slate-500">
-                    <span className="font-semibold text-blue-600">{t.work.impact}</span>
-                    {t.work.impacts[i + 1]}
-                  </p>
+                  )}
+                </div>
 
-                  <div className="mt-5 flex flex-wrap gap-2 px-1">
-                    {p.stack.map((s) => (
-                      <span
-                        key={s}
-                        className="inline-flex items-center gap-1.5 rounded-full bg-slate-900/[0.04] px-3 py-1 text-xs font-medium text-slate-600"
-                      >
-                        <TechIcon name={s} size={14} /> {s}
-                      </span>
-                    ))}
-                  </div>
+                <h3 className="font-display px-1 text-2xl font-bold leading-tight tracking-tight">
+                  {p.name}
+                </h3>
+                <p className="font-body mt-3 line-clamp-3 px-1 text-sm leading-relaxed text-slate-600">
+                  {t.work.summaries[i]}
+                </p>
+                <p className="font-body mt-3 line-clamp-2 px-1 text-sm leading-relaxed text-slate-500">
+                  <span className="font-semibold text-blue-600">{t.work.impact}</span>
+                  {t.work.impacts[i]}
+                </p>
 
-                  <div className="mt-auto flex items-center gap-4 border-t border-slate-900/[0.06] px-1 pt-5">
+                <div className="mt-5 flex flex-wrap gap-2 px-1">
+                  {p.stack.map((s) => (
+                    <span
+                      key={s}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-slate-900/[0.04] px-3 py-1 text-xs font-medium text-slate-600"
+                    >
+                      <TechIcon name={s} size={14} /> {s}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="mt-auto flex items-center gap-4 border-t border-slate-900/[0.06] px-1 pt-5">
+                  <a
+                    href={p.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-cursor="hover"
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
+                  >
+                    <Github className="h-4 w-4" /> {t.work.code}
+                  </a>
+                  {p.demo && (
                     <a
-                      href={p.github}
+                      href={p.demo}
                       target="_blank"
                       rel="noopener noreferrer"
                       data-cursor="hover"
                       className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
                     >
-                      <Github className="h-4 w-4" /> {t.work.code}
+                      <Globe className="h-4 w-4" /> {t.work.liveDemo}
                     </a>
-                    {p.demo && (
-                      <a
-                        href={p.demo}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        data-cursor="hover"
-                        className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
-                      >
-                        <Globe className="h-4 w-4" /> {t.work.liveDemo}
-                      </a>
-                    )}
-                    <ArrowUpRight className="ml-auto h-5 w-5 text-slate-300 transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-blue-500" />
-                  </div>
-                </article>
-              </TiltCard>
+                  )}
+                  <ArrowUpRight className="ml-auto h-5 w-5 text-slate-300 transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-blue-500" />
+                </div>
+              </article>
             ))}
           </div>
         </div>
