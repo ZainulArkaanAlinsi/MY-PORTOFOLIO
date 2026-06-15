@@ -163,7 +163,8 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
         });
       });
 
-      // animated timeline line grows as you scroll the journey
+      // animated timeline line grows as you scroll the journey, with a glowing
+      // comet that rides the growing tip down the line.
       gsap.utils.toArray<HTMLElement>('[data-grow-line]').forEach((el) => {
         gsap.from(el, {
           scaleY: 0,
@@ -171,6 +172,27 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
           ease: 'none',
           scrollTrigger: { trigger: el, start: 'top 80%', end: 'bottom 60%', scrub: true },
         });
+
+        const container = el.parentElement;
+        const comet = container?.querySelector<HTMLElement>('[data-timeline-comet]');
+        if (container && comet) {
+          gsap.fromTo(
+            comet,
+            { top: 8, autoAlpha: 0 },
+            {
+              top: () => container.offsetHeight - 8,
+              autoAlpha: 1,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: el,
+                start: 'top 80%',
+                end: 'bottom 60%',
+                scrub: true,
+                invalidateOnRefresh: true,
+              },
+            }
+          );
+        }
       });
 
       // scroll-velocity skew — the kinetic bands lean into the scroll
@@ -650,6 +672,11 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
               data-grow-line
               className="timeline-line absolute bottom-2 left-[9px] top-2 w-[2px] md:left-1/2 md:-translate-x-1/2"
             />
+            <span
+              data-timeline-comet
+              aria-hidden
+              className="timeline-comet absolute left-[10px] top-2 -translate-x-1/2 md:left-1/2"
+            />
             {experience.map((exp, i) => (
               <div
                 key={`${exp.company}-${i}`}
@@ -663,6 +690,10 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                     i % 2 === 0 ? 'md:-right-[10px] md:left-auto' : 'md:-left-[10px]'
                   }`}
                 >
+                  <span
+                    aria-hidden
+                    className="absolute -inset-0.5 -z-10 animate-ping rounded-full bg-blue-400/50"
+                  />
                   <Briefcase className="h-2.5 w-2.5" />
                 </span>
                 <div data-spotlight className="glass glow-card spotlight rounded-2xl p-5 text-left">

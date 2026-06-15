@@ -459,6 +459,20 @@ html.dark .spotlight::after {
     transparent);
 }
 
+/* glowing comet that rides the growing timeline tip (JS animates `top`) */
+.timeline-comet {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, #fff 0%, var(--santa-fe) 45%, transparent 72%);
+  box-shadow:
+    0 0 12px 3px rgba(173, 115, 78, 0.65),
+    0 0 26px 9px rgba(209, 35, 35, 0.22);
+  z-index: 1;
+  pointer-events: none;
+  margin-top: -7px;
+}
+
 /* ===================================================================
    "WILD" KINETIC LAYER  (bold but still readable)
    =================================================================== */
@@ -804,6 +818,7 @@ html.dark .text-stroke { -webkit-text-stroke-color: rgba(245, 235, 226, 0.22); }
   .animate-grow-bar { animation: none !important; transform: none !important; }
   .animate-ring { animation: none !important; }
   .link-underline::after { transition: none !important; }
+  .timeline-comet { display: none !important; }
   .tilt-card { transform: none !important; }
   .tilt-card .tilt-pop { transform: none !important; }
   .cursor-none,
