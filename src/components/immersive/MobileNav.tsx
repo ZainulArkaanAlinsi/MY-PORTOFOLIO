@@ -14,7 +14,7 @@ type NavLink = { label: string; href: string };
  * jump around the page. This adds a hamburger that opens a full-screen,
  * GSAP-animated overlay with big numbered section links, socials and a CTA.
  */
-export default function MobileNav({ links }: { links: NavLink[] }) {
+export default function MobileNav({ links, active }: { links: NavLink[]; active?: string }) {
   const [open, setOpen] = useState(false);
   const t = useT();
   const panelRef = useRef<HTMLDivElement>(null);
@@ -138,23 +138,34 @@ export default function MobileNav({ links }: { links: NavLink[] }) {
           </p>
 
           <nav className="flex flex-col">
-            {links.map((l, i) => (
-              <a
-                key={l.href}
-                href={l.href}
-                onClick={() => setOpen(false)}
-                data-mnav-item
-                className="group flex items-baseline gap-4 border-b border-[var(--line)] py-4"
-              >
-                <span className="font-mono text-xs tabular-nums text-[color:var(--santa-fe)]">
-                  0{i + 1}
-                </span>
-                <span className="font-display text-3xl font-bold tracking-tight text-[color:var(--foreground)] transition-colors group-hover:text-[color:var(--santa-fe)] sm:text-4xl">
-                  {l.label}
-                </span>
-                <ArrowUpRight className="ml-auto h-5 w-5 self-center text-slate-300 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[color:var(--santa-fe)]" />
-              </a>
-            ))}
+            {links.map((l, i) => {
+              const isActive = active === l.href.slice(1);
+              return (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  data-mnav-item
+                  aria-current={isActive ? 'true' : undefined}
+                  className="group flex items-baseline gap-4 border-b border-[var(--line)] py-4"
+                >
+                  <span className="font-mono text-xs tabular-nums text-[color:var(--santa-fe)]">
+                    0{i + 1}
+                  </span>
+                  <span
+                    className={`font-display text-3xl font-bold tracking-tight transition-colors group-hover:text-[color:var(--santa-fe)] sm:text-4xl ${
+                      isActive ? 'text-[color:var(--cardinal)]' : 'text-[color:var(--foreground)]'
+                    }`}
+                  >
+                    {l.label}
+                  </span>
+                  {isActive && (
+                    <span className="ml-1 h-2 w-2 self-center rounded-full bg-[color:var(--cardinal)]" />
+                  )}
+                  <ArrowUpRight className="ml-auto h-5 w-5 self-center text-slate-300 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[color:var(--santa-fe)]" />
+                </a>
+              );
+            })}
           </nav>
 
           <div className="mt-auto pt-8">

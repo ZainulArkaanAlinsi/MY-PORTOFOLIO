@@ -95,6 +95,7 @@ function StatementBand() {
 export default function ImmersivePortfolio({ projects }: { projects: Project[] }) {
   const [ready, setReady] = useState(false);
   const [fancyFx, setFancyFx] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
   const rootRef = useRef<HTMLDivElement | null>(null);
   const dispRef = useRef<SVGFEDisplacementMapElement | null>(null);
   const galleryRef = useRef<HTMLDivElement | null>(null);
@@ -118,6 +119,27 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
     // defer so we don't setState synchronously in the effect body
     const id = requestAnimationFrame(() => setFancyFx(fine && wide && !reduced));
     return () => cancelAnimationFrame(id);
+  }, []);
+
+  // Scroll-spy: highlight the nav link for whichever section sits in a thin
+  // band near the middle of the viewport. Works with Lenis (native scroll).
+  useEffect(() => {
+    const sections = navLinks
+      .map((l) => document.getElementById(l.href.slice(1)))
+      .filter((el): el is HTMLElement => el !== null);
+    if (!sections.length) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setActiveSection(e.target.id);
+        });
+      },
+      { rootMargin: '-45% 0px -50% 0px', threshold: 0 }
+    );
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+    // navLinks identity changes with language, but the section ids are stable
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // GSAP scroll reveals + light parallax
@@ -345,15 +367,21 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
             {profile.handle}
           </a>
           <div className="hidden items-center gap-7 lg:flex">
-            {navLinks.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
-                className="link-underline font-body text-sm text-slate-600 transition-colors hover:text-blue-600"
-              >
-                {l.label}
-              </a>
-            ))}
+            {navLinks.map((l) => {
+              const isActive = activeSection === l.href.slice(1);
+              return (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  aria-current={isActive ? 'true' : undefined}
+                  className={`link-underline font-body text-sm transition-colors hover:text-blue-600 ${
+                    isActive ? 'is-active font-semibold text-blue-600' : 'text-slate-600'
+                  }`}
+                >
+                  {l.label}
+                </a>
+              );
+            })}
           </div>
           <div className="flex items-center gap-2.5">
             <LangThemeControls />
@@ -365,7 +393,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
             >
               <Download className="h-3.5 w-3.5" /> {t.nav.resume}
             </a>
-            <MobileNav links={navLinks} />
+            <MobileNav links={navLinks} active={activeSection} />
           </div>
         </div>
       </nav>
