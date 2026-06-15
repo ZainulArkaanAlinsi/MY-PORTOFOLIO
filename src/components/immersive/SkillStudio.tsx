@@ -12,12 +12,16 @@ const ICONS = [Layers, Server, Smartphone];
 
 export default function SkillStudio() {
   const [active, setActive] = useState(0);
+  // The companion phone mirrors whichever skill the user hovers/taps in the
+  // laptop; it falls back to the group's top skill when nothing is picked.
+  const [selectedName, setSelectedName] = useState<string | null>(null);
   const t = useT();
 
   const group = skillGroups[active];
   const catLabel = (i: number) => t.skills.categories[i] ?? skillGroups[i].label;
   const items = group.items;
   const top = [...items].sort((a, b) => b.level - a.level)[0];
+  const selected = items.find((s) => s.name === selectedName) ?? top;
 
   return (
     <div className="relative">
@@ -51,7 +55,10 @@ export default function SkillStudio() {
                   return (
                     <button
                       key={g.label}
-                      onClick={() => setActive(i)}
+                      onClick={() => {
+                        setActive(i);
+                        setSelectedName(null);
+                      }}
                       data-cursor="hover"
                       className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
                         on
@@ -66,25 +73,46 @@ export default function SkillStudio() {
                 })}
               </div>
 
-              {/* skill bars */}
-              <div key={active} className="grid grid-cols-2 gap-x-5 gap-y-4">
-                {items.map((s, i) => (
-                  <div key={s.name} className="animate-mock-in" style={{ animationDelay: `${i * 0.06}s` }}>
-                    <div className="mb-1.5 flex items-center justify-between">
-                      <span className="flex items-center gap-2 text-[13px] font-bold text-[color:var(--rebel)]">
-                        <TechIcon name={s.name} size={16} />
-                        {s.name}
-                      </span>
-                      <span className="font-mono text-[11px] text-[color:var(--cardinal)]">{s.level}%</span>
-                    </div>
-                    <div className="h-2 overflow-hidden rounded-full bg-[rgba(69,29,7,0.1)]">
-                      <div
-                        className="animate-grow-bar h-full rounded-full bg-linear-to-r from-[#ad734e] to-[#dbd294]"
-                        style={{ width: `${s.level}%`, animationDelay: `${0.15 + i * 0.05}s` }}
-                      />
-                    </div>
-                  </div>
-                ))}
+              {/* skill bars — hover / tap to mirror on the phone */}
+              <div key={active} className="grid grid-cols-2 gap-x-3 gap-y-2">
+                {items.map((s, i) => {
+                  const on = selected.name === s.name;
+                  return (
+                    <button
+                      type="button"
+                      key={s.name}
+                      onMouseEnter={() => setSelectedName(s.name)}
+                      onFocus={() => setSelectedName(s.name)}
+                      onClick={() => setSelectedName(s.name)}
+                      data-cursor="hover"
+                      aria-pressed={on}
+                      className={`animate-mock-in rounded-lg p-2 text-left transition-colors ${
+                        on ? 'bg-[rgba(173,115,78,0.12)]' : 'hover:bg-[rgba(173,115,78,0.06)]'
+                      }`}
+                      style={{ animationDelay: `${i * 0.06}s` }}
+                    >
+                      <div className="mb-1.5 flex items-center justify-between">
+                        <span
+                          className={`flex items-center gap-2 text-[13px] font-bold ${
+                            on ? 'text-[color:var(--cardinal)]' : 'text-[color:var(--rebel)]'
+                          }`}
+                        >
+                          <TechIcon name={s.name} size={16} />
+                          {s.name}
+                        </span>
+                        <span className="font-mono text-[11px] text-[color:var(--cardinal)]">{s.level}%</span>
+                      </div>
+                      <div className="h-2 overflow-hidden rounded-full bg-[rgba(69,29,7,0.1)]">
+                        <div
+                          className={`animate-grow-bar h-full rounded-full bg-linear-to-r from-[#ad734e] to-[#dbd294] ${
+                            on ? 'shadow-[0_0_10px_rgba(173,115,78,0.7)]' : ''
+                          }`}
+                          style={{ width: `${s.level}%`, animationDelay: `${0.15 + i * 0.05}s` }}
+                        />
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
 
               {/* footer */}
@@ -117,9 +145,9 @@ export default function SkillStudio() {
             <div key={active} className="animate-mock-in flex flex-col items-center">
               {/* brand logo badge */}
               <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-lg">
-                <TechIcon name={top.name} size={30} />
+                <TechIcon name={selected.name} size={30} />
               </div>
-              {/* mini ring */}
+              {/* mini ring — smoothly tracks the selected skill */}
               <div className="relative h-28 w-28">
                 <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
                   <circle cx="60" cy="60" r={RADIUS} fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="9" />
@@ -131,22 +159,22 @@ export default function SkillStudio() {
                     stroke="#f5ebe2"
                     strokeWidth="9"
                     strokeLinecap="round"
-                    className="animate-ring"
+                    className="ring-progress"
                     style={{
                       strokeDasharray: CIRC,
-                      strokeDashoffset: 'var(--target)',
-                      ['--circ' as string]: `${CIRC}`,
-                      ['--target' as string]: `${CIRC * (1 - top.level / 100)}`,
+                      strokeDashoffset: CIRC * (1 - selected.level / 100),
                     }}
                   />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="font-display text-2xl font-black">{top.level}%</span>
+                  <span className="font-display text-2xl font-black tabular-nums">{selected.level}%</span>
                 </div>
               </div>
 
-              <p className="font-display mt-4 text-lg font-bold leading-tight">{top.name}</p>
-              <p className="font-body text-[11px] text-white/60">{t.skills.topSkill}</p>
+              <p className="font-display mt-4 text-lg font-bold leading-tight">{selected.name}</p>
+              <p className="font-body text-[11px] text-white/60">
+                {selected.name === top.name ? t.skills.topSkill : catLabel(active)}
+              </p>
 
               <div className="mt-5 w-full rounded-2xl border border-white/15 bg-white/10 p-3 text-center">
                 <p className="font-body text-[9px] uppercase tracking-[0.2em] text-white/55">{t.skills.toolsTracked}</p>

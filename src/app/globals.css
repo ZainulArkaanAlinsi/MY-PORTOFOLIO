@@ -644,6 +644,11 @@ html.dark .spotlight::after {
 }
 .animate-ring { animation: ring-fill 1.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
+/* interactive progress ring — eases to the selected skill's level */
+.ring-progress {
+  transition: stroke-dashoffset 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 /* ---- Flat device frames (precise, no fragile 3D) ---- */
 .dev-screen {
   position: relative;
@@ -817,6 +822,7 @@ html.dark .text-stroke { -webkit-text-stroke-color: rgba(245, 235, 226, 0.22); }
   .animate-mock-in { animation: none !important; }
   .animate-grow-bar { animation: none !important; transform: none !important; }
   .animate-ring { animation: none !important; }
+  .ring-progress { transition: none !important; }
   .link-underline::after { transition: none !important; }
   .timeline-comet { display: none !important; }
   .tilt-card { transform: none !important; }
