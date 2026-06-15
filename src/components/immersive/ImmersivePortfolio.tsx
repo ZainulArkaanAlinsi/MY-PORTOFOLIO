@@ -34,6 +34,7 @@ import TechIcon from './TechIcon';
 import ScrollProgress from './ScrollProgress';
 import LangThemeControls from './LangThemeControls';
 import MobileNav from './MobileNav';
+import SmoothScroll from './SmoothScroll';
 import { useT } from '@/i18n/provider';
 
 // Brand glyphs (lucide v1 dropped brand icons) — inherit currentColor.
@@ -280,6 +281,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
       className="font-body relative min-h-screen w-full overflow-x-hidden text-slate-900"
     >
       {!ready && <Preloader onDone={() => setReady(true)} />}
+      <SmoothScroll />
       <div className="grain" aria-hidden="true" />
       <ScrollProgress />
       <ImmersiveCursor />
