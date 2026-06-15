@@ -189,6 +189,21 @@ html.dark .grain {
   color: var(--foreground);
 }
 
+/* Per-character split reveal (GSAP rises .split-char from behind the mask).
+   The padding + equal negative margin grows the overflow box so the tight
+   hero leading never clips tall glyphs, without affecting layout flow. */
+.split-word {
+  display: inline-block;
+  overflow: hidden;
+  padding: 0.1em 0.03em;
+  margin: -0.1em -0.03em;
+  vertical-align: top;
+}
+.split-char {
+  display: inline-block;
+  will-change: transform;
+}
+
 /* Warm gradient text */
 .text-gradient {
   background: linear-gradient(120deg, #ad734e 0%, #d12323 55%, #8f5d3e 100%);

@@ -35,6 +35,7 @@ import ScrollProgress from './ScrollProgress';
 import LangThemeControls from './LangThemeControls';
 import MobileNav from './MobileNav';
 import SmoothScroll from './SmoothScroll';
+import SplitText from './SplitText';
 import { useT } from '@/i18n/provider';
 
 // Brand glyphs (lucide v1 dropped brand icons) — inherit currentColor.
@@ -256,13 +257,26 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) return;
     const ctx = gsap.context(() => {
-      gsap.from('[data-hero-line]', {
-        yPercent: 70,
-        autoAlpha: 0,
-        duration: 1.15,
+      const tl = gsap.timeline();
+      // the name's letters rise from behind their word masks…
+      tl.from('[data-hero-name] .split-char', {
+        yPercent: 115,
+        duration: 0.9,
         ease: 'power4.out',
-        stagger: 0.1,
+        stagger: 0.035,
       });
+      // …then the surrounding lines flow up, overlapping the tail of the name
+      tl.from(
+        '[data-hero-line]',
+        {
+          yPercent: 70,
+          autoAlpha: 0,
+          duration: 1.05,
+          ease: 'power4.out',
+          stagger: 0.09,
+        },
+        '-=0.55'
+      );
     }, rootRef);
     return () => ctx.revert();
   }, [ready]);
@@ -374,13 +388,13 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
           </p>
 
           <h1
-            data-hero-line
+            data-hero-name
             onMouseEnter={() => liquify(22)}
             onMouseLeave={() => liquify(6)}
             className="hero-title liquid-target font-display text-[clamp(44px,10vw,116px)] font-black leading-[0.92] tracking-[-0.03em]"
             style={fancyFx ? { filter: 'url(#liquid)' } : undefined}
           >
-            {profile.name}
+            <SplitText text={profile.name} />
           </h1>
 
           <div data-hero-line className="relative mt-4 inline-block">
