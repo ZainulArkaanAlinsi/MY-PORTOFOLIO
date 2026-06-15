@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Briefcase, Star, Sparkle } from 'lucide-react';
 import { profile, experience, stats, tools } from '@/data/portfolio';
@@ -19,6 +20,23 @@ export default function AboutNewspaper() {
     year: 'numeric',
   });
 
+  // Live "edition" clock — ticks every second. Client-only (set after mount)
+  // so the seconds never cause an SSR hydration mismatch.
+  const [time, setTime] = useState('');
+  useEffect(() => {
+    const tick = () =>
+      setTime(
+        new Date().toLocaleTimeString(DATE_LOCALE[lang] ?? 'en-GB', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        })
+      );
+    tick();
+    const id = window.setInterval(tick, 1000);
+    return () => window.clearInterval(id);
+  }, [lang]);
+
   return (
     <section id="about" className="paper relative scroll-mt-24 overflow-hidden px-6 py-28 sm:px-12 sm:py-44">
       <div className="relative mx-auto max-w-6xl">
@@ -35,7 +53,10 @@ export default function AboutNewspaper() {
           </h2>
 
           <div className="flex flex-col items-center justify-between gap-1 border-y border-[var(--line)] py-3 font-body text-[10px] font-medium uppercase tracking-[0.3em] text-slate-500 sm:flex-row sm:text-[11px]">
-            <span>{today}</span>
+            <span className="tabular-nums">
+              {today}
+              {time && <span className="text-[color:var(--santa-fe)]"> · {time}</span>}
+            </span>
             <span className="text-[color:var(--cardinal)]">{t.about.tags}</span>
             <span>{t.about.edition}</span>
           </div>
@@ -77,15 +98,18 @@ export default function AboutNewspaper() {
           {/* portrait + fact rail */}
           <aside className="lg:col-span-5">
             <div className="space-y-10">
-              <figure data-reveal className="relative">
+              <figure data-reveal className="group relative">
                 <div className="gradient-border overflow-hidden p-1.5">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={profile.avatar}
                     alt={profile.name}
-                    className="aspect-4/5 w-full rounded-[0.9rem] object-cover"
+                    className="aspect-4/5 w-full rounded-[0.9rem] object-cover transition-[filter] duration-700 ease-out [filter:grayscale(0.4)_contrast(1.05)_sepia(0.12)] group-hover:[filter:none]"
                     data-parallax="0.08"
                   />
+                  <span className="pointer-events-none absolute right-3 top-3 rounded-full bg-[color:var(--rebel)]/75 px-2.5 py-1 font-body text-[9px] font-bold uppercase tracking-[0.2em] text-[color:var(--merino)] opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                    {t.about.frontPage}
+                  </span>
                 </div>
 
                 <div className="glass animate-float absolute -left-4 -top-4 rounded-2xl px-4 py-2.5">
@@ -124,7 +148,7 @@ export default function AboutNewspaper() {
               </figure>
 
               {/* fact file */}
-              <div data-reveal className="glass-news rounded-3xl p-7">
+              <div data-reveal data-spotlight className="glass-news spotlight rounded-3xl p-7">
                 <h4 className="font-serif mb-4 border-b border-[var(--line)] pb-3 text-lg font-black uppercase tracking-tight text-[color:var(--rebel)]">
                   {t.about.factFile}
                 </h4>
@@ -166,7 +190,7 @@ export default function AboutNewspaper() {
         </blockquote>
 
         {/* ===== DAILY TOOLS ===== */}
-        <div data-reveal className="glass-news mt-20 rounded-3xl p-7 sm:p-9">
+        <div data-reveal data-spotlight className="glass-news spotlight mt-20 rounded-3xl p-7 sm:p-9">
           <p className="font-body mb-6 text-center text-[11px] font-bold uppercase tracking-[0.3em] text-[color:var(--santa-fe)]">
             {t.about.dailyTools}
           </p>
@@ -194,7 +218,7 @@ export default function AboutNewspaper() {
 
           <div data-reveal-stagger className="grid gap-6 sm:grid-cols-3">
             {experience.slice(0, 3).map((exp, i) => (
-              <article key={`${exp.company}-${i}`} data-stagger-item className="glass-news flex flex-col rounded-3xl p-7">
+              <article key={`${exp.company}-${i}`} data-stagger-item data-spotlight className="glass-news spotlight flex flex-col rounded-3xl p-7">
                 <div className="mb-3 flex items-center justify-between">
                   <span className="font-body text-[10px] font-bold uppercase tracking-[0.3em] text-[color:var(--cardinal)]">
                     {t.about.kickers[i] ?? 'Notes'}
@@ -220,7 +244,7 @@ export default function AboutNewspaper() {
             { target: stats.projectsCompleted, suffix: '+', label: t.about.statProjects },
             { target: stats.technologiesMastered, suffix: '+', label: t.about.statTech },
           ].map((s) => (
-            <div key={s.label} data-stagger-item className="glass-news rounded-3xl px-4 py-7 text-center">
+            <div key={s.label} data-stagger-item data-spotlight className="glass-news spotlight rounded-3xl px-4 py-7 text-center">
               <div className="text-gradient font-display text-4xl font-black sm:text-5xl">
                 <AnimatedCounter target={s.target} suffix={s.suffix} />
               </div>
