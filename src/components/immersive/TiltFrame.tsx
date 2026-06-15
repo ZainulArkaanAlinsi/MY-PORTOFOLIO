@@ -3,9 +3,12 @@
 import { useRef } from 'react';
 
 /**
- * Subtle pointer-driven 3D tilt wrapper. Sets --rx/--ry CSS vars on mouse
- * move (consumed by the `.tilt-frame` rule) and eases back to flat on leave.
- * No-ops under reduced motion; touch devices simply never fire mousemove.
+ * Subtle pointer-driven 3D tilt wrapper. Sets --rx/--ry CSS vars as the mouse
+ * moves (consumed by the `.tilt-frame` rule) and eases back to flat on leave.
+ *
+ * Uses pointer events and only reacts to a real `mouse` pointer — touch and pen
+ * are ignored, so tapping/scrolling on a phone never sticks a tilt. Also no-ops
+ * under reduced motion.
  */
 export default function TiltFrame({
   children,
@@ -18,7 +21,8 @@ export default function TiltFrame({
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
-  const onMove = (e: React.MouseEvent) => {
+  const onMove = (e: React.PointerEvent) => {
+    if (e.pointerType !== 'mouse') return;
     const el = ref.current;
     if (!el) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -29,7 +33,8 @@ export default function TiltFrame({
     el.style.setProperty('--ry', `${px * max}deg`);
   };
 
-  const reset = () => {
+  const reset = (e: React.PointerEvent) => {
+    if (e.pointerType !== 'mouse') return;
     const el = ref.current;
     if (!el) return;
     el.style.setProperty('--rx', '0deg');
@@ -37,7 +42,7 @@ export default function TiltFrame({
   };
 
   return (
-    <div ref={ref} onMouseMove={onMove} onMouseLeave={reset} className={`tilt-frame ${className}`}>
+    <div ref={ref} onPointerMove={onMove} onPointerLeave={reset} className={`tilt-frame ${className}`}>
       {children}
     </div>
   );
