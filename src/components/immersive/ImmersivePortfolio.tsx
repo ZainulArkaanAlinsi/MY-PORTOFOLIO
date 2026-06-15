@@ -37,6 +37,7 @@ import MobileNav from './MobileNav';
 import SmoothScroll from './SmoothScroll';
 import SplitText from './SplitText';
 import CopyEmailButton from './CopyEmailButton';
+import TiltFrame from './TiltFrame';
 import { useT } from '@/i18n/provider';
 
 // Brand glyphs (lucide v1 dropped brand icons) — inherit currentColor.
@@ -555,17 +556,19 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                   data-reveal
                   className="group grid items-center gap-8 md:grid-cols-2 md:gap-12 lg:gap-16"
                 >
-                  {/* preview */}
+                  {/* preview — matte gradient frame with a subtle cursor tilt */}
                   <div className={`relative isolate ${flip ? 'md:order-2' : ''}`}>
                     <span className="section-watermark pointer-events-none absolute -top-12 -left-2 -z-10 text-[7rem] leading-none sm:text-[10rem]">
                       {String(i + 1).padStart(2, '0')}
                     </span>
-                    <div className="overflow-hidden rounded-2xl shadow-[0_30px_60px_-32px_rgba(69,29,7,0.5)] transition-transform duration-500 group-hover:-translate-y-1.5">
-                      <RepoShot
-                        url={p.github}
-                        imgClassName="aspect-[16/10] transition-transform duration-700 group-hover:scale-[1.05]"
-                      />
-                    </div>
+                    <TiltFrame>
+                      <div className="gradient-border p-2 shadow-[0_34px_64px_-30px_rgba(69,29,7,0.55)] sm:p-2.5">
+                        <RepoShot
+                          url={p.github}
+                          imgClassName="aspect-[16/10] transition-transform duration-700 group-hover:scale-[1.05]"
+                        />
+                      </div>
+                    </TiltFrame>
                   </div>
 
                   {/* details */}
