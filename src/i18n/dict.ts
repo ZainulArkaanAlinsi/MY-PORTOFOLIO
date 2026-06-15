@@ -39,7 +39,7 @@ export interface AppDict {
     grades: string[];
   };
   contact: {
-    kicker: string; headingPre: string; headingEm: string; paragraph: string; resume: string; footerNote: string;
+    kicker: string; headingPre: string; headingEm: string; paragraph: string; resume: string; footerNote: string; copy: string; copied: string;
   };
   // shared dynamic content (by index, matching portfolio.ts arrays)
   exp: { role: string; description: string }[];
@@ -144,6 +144,8 @@ const en: AppDict = {
       'Open to internships, freelance projects, and collaboration. The fastest way to reach me is email — I usually reply within a day.',
     resume: 'Resume',
     footerNote: 'Built with Next.js, Three.js & ☕',
+    copy: 'Copy',
+    copied: 'Copied!',
   },
   exp: [
     {
@@ -266,6 +268,8 @@ const id: AppDict = {
       'Terbuka untuk magang, proyek freelance, dan kolaborasi. Cara tercepat menghubungi saya lewat email — biasanya saya balas dalam sehari.',
     resume: 'CV',
     footerNote: 'Dibuat dengan Next.js, Three.js & ☕',
+    copy: 'Salin',
+    copied: 'Tersalin!',
   },
   exp: [
     {
@@ -388,6 +392,8 @@ const ar: AppDict = {
       'منفتح على التدريب والمشاريع الحرّة والتعاون. أسرع طريقة للوصول إليّ هي البريد الإلكتروني — عادةً أردّ خلال يوم.',
     resume: 'السيرة الذاتية',
     footerNote: 'بُني بـ Next.js وThree.js و☕',
+    copy: 'نسخ',
+    copied: 'تم النسخ!',
   },
   exp: [
     {

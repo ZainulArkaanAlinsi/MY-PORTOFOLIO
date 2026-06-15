@@ -36,6 +36,7 @@ import LangThemeControls from './LangThemeControls';
 import MobileNav from './MobileNav';
 import SmoothScroll from './SmoothScroll';
 import SplitText from './SplitText';
+import CopyEmailButton from './CopyEmailButton';
 import { useT } from '@/i18n/provider';
 
 // Brand glyphs (lucide v1 dropped brand icons) — inherit currentColor.
@@ -799,14 +800,17 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
               {t.contact.paragraph}
             </p>
 
-            <a
-              href={`mailto:${profile.email}`}
-              data-magnetic
-              data-cursor="hover"
-              className="cta-shine mt-9 inline-flex items-center gap-2.5 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-blue-500/30 transition-shadow hover:shadow-blue-500/50"
-            >
-              <Mail className="h-5 w-5" /> {profile.email}
-            </a>
+            <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+              <a
+                href={`mailto:${profile.email}`}
+                data-magnetic
+                data-cursor="hover"
+                className="cta-shine inline-flex items-center gap-2.5 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-blue-500/30 transition-shadow hover:shadow-blue-500/50"
+              >
+                <Mail className="h-5 w-5" /> {profile.email}
+              </a>
+              <CopyEmailButton />
+            </div>
 
             <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
               <a
