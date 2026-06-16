@@ -201,7 +201,6 @@ html.dark .grain {
 }
 .split-char {
   display: inline-block;
-  will-change: transform;
 }
 
 /* Warm gradient text */
@@ -801,6 +800,45 @@ html.dark .text-stroke { -webkit-text-stroke-color: rgba(245, 235, 226, 0.22); }
    RTL (Arabic)
    =================================================================== */
 [dir="rtl"] .font-mono { direction: ltr; unicode-bidi: embed; }
+
+/* ===================================================================
+   PERFORMANCE — coarse pointer (phones / tablets)
+   backdrop-filter and the grain blend mode are the heaviest things to
+   composite while scrolling, and weakest on mobile GPUs. Drop them on
+   touch devices and fake the frosted look with a more opaque surface.
+   Desktop (fine pointer) keeps the full glass treatment.
+   =================================================================== */
+@media (pointer: coarse) {
+  .glass {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(255, 252, 247, 0.9);
+  }
+  .glass-soft {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(255, 250, 243, 0.85);
+  }
+  .glass-news,
+  .glass-news:hover {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgba(255, 250, 243, 0.92);
+  }
+  .grain {
+    display: none;
+  }
+  html.dark .glass {
+    background: rgba(44, 32, 23, 0.92);
+  }
+  html.dark .glass-soft {
+    background: rgba(44, 32, 23, 0.85);
+  }
+  html.dark .glass-news,
+  html.dark .glass-news:hover {
+    background: rgba(40, 28, 20, 0.92);
+  }
+}
 
 /* ===================================================================
    REDUCED MOTION

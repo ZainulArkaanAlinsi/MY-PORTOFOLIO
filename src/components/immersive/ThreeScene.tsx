@@ -172,12 +172,23 @@ export default function ThreeScene() {
     const clock = new THREE.Clock();
     let raf = 0;
     let running = true;
+    let inView = true;
     const tmpBlue = new THREE.Color();
     const tmpCyan = new THREE.Color();
+
+    // Cap the decorative scene to ~30fps on phones to halve its GPU cost
+    // (the rotation is slow enough that 30fps is indistinguishable).
+    const minFrameMs = isMobile ? 1000 / 30 : 0;
+    let lastRenderTs = 0;
 
     const animate = () => {
       if (!running) return;
       raf = requestAnimationFrame(animate);
+      if (minFrameMs) {
+        const now = performance.now();
+        if (now - lastRenderTs < minFrameMs) return;
+        lastRenderTs = now;
+      }
       const t = clock.getElapsedTime();
 
       group.rotation.y += prefersReduced ? 0.0008 : 0.0035;
@@ -206,16 +217,32 @@ export default function ThreeScene() {
     };
     animate();
 
-    const onVisibility = () => {
-      running = !document.hidden;
+    // Start/stop without ever double-scheduling the RAF loop.
+    const setRunning = (next: boolean) => {
+      if (next === running) return;
+      running = next;
       if (running) animate();
     };
+
+    const onVisibility = () => setRunning(inView && !document.hidden);
     document.addEventListener('visibilitychange', onVisibility);
+
+    // Pause the whole render loop while the hero canvas is scrolled out of
+    // view — no point spending GPU/CPU on an off-screen WebGL scene.
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        inView = entry.isIntersecting;
+        setRunning(inView && !document.hidden);
+      },
+      { threshold: 0 }
+    );
+    io.observe(mount);
 
     // --- Cleanup ---
     return () => {
       running = false;
       cancelAnimationFrame(raf);
+      io.disconnect();
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
