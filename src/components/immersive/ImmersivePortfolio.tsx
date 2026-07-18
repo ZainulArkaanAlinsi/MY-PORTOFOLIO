@@ -5,13 +5,15 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
   ArrowUpRight,
-  ArrowDown,
   Globe,
   Download,
   Mail,
   GraduationCap,
   Award,
   Briefcase,
+  BadgeCheck,
+  CalendarDays,
+  Image as ImageIcon,
 } from 'lucide-react';
 import type { Project } from '@/lib/github';
 import {
@@ -20,15 +22,15 @@ import {
   education,
   certifications,
   featuredProjects,
-  languages,
+  stats,
 } from '@/data/portfolio';
-import ThreeScene from './ThreeScene';
 import Preloader from './Preloader';
 import ImmersiveCursor from './ImmersiveCursor';
 import Marquee from './Marquee';
 import ScrambleText from './ScrambleText';
 import AboutNewspaper from './AboutNewspaper';
 import SkillStudio from './SkillStudio';
+import RetroComputer3D from './RetroComputer3D';
 import RepoShot from './RepoShot';
 import TechIcon from './TechIcon';
 import ScrollProgress from './ScrollProgress';
@@ -68,6 +70,52 @@ function Kicker({ num, text, color }: { num: string; text: string; color: string
   );
 }
 
+// Four mounting-corner ticks that frame a photo well like a matted print —
+// reinforces the "drop your real photo here" affordance on placeholders.
+function PhotoCorners() {
+  const base = 'absolute h-5 w-5 border-[rgba(173,115,78,0.45)]';
+  return (
+    <span aria-hidden className="pointer-events-none">
+      <span className={`${base} left-3 top-3 rounded-tl-lg border-l-2 border-t-2`} />
+      <span className={`${base} right-3 top-3 rounded-tr-lg border-r-2 border-t-2`} />
+      <span className={`${base} bottom-3 left-3 rounded-bl-lg border-b-2 border-l-2`} />
+      <span className={`${base} bottom-3 right-3 rounded-br-lg border-b-2 border-r-2`} />
+    </span>
+  );
+}
+
+// Official-looking wax seal: a gradient medallion inside a slowly rotating
+// dashed ring. Used on credential + education photo placeholders.
+function AwardSeal({
+  icon: Icon,
+  gradient,
+  size = 64,
+}: {
+  icon: typeof Award;
+  gradient: string;
+  size?: number;
+}) {
+  const inner = Math.round(size * 0.72);
+  return (
+    <span className="relative flex items-center justify-center" style={{ height: size, width: size }}>
+      <svg
+        className="animate-spin-slow absolute inset-0 h-full w-full"
+        style={{ animationDuration: '22s' }}
+        viewBox="0 0 64 64"
+        aria-hidden
+      >
+        <circle cx="32" cy="32" r="30" fill="none" stroke="rgba(173,115,78,0.45)" strokeWidth="1.5" strokeDasharray="2 6" strokeLinecap="round" />
+      </svg>
+      <span
+        className="flex items-center justify-center rounded-full text-white shadow-[0_12px_28px_-12px_var(--santa-fe)]"
+        style={{ height: inner, width: inner, backgroundImage: gradient }}
+      >
+        <Icon className="h-1/2 w-1/2" />
+      </span>
+    </span>
+  );
+}
+
 // Big slanted kinetic statement band — filled + outlined words alternate
 function StatementBand() {
   const words = ['DESIGN', 'BUILD', 'SHIP', 'REPEAT'];
@@ -93,6 +141,30 @@ function StatementBand() {
   );
 }
 
+// Live local clock for Bekasi (WIB / UTC+7). Renders a placeholder until
+// mounted so server and client markup match (no hydration mismatch).
+function LocalTime() {
+  const [time, setTime] = useState<string | null>(null);
+  useEffect(() => {
+    const fmt = () =>
+      new Intl.DateTimeFormat('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+        timeZone: 'Asia/Jakarta',
+      }).format(new Date());
+    // defer the first paint out of the effect body (avoids a synchronous
+    // setState-in-effect), then keep it ticking
+    const raf = requestAnimationFrame(() => setTime(fmt()));
+    const id = window.setInterval(() => setTime(fmt()), 30000);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearInterval(id);
+    };
+  }, []);
+  return <span className="tabular-nums">{time ?? '--:--'}</span>;
+}
+
 export default function ImmersivePortfolio({ projects }: { projects: Project[] }) {
   const [ready, setReady] = useState(false);
   const [fancyFx, setFancyFx] = useState(false);
@@ -107,6 +179,12 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
     { label: t.nav.work, href: '#work' },
     { label: t.nav.journey, href: '#journey' },
     { label: t.nav.contact, href: '#contact' },
+  ];
+  const contactLinks = [
+    { icon: Github, label: 'GitHub', value: 'ZainulArkaanAlinsi', href: profile.social.github, external: true, download: false },
+    { icon: Linkedin, label: 'LinkedIn', value: 'Zainul Arkaan', href: profile.social.linkedin, external: true, download: false },
+    { icon: Globe, label: 'Website', value: 'zainularkaan.dev', href: profile.social.website, external: true, download: false },
+    { icon: Download, label: t.contact.resume, value: 'PDF', href: profile.cv, external: false, download: true },
   ];
 
   // Enable GPU-heavy flourishes (the liquid hero-title filter) only on
@@ -365,34 +443,42 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
         </div>
       </nav>
 
-      {/* ===== HERO — 3D + liquid title over a dot grid ===== */}
+      {/* ===== HERO — retro-terminal statement + warm CRT over a dot grid ===== */}
       <header
         id="top"
-        className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-6 text-center"
+        className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-6 pb-16 pt-28 text-center sm:pt-24"
       >
-        <div className="dot-grid pointer-events-none absolute inset-0 opacity-60" />
-        <ThreeScene />
-        {/* morphing color blob */}
-        <div className="animate-blob pointer-events-none absolute left-[8%] top-[18%] h-56 w-56 bg-linear-to-br from-blue-400/30 via-cyan-300/30 to-violet-400/30 blur-2xl sm:h-80 sm:w-80" />
-        {/* decorative outlined statement words */}
-        <span
-          aria-hidden="true"
-          className="font-display text-stroke pointer-events-none absolute -left-4 top-[12%] hidden -rotate-6 text-[14vw] font-black leading-none opacity-40 sm:left-6 sm:block"
-        >
-          FULL-STACK
-        </span>
-        <span
-          aria-hidden="true"
-          className="font-display text-stroke pointer-events-none absolute -right-2 bottom-[14%] hidden rotate-6 text-[14vw] font-black leading-none opacity-40 sm:right-8 sm:block"
-        >
-          MOBILE
-        </span>
+        <div className="dot-grid pointer-events-none absolute inset-0 opacity-50" />
+        {/* soft warm glows — no hard shapes */}
+        <div className="animate-blob pointer-events-none absolute left-[5%] top-[18%] h-56 w-56 bg-linear-to-br from-blue-400/20 via-cyan-300/20 to-violet-400/15 blur-2xl sm:h-72 sm:w-72" />
+        <div className="pointer-events-none absolute right-[10%] top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(173,115,78,0.16),transparent_70%)] blur-2xl sm:h-[26rem] sm:w-[26rem]" />
         <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent via-transparent to-[color:var(--background)]" />
 
-        <div className="relative z-10 mx-auto max-w-5xl">
+        {/* Poster centerpiece: giant name → 3D computer star → role → CTAs,
+            with two balanced stat chips floating in the side gutters. Spacing
+            follows an 8pt rhythm; details live on the CRT screen (progressive
+            disclosure) so the composition stays calm. */}
+        <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-2">
+          {/* terminal header bar */}
+          <div
+            data-hero-line
+            className="mb-6 hidden w-full items-center gap-3 font-mono text-[10px] uppercase tracking-[0.22em] text-slate-400 sm:flex"
+          >
+            <span className="text-[color:var(--santa-fe)]">/ portfolio &rsquo;26</span>
+            <span className="text-slate-300">{'//'}</span>
+            <span>full-stack &amp; mobile dev</span>
+            <span className="mx-1 h-px flex-1 bg-[var(--line)]" />
+            <span>
+              sys: <span className="text-emerald-600">ok</span>
+            </span>
+            <span className="text-slate-300">{'//'}</span>
+            <span>bekasi, id</span>
+          </div>
+
+          {/* availability */}
           <p
             data-hero-line
-            className="glass-soft mx-auto mb-7 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.25em] text-slate-600"
+            className="glass-soft mb-5 inline-flex items-center gap-2 rounded-full px-4 py-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-slate-600"
           >
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
@@ -401,42 +487,180 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
             {t.availability}
           </p>
 
-          <p data-hero-line className="font-body mb-3 text-base text-slate-500 sm:text-lg">
-            {t.hero.greeting}
-          </p>
-
+          {/* giant name masthead */}
           <h1
             data-hero-name
-            onMouseEnter={() => liquify(22)}
+            onMouseEnter={() => liquify(18)}
             onMouseLeave={() => liquify(6)}
-            className="hero-title liquid-target font-display text-[clamp(44px,10vw,116px)] font-black leading-[0.92] tracking-[-0.03em]"
+            className="liquid-target relative z-10 text-center font-display font-black leading-[0.82] tracking-[-0.02em]"
             style={fancyFx ? { filter: 'url(#liquid)' } : undefined}
           >
-            <SplitText text={profile.name} />
+            <span className="block text-stroke-accent text-[clamp(40px,8.5vw,104px)]">
+              <SplitText text={profile.shortName} />
+            </span>
+            <span className="em-serif animated-gradient-text mt-1 block text-[clamp(26px,5.5vw,60px)]">
+              Al Insi
+            </span>
           </h1>
 
-          <div data-hero-line className="relative mt-4 inline-block">
-            <h2 className="animated-gradient-text font-display text-[clamp(20px,4vw,44px)] font-black tracking-tight">
-              {t.hero.role}
-            </h2>
-            <span className="sticker glass absolute -right-10 -top-6 hidden rotate-6 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-600 sm:-right-16 sm:block">
-              ★ 2026
-            </span>
+          {/* role */}
+          <h2
+            data-hero-line
+            className="font-display mt-3 text-center text-[clamp(17px,2.6vw,26px)] font-bold tracking-tight text-slate-700"
+          >
+            {t.hero.role}
+          </h2>
+
+          {/* POSTER STAGE — scrapbook desk: the interactive computer pinned into
+              a warm collage (graph-paper slab, polaroids, sticky notes, a code
+              sticker + a resume feeding out of the slot). Scraps are decorative
+              and desktop-only so mobile stays calm (low cognitive load). */}
+          <div className="relative mt-3 w-full">
+            {/* graph-paper desk slab */}
+            <div
+              aria-hidden
+              className="grid-paper pointer-events-none absolute inset-x-2 bottom-0 top-28 rounded-3xl border border-[color:var(--line)] opacity-70 sm:inset-x-8"
+            />
+            {/* warm glow behind the screen */}
+            <div className="pointer-events-none absolute inset-x-1/4 top-8 h-48 rounded-full bg-[radial-gradient(circle,rgba(173,115,78,0.22),transparent_68%)] blur-2xl" />
+            {/* frosted glass display slab — blurs the grid paper behind the computer */}
+            <div
+              aria-hidden
+              className="glass-slab pointer-events-none absolute inset-x-6 bottom-6 top-20 z-[5] rounded-[2rem] sm:inset-x-16"
+            />
+
+            {/* the interactive computer */}
+            <div data-hero-line className="relative z-10 mx-auto w-full max-w-[560px]">
+              <RetroComputer3D />
+            </div>
+
+            {/* resume feeding out of the front slot */}
+            <div
+              aria-hidden
+              className="scrap-bob pointer-events-none absolute bottom-2 left-1/2 z-30 hidden w-56 -translate-x-1/2 lg:block"
+              style={{ ['--rot' as string]: '1.5deg', animationDelay: '2s' }}
+            >
+              <div className="resume-strip rounded-sm border border-[color:var(--line)] px-4 py-3">
+                <p className="font-display text-[11px] font-black uppercase tracking-[0.14em] text-[color:var(--rebel)]">
+                  {profile.shortName} — CV
+                </p>
+                <div className="mt-1.5 space-y-1">
+                  <span className="block h-1 w-full rounded bg-[color:var(--line)]" />
+                  <span className="block h-1 w-4/5 rounded bg-[color:var(--line)]" />
+                  <span className="block h-1 w-2/3 rounded bg-[color:var(--line)]" />
+                </div>
+              </div>
+            </div>
+
+            {/* ===== scrapbook scraps — desktop only, decorative ===== */}
+            <div aria-hidden className="pointer-events-none absolute inset-0 z-20 hidden lg:block">
+              {/* years — taped index card (static: it's a glass blur, so no bob) */}
+              <div
+                className="glass absolute left-[1%] top-[6%] -rotate-[5deg] rounded-xl px-4 py-2.5 text-center"
+              >
+                <p className="stat-num font-display text-2xl font-black leading-none">{profile.yearsExperience}+</p>
+                <p className="font-mono mt-1 text-[9px] uppercase tracking-[0.2em] text-slate-400">years building</p>
+              </div>
+
+              {/* code sticker </> */}
+              <div
+                className="scrap-bob absolute left-[8%] top-[34%]"
+                style={{ ['--rot' as string]: '-8deg', animationDelay: '0.4s' }}
+              >
+                <div className="starburst flex h-16 w-16 items-center justify-center bg-[color:var(--santa-fe)] shadow-lg">
+                  <span className="font-mono text-lg font-black text-[color:var(--merino)]">&lt;/&gt;</span>
+                </div>
+              </div>
+
+              {/* polaroid — real photo */}
+              <div
+                className="scrap-bob absolute left-[2%] top-[52%] w-28"
+                style={{ ['--rot' as string]: '-7deg', animationDelay: '0.9s' }}
+              >
+                <figure className="polaroid">
+                  <span className="tape left-1/2 -top-2 -translate-x-1/2 rotate-[6deg]" />
+                  <span className="frame aspect-square">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/arkaan22.png" alt="" />
+                  </span>
+                  <figcaption className="font-body text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                    Bekasi &rsquo;26
+                  </figcaption>
+                </figure>
+              </div>
+
+              {/* sticky note — CTRL+Z */}
+              <div
+                className="scrap-bob absolute right-[5%] top-[12%] w-36"
+                style={{ ['--rot' as string]: '5deg', animationDelay: '0.6s' }}
+              >
+                <div className="sticky-note rounded-sm px-3 py-3">
+                  <span className="pushpin absolute -top-1.5 left-1/2 -translate-x-1/2" />
+                  <p className="font-display text-sm font-black leading-tight text-[color:var(--rebel)]">
+                    CTRL + Z
+                    <span className="font-body mt-0.5 block text-[11px] font-semibold normal-case">
+                      = my superpower
+                    </span>
+                  </p>
+                </div>
+              </div>
+
+              {/* scene polaroid — warm 'journey' */}
+              <div
+                className="scrap-bob absolute right-[3%] top-[44%] w-24"
+                style={{ ['--rot' as string]: '7deg', animationDelay: '1.3s' }}
+              >
+                <figure className="polaroid">
+                  <span className="tape left-1/2 -top-2 -translate-x-1/2 -rotate-[8deg]" />
+                  <span className="frame relative block aspect-square bg-[linear-gradient(to_bottom,#e6c99f,#cf9e6f_55%,#8a5a34)]">
+                    <span className="absolute right-2 top-2 h-4 w-4 rounded-full bg-[#f6e4c4]/90" />
+                  </span>
+                  <figcaption className="font-body text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                    Journey
+                  </figcaption>
+                </figure>
+              </div>
+
+              {/* small tag — 2026 */}
+              <div
+                className="scrap-bob absolute right-[15%] top-[66%]"
+                style={{ ['--rot' as string]: '-6deg', animationDelay: '1.7s' }}
+              >
+                <div className="sticky-note rounded-sm px-3 py-1.5">
+                  <span className="pushpin absolute -top-1.5 right-2" />
+                  <p className="font-display text-sm font-black text-[color:var(--rebel)]">2026</p>
+                </div>
+              </div>
+
+              {/* projects — taped index card (static: it's a glass blur, so no bob) */}
+              <div
+                className="glass absolute right-[1%] top-[74%] rotate-[4deg] rounded-xl px-4 py-2.5 text-center"
+              >
+                <p className="stat-num font-display text-2xl font-black leading-none">{stats.projectsCompleted}+</p>
+                <p className="font-mono mt-1 text-[9px] uppercase tracking-[0.2em] text-slate-400">projects</p>
+              </div>
+            </div>
           </div>
 
-          <p
+          {/* meta (mobile only) */}
+          <div
             data-hero-line
-            className="font-body mx-auto mt-7 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg"
+            className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 lg:hidden"
           >
-            {t.hero.subheadline}
-          </p>
+            <span>{profile.location}</span>
+            <span className="text-[color:var(--santa-fe)]">·</span>
+            <span>{profile.yearsExperience}+ yrs</span>
+            <span className="text-[color:var(--santa-fe)]">·</span>
+            <span className="text-[color:var(--santa-fe)]">portfolio &rsquo;26</span>
+          </div>
 
-          <div data-hero-line className="mt-10 flex flex-wrap items-center justify-center gap-4">
+          {/* CTAs — one prominent primary (Fitts), two lighter options (Hick) */}
+          <div data-hero-line className="mt-7 flex flex-wrap items-center justify-center gap-4">
             <a
               href="#work"
               data-magnetic
               data-cursor="hover"
-              className="cta-shine inline-flex items-center gap-2 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 px-7 py-3.5 text-sm font-semibold text-white shadow-xl shadow-blue-500/30 transition-shadow hover:shadow-blue-500/50"
+              className="cta-shine inline-flex items-center gap-2 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-blue-500/30 transition-shadow hover:shadow-blue-500/50"
             >
               {t.hero.viewProjects} <ArrowUpRight className="h-4 w-4" />
             </a>
@@ -444,7 +668,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
               href="#contact"
               data-magnetic
               data-cursor="hover"
-              className="glass inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold text-slate-700 transition-colors hover:text-blue-600"
+              className="glass inline-flex items-center gap-2 rounded-full px-6 py-4 text-sm font-semibold text-slate-700 transition-colors hover:text-blue-600"
             >
               <Mail className="h-4 w-4" /> {t.hero.contactMe}
             </a>
@@ -453,29 +677,23 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
               download
               data-magnetic
               data-cursor="hover"
-              className="inline-flex items-center gap-2 rounded-full px-5 py-3.5 text-sm font-semibold text-slate-600 underline-offset-4 transition-colors hover:text-blue-600 hover:underline"
+              className="inline-flex items-center gap-2 rounded-full px-4 py-4 text-sm font-semibold text-slate-500 underline-offset-4 transition-colors hover:text-blue-600 hover:underline"
             >
               <Download className="h-4 w-4" /> {t.hero.downloadResume}
             </a>
           </div>
-
-          {/* tech logo strip */}
-          <div data-hero-line className="mt-12 flex flex-col items-center gap-3">
-            <span className="font-body text-[10px] uppercase tracking-[0.35em] text-slate-400">
-              {t.hero.buildingWith}
-            </span>
-            <div className="flex flex-wrap items-center justify-center gap-x-7 gap-y-3">
-              {['Flutter', 'Next.js', 'React', 'Laravel', 'Firebase', 'TypeScript', 'Dart'].map((t) => (
-                <TechIcon key={t} name={t} size={26} className="opacity-80 transition-all duration-300 hover:-translate-y-1 hover:scale-110 hover:opacity-100" />
-              ))}
-            </div>
-          </div>
         </div>
 
-        <div className="absolute bottom-7 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 text-slate-400 sm:flex">
-          <span className="font-body text-[9px] uppercase tracking-[0.4em]">{t.hero.scroll}</span>
-          <ArrowDown className="h-4 w-4 animate-bounce" />
-        </div>
+        {/* refined scroll cue — a slim CRT-glass capsule with a travelling dot */}
+        <a
+          href="#work"
+          aria-label={t.hero.scroll}
+          className="scroll-cue group absolute bottom-7 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 sm:flex"
+        >
+          <span className="scroll-capsule relative flex h-9 w-5 items-start justify-center rounded-full border border-[color:var(--line)] bg-[color:var(--surface)]/50 backdrop-blur-sm transition-colors group-hover:border-[color:var(--santa-fe)]">
+            <span className="scroll-dot mt-1.5 h-1.5 w-1.5 rounded-full bg-[color:var(--santa-fe)]" />
+          </span>
+        </a>
       </header>
 
       <Marquee />
@@ -497,28 +715,12 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
             </h2>
           </div>
 
-          {/* interactive device studio */}
+          {/* interactive device studio + floating language cards */}
           <div data-reveal>
             <SkillStudio />
-            <p className="font-body mt-8 text-center text-xs text-slate-400">
+            <p className="font-body mt-14 text-center text-xs text-slate-400 sm:mt-20">
               {t.skills.note}
             </p>
-          </div>
-
-          {/* languages strip */}
-          <div data-reveal-stagger className="mx-auto mt-14 grid max-w-3xl gap-4 sm:grid-cols-3">
-            {languages.map((l, i) => (
-              <div key={l.name} data-stagger-item className="glass-news rounded-2xl p-5 text-center">
-                <p className="font-display font-bold text-[color:var(--foreground)]">{t.languageNames[i]}</p>
-                <p className="font-body text-xs text-slate-500">{t.proficiency[i]}</p>
-                <div className="mx-auto mt-3 h-1.5 w-3/4 overflow-hidden rounded-full bg-[rgba(69,29,7,0.1)]">
-                  <div
-                    className="h-full rounded-full bg-linear-to-r from-[#ad734e] to-[#dbd294]"
-                    style={{ width: `${l.level}%` }}
-                  />
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -565,7 +767,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                       <div className="gradient-border p-2 shadow-[0_34px_64px_-30px_rgba(69,29,7,0.55)] sm:p-2.5">
                         <RepoShot
                           url={p.github}
-                          imgClassName="aspect-[16/10] transition-transform duration-700 group-hover:scale-[1.05]"
+                          imgClassName="aspect-[2/1] object-top transition-transform duration-700 group-hover:scale-[1.05] sm:aspect-[16/10] sm:object-center"
                         />
                       </div>
                     </TiltFrame>
@@ -706,12 +908,18 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
             ))}
           </div>
 
-          {/* certifications */}
-          <div className="mt-16">
-            <h3 className="font-display mb-6 flex items-center justify-center gap-2 text-xl font-bold">
-              <Award className="h-5 w-5 text-cyan-500" /> {t.journey.certifications}
-            </h3>
-            <div data-reveal-stagger className="grid gap-4 sm:grid-cols-2">
+          {/* certifications — framed credential wall with generous photo slots */}
+          <div className="mt-24">
+            <div className="mb-10 flex flex-col items-center gap-2 text-center">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#8f5d3e,#ad734e_46%,#c0492e)] text-white shadow-[0_8px_20px_-10px_var(--santa-fe)]">
+                  <Award className="h-5 w-5" />
+                </span>
+                <h3 className="font-display text-xl font-bold sm:text-2xl">{t.journey.certifications}</h3>
+              </div>
+              <p className="font-body text-sm text-[color:var(--muted)]">{t.journey.certsSub}</p>
+            </div>
+            <div data-reveal-stagger className="grid gap-6 sm:grid-cols-2">
               {certifications.map((c, i) => (
                 <a
                   key={c.title}
@@ -721,39 +929,142 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                   data-stagger-item
                   data-cursor="hover"
                   data-spotlight
-                  className="glass glow-card spotlight flex items-center gap-4 rounded-2xl p-5"
+                  className="group glass glow-card spotlight relative flex flex-col rounded-[1.7rem] p-3.5"
                 >
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-cyan-400 text-white">
-                    <Award className="h-5 w-5" />
+                  {/* framed photo well — drop the real scan into portfolio.ts */}
+                  <div className="photo-well relative aspect-[4/3] overflow-hidden rounded-[1.25rem] border border-[var(--line)]">
+                    {c.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={c.image}
+                        alt={c.title}
+                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+                      />
+                    ) : (
+                      <>
+                        <PhotoCorners />
+                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                          <AwardSeal
+                            icon={Award}
+                            gradient="linear-gradient(135deg,#8f5d3e,#ad734e 46%,#c0492e)"
+                            size={64}
+                          />
+                          <span className="inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.22em] text-[color:var(--muted)]">
+                            <ImageIcon className="h-3.5 w-3.5" /> {t.journey.photoSlot}
+                          </span>
+                        </div>
+                      </>
+                    )}
+                    <span className="absolute left-3 top-3 rounded-full border border-[var(--line)] bg-[color:var(--background)]/80 px-2.5 py-1 font-display text-[11px] font-bold tabular-nums backdrop-blur">
+                      {c.year}
+                    </span>
+                    <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-[color:var(--santa-fe)]/15 px-2.5 py-1 text-[11px] font-semibold text-[color:var(--santa-fe)] backdrop-blur">
+                      <BadgeCheck className="h-3.5 w-3.5" /> {t.journey.grades[i] ?? c.grade}
+                    </span>
+                    <span className="frame-sheen" aria-hidden />
                   </div>
-                  <div className="min-w-0">
-                    <p className="font-display truncate font-bold">{c.title}</p>
-                    <p className="font-body text-sm text-slate-500">
-                      {c.issuer} · {c.year} · {t.journey.grades[i] ?? c.grade}
-                    </p>
+                  {/* caption on the mat */}
+                  <div className="flex items-start gap-3 px-1.5 pb-1 pt-4">
+                    <span className="font-display mt-0.5 text-sm font-black tabular-nums text-[color:var(--santa-fe)]">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-display font-bold leading-snug">{c.title}</p>
+                      <p className="font-body mt-0.5 text-sm text-[color:var(--muted)]">{c.issuer}</p>
+                    </div>
+                    <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[var(--line)] text-[color:var(--muted)] transition-colors group-hover:border-[color:var(--santa-fe)] group-hover:bg-[color:var(--santa-fe)] group-hover:text-white">
+                      <ArrowUpRight className="h-4 w-4" />
+                    </span>
                   </div>
-                  <ArrowUpRight className="ml-auto h-4 w-4 shrink-0 text-slate-300" />
                 </a>
               ))}
             </div>
           </div>
 
-          {/* education */}
-          <div className="mt-12">
-            <h3 className="font-display mb-6 flex items-center gap-2 text-xl font-bold">
-              <GraduationCap className="h-5 w-5 text-violet-500" /> {t.journey.education}
-            </h3>
-            <div data-reveal-stagger className="space-y-4">
+          {/* education — campus feature with a generous matted photo panel */}
+          <div className="mt-24">
+            <div className="mb-10 flex flex-col items-center gap-2 text-center">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#6b4423,#ad734e_55%,#c9a94e)] text-white shadow-[0_8px_20px_-10px_var(--santa-fe)]">
+                  <GraduationCap className="h-5 w-5" />
+                </span>
+                <h3 className="font-display text-xl font-bold sm:text-2xl">{t.journey.education}</h3>
+              </div>
+              <p className="font-body text-sm text-[color:var(--muted)]">{t.journey.eduSub}</p>
+            </div>
+            <div data-reveal-stagger className="space-y-8">
               {education.map((ed) => (
-                <div key={ed.school} data-stagger-item data-spotlight className="glass glow-card spotlight rounded-2xl p-6">
-                  <span className="font-body text-xs font-semibold uppercase tracking-wider text-violet-600">
-                    {ed.period}
-                  </span>
-                  <h4 className="font-display mt-1 text-lg font-bold">{ed.school}</h4>
-                  <p className="font-body text-sm font-medium text-slate-500">{t.edu.program}</p>
-                  <p className="font-body mt-2 text-sm leading-relaxed text-slate-600">
-                    {t.edu.description}
-                  </p>
+                <div
+                  key={ed.school}
+                  data-stagger-item
+                  data-spotlight
+                  className="group glass glow-card spotlight relative grid overflow-hidden rounded-[2rem] md:grid-cols-5"
+                >
+                  {/* matted photo panel — drop the real photo into portfolio.ts */}
+                  <div className="photo-well relative min-h-[300px] border-b border-[var(--line)] p-3.5 md:col-span-2 md:border-b-0 md:border-r">
+                    <div className="relative h-full w-full overflow-hidden rounded-[1.4rem] border border-[var(--line)] bg-[linear-gradient(135deg,var(--surface),var(--surface-2))]">
+                      {ed.image ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={ed.image}
+                          alt={ed.school}
+                          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                        />
+                      ) : (
+                        <>
+                          <PhotoCorners />
+                          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
+                            <AwardSeal
+                              icon={GraduationCap}
+                              gradient="linear-gradient(135deg,#6b4423,#ad734e 55%,#c9a94e)"
+                              size={80}
+                            />
+                            <span className="inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.22em] text-[color:var(--muted)]">
+                              <ImageIcon className="h-3.5 w-3.5" /> {t.journey.photoSlot}
+                            </span>
+                          </div>
+                        </>
+                      )}
+                      <span className="absolute left-3 top-3 inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[color:var(--background)]/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--foreground)] backdrop-blur">
+                        <span className="relative flex h-2 w-2">
+                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--santa-fe)] opacity-70" />
+                          <span className="relative inline-flex h-2 w-2 rounded-full bg-[color:var(--santa-fe)]" />
+                        </span>
+                        {t.journey.current}
+                      </span>
+                      <span className="frame-sheen" aria-hidden />
+                    </div>
+                  </div>
+                  {/* details */}
+                  <div className="relative overflow-hidden p-6 sm:p-9 md:col-span-3">
+                    <GraduationCap
+                      aria-hidden
+                      className="pointer-events-none absolute -right-5 -top-5 h-32 w-32 text-[rgba(173,115,78,0.07)]"
+                    />
+                    <span className="font-body inline-flex items-center gap-1.5 rounded-full border border-[var(--line)] px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[color:var(--santa-fe)]">
+                      <CalendarDays className="h-3.5 w-3.5" /> {ed.period}
+                    </span>
+                    <h4 className="font-display mt-4 text-2xl font-bold leading-tight sm:text-3xl">{ed.school}</h4>
+                    <p className="font-body mt-1.5 text-sm font-medium text-[color:var(--muted)]">{t.edu.program}</p>
+                    <p className="font-body mt-4 text-sm leading-relaxed text-[color:var(--muted)] sm:text-base">
+                      {t.edu.description}
+                    </p>
+                    <div className="mt-6">
+                      <p className="font-body mb-2.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">
+                        {t.journey.focus}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {t.journey.eduFocus.map((f) => (
+                          <span
+                            key={f}
+                            className="inline-flex items-center gap-1.5 rounded-full bg-slate-900/[0.04] px-3 py-1 text-xs font-medium text-slate-600"
+                          >
+                            <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--santa-fe)]" /> {f}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -765,73 +1076,90 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
       <section id="contact" className="relative scroll-mt-24 px-6 py-28 sm:px-12 sm:py-44">
         <div
           data-reveal
-          className="gradient-border relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] px-6 py-16 text-center sm:px-12 sm:py-20"
+          className="gradient-border relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] px-6 py-12 sm:px-12 sm:py-16"
         >
           <div className="dot-grid pointer-events-none absolute inset-0 opacity-50" />
-          <div className="pointer-events-none absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2">
+          <div className="pointer-events-none absolute -top-24 right-[-4rem] h-80 w-80">
             <div className="animate-spin-slow h-full w-full rounded-full bg-[conic-gradient(from_0deg,rgba(173,115,78,0.28),rgba(219,210,148,0.2),rgba(209,35,35,0.22),rgba(173,115,78,0.28))] blur-2xl" />
           </div>
 
           <div className="relative">
-            <div className="flex justify-center">
+            {/* top row — kicker + live status */}
+            <div className="flex flex-wrap items-center justify-between gap-4">
               <Kicker num="05" text={t.contact.kicker} color="#ad734e" />
+              <span className="glass-soft inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.15em] text-slate-500">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                </span>
+                {t.contact.available} · {profile.location.split(',')[0]} <LocalTime /> WIB
+              </span>
             </div>
-            <h2 className="font-display text-[clamp(32px,6vw,72px)] font-black leading-[0.98] tracking-[-0.02em]">
+
+            {/* heading */}
+            <h2 className="font-display mt-6 max-w-3xl text-[clamp(32px,6vw,68px)] font-black leading-[0.98] tracking-[-0.02em]">
               {t.contact.headingPre}
               <span className="em-serif animated-gradient-text"> {t.contact.headingEm}</span>
             </h2>
-            <p className="font-body mx-auto mt-6 max-w-xl text-lg text-slate-600">
+            <p className="font-body mt-5 max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
               {t.contact.paragraph}
             </p>
 
-            <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-              <a
-                href={`mailto:${profile.email}`}
-                data-magnetic
-                data-cursor="hover"
-                className="cta-shine inline-flex items-center gap-2.5 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-blue-500/30 transition-shadow hover:shadow-blue-500/50"
+            {/* email card + contact links */}
+            <div className="mt-10 grid gap-5 md:grid-cols-5">
+              {/* direct email card */}
+              <div
+                data-spotlight
+                className="glass-news spotlight flex flex-col justify-center rounded-2xl p-6 sm:p-8 md:col-span-3"
               >
-                <Mail className="h-5 w-5" /> {profile.email}
-              </a>
-              <CopyEmailButton />
-            </div>
+                <p className="font-body text-[11px] uppercase tracking-[0.25em] text-slate-400">
+                  {t.contact.emailDirect}
+                </p>
+                <a
+                  href={`mailto:${profile.email}`}
+                  data-cursor="hover"
+                  className="font-display mt-2 break-all text-xl font-black tracking-tight transition-colors hover:text-[color:var(--santa-fe)] sm:text-2xl"
+                >
+                  {profile.email}
+                </a>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <a
+                    href={`mailto:${profile.email}`}
+                    data-magnetic
+                    data-cursor="hover"
+                    className="cta-shine inline-flex items-center gap-2 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-shadow hover:shadow-blue-500/50"
+                  >
+                    <Mail className="h-4 w-4" /> {t.contact.sendEmail}
+                  </a>
+                  <CopyEmailButton />
+                </div>
+              </div>
 
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-              <a
-                href={profile.social.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-cursor="hover"
-                className="glass inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
-              >
-                <Github className="h-4 w-4" /> GitHub
-              </a>
-              <a
-                href={profile.social.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-cursor="hover"
-                className="glass inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
-              >
-                <Linkedin className="h-4 w-4" /> LinkedIn
-              </a>
-              <a
-                href={profile.social.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-cursor="hover"
-                className="glass inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
-              >
-                <Globe className="h-4 w-4" /> Website
-              </a>
-              <a
-                href={profile.cv}
-                download
-                data-cursor="hover"
-                className="glass inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:text-blue-600"
-              >
-                <Download className="h-4 w-4" /> {t.contact.resume}
-              </a>
+              {/* contact links */}
+              <div className="grid gap-3 md:col-span-2">
+                {contactLinks.map((l) => {
+                  const Icon = l.icon;
+                  return (
+                    <a
+                      key={l.label}
+                      href={l.href}
+                      {...(l.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                      {...(l.download ? { download: true } : {})}
+                      data-cursor="hover"
+                      className="group flex items-center gap-3.5 rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface)]/50 px-4 py-3 transition-all hover:-translate-y-0.5 hover:border-[color:var(--santa-fe)] hover:bg-[color:var(--surface)]"
+                    >
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-cyan-400 text-white">
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="font-display block text-sm font-bold leading-tight">{l.label}</span>
+                        <span className="font-body block truncate text-xs text-slate-500">{l.value}</span>
+                      </span>
+                      <ArrowUpRight className="h-4 w-4 shrink-0 text-slate-300 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[color:var(--santa-fe)]" />
+                    </a>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>

@@ -25,15 +25,24 @@ export const profile = {
   yearsExperience: 3,
 } as const;
 
-export const education = [
+export const education: {
+  period: string;
+  school: string;
+  program: string;
+  description: string;
+  // Foto sekolah/kampus. Isi path-nya nanti, mis. "/education/idn.jpg"
+  // (taruh file-nya di folder /public). Kosongkan untuk pakai placeholder.
+  image?: string;
+}[] = [
   {
     period: "2023 — Present",
     school: "IDN Boarding School",
     program: "Software Engineering Specialist Program",
     description:
       "Intensive program focused on full-stack development, mobile engineering, and product thinking.",
+    image: "",
   },
-] as const;
+];
 
 export const experience = [
   {
@@ -140,13 +149,23 @@ export const languages = [
   { name: "English", level: 65, proficiency: "Intermediate" },
 ] as const;
 
-export const certifications = [
+export const certifications: {
+  year: string;
+  title: string;
+  issuer: string;
+  grade: string;
+  link: string;
+  // Foto/scan sertifikatnya. Isi path-nya nanti, mis. "/certs/fullstack.jpg"
+  // (taruh file-nya di folder /public). Kosongkan untuk pakai placeholder.
+  image?: string;
+}[] = [
   {
     year: "2025",
     title: "Fullstack Web Development",
     issuer: "Flexible Kickstart Journal",
     grade: "Excellent",
     link: "https://www.linkedin.com/in/zainul-arkaan-3bb51731a/details/certifications/",
+    image: "",
   },
   {
     year: "2025",
@@ -154,6 +173,7 @@ export const certifications = [
     issuer: "Certified Program",
     grade: "Completed",
     link: "https://www.linkedin.com/in/zainul-arkaan-3bb51731a/details/certifications/",
+    image: "",
   },
   {
     year: "2025",
@@ -161,6 +181,7 @@ export const certifications = [
     issuer: "Dicoding Indonesia",
     grade: "Completed",
     link: "https://www.linkedin.com/in/zainul-arkaan-3bb51731a/details/certifications/",
+    image: "",
   },
   {
     year: "2024",
@@ -168,8 +189,9 @@ export const certifications = [
     issuer: "Dicoding Indonesia",
     grade: "Completed",
     link: "https://www.linkedin.com/in/zainul-arkaan-3bb51731a/details/certifications/",
+    image: "",
   },
-] as const;
+];
 
 export const stats = {
   hoursCoding: 1200,

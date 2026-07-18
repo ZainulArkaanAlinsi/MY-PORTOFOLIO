@@ -14,7 +14,7 @@ export interface AppDict {
   nav: { about: string; skills: string; work: string; journey: string; contact: string; resume: string };
   hero: {
     greeting: string; role: string; subheadline: string;
-    viewProjects: string; contactMe: string; downloadResume: string; buildingWith: string; scroll: string;
+    viewProjects: string; contactMe: string; downloadResume: string; buildingWith: string; scroll: string; dragRotate: string;
   };
   about: {
     volume: string; est: string; edition: string; tags: string;
@@ -27,7 +27,7 @@ export interface AppDict {
   };
   skills: {
     kicker: string; headingPre: string; headingEm: string; note: string;
-    categories: string[]; spotlight: string; topSkill: string; toolsTracked: string; operational: string;
+    categories: string[]; spotlight: string; topSkill: string; toolsTracked: string; operational: string; dragCard: string;
   };
   work: {
     kicker: string; headingPre: string; headingEm: string; more: string; all: string;
@@ -36,11 +36,14 @@ export interface AppDict {
   };
   journey: {
     kicker: string; headingPre: string; headingEm: string; certifications: string; education: string;
-    grades: string[];
+    grades: string[]; photoSlot: string; current: string;
+    certsSub: string; eduSub: string; focus: string; eduFocus: string[];
   };
   contact: {
     kicker: string; headingPre: string; headingEm: string; paragraph: string; resume: string; footerNote: string; copy: string; copied: string;
+    emailDirect: string; sendEmail: string; available: string;
   };
+  statsBand: { years: string; projects: string; tech: string; certs: string };
   // shared dynamic content (by index, matching portfolio.ts arrays)
   exp: { role: string; description: string }[];
   edu: { program: string; description: string };
@@ -62,6 +65,7 @@ const en: AppDict = {
     downloadResume: 'Download Resume',
     buildingWith: 'Building with',
     scroll: 'Scroll',
+    dragRotate: 'Drag to rotate',
   },
   about: {
     volume: 'Vol. I — About',
@@ -100,6 +104,7 @@ const en: AppDict = {
     topSkill: 'Top skill',
     toolsTracked: 'Tools tracked',
     operational: 'operational',
+    dragCard: 'Drag or tap to flip',
   },
   work: {
     kicker: 'Selected work',
@@ -135,6 +140,12 @@ const en: AppDict = {
     certifications: 'Certifications',
     education: 'Education',
     grades: ['Excellent', 'Completed', 'Completed', 'Completed'],
+    photoSlot: 'Photo coming soon',
+    current: 'Ongoing',
+    certsSub: 'Verified courses & credentials I have earned',
+    eduSub: 'Where I am sharpening the craft',
+    focus: 'Focus areas',
+    eduFocus: ['Full-stack development', 'Mobile engineering', 'Product thinking'],
   },
   contact: {
     kicker: 'Get in touch',
@@ -146,7 +157,11 @@ const en: AppDict = {
     footerNote: 'Built with Next.js, Three.js & ☕',
     copy: 'Copy',
     copied: 'Copied!',
+    emailDirect: 'Email me directly',
+    sendEmail: 'Send email',
+    available: 'Available',
   },
+  statsBand: { years: 'Years building', projects: 'Projects shipped', tech: 'Technologies', certs: 'Certifications' },
   exp: [
     {
       role: 'Workshop Instructor',
@@ -186,6 +201,7 @@ const id: AppDict = {
     downloadResume: 'Unduh CV',
     buildingWith: 'Dibangun dengan',
     scroll: 'Gulir',
+    dragRotate: 'Geser untuk memutar',
   },
   about: {
     volume: 'Vol. I — Tentang',
@@ -224,6 +240,7 @@ const id: AppDict = {
     topSkill: 'Skill teratas',
     toolsTracked: 'Jumlah tools',
     operational: 'operasional',
+    dragCard: 'Geser atau ketuk untuk ganti',
   },
   work: {
     kicker: 'Karya pilihan',
@@ -259,6 +276,12 @@ const id: AppDict = {
     certifications: 'Sertifikat',
     education: 'Pendidikan',
     grades: ['Sangat Baik', 'Selesai', 'Selesai', 'Selesai'],
+    photoSlot: 'Foto menyusul',
+    current: 'Berjalan',
+    certsSub: 'Kursus & kredensial terverifikasi yang saya raih',
+    eduSub: 'Tempat saya mengasah keahlian',
+    focus: 'Bidang fokus',
+    eduFocus: ['Pengembangan full-stack', 'Rekayasa mobile', 'Pola pikir produk'],
   },
   contact: {
     kicker: 'Mari terhubung',
@@ -270,7 +293,11 @@ const id: AppDict = {
     footerNote: 'Dibuat dengan Next.js, Three.js & ☕',
     copy: 'Salin',
     copied: 'Tersalin!',
+    emailDirect: 'Email langsung ke saya',
+    sendEmail: 'Kirim email',
+    available: 'Tersedia',
   },
+  statsBand: { years: 'Tahun berkarya', projects: 'Proyek dirilis', tech: 'Teknologi', certs: 'Sertifikat' },
   exp: [
     {
       role: 'Instruktur Workshop',
@@ -310,6 +337,7 @@ const ar: AppDict = {
     downloadResume: 'تحميل السيرة الذاتية',
     buildingWith: 'أبني باستخدام',
     scroll: 'مرّر',
+    dragRotate: 'اسحب للتدوير',
   },
   about: {
     volume: 'العدد الأول — نبذة',
@@ -348,6 +376,7 @@ const ar: AppDict = {
     topSkill: 'أعلى مهارة',
     toolsTracked: 'عدد الأدوات',
     operational: 'يعمل',
+    dragCard: 'اسحب أو انقر للتبديل',
   },
   work: {
     kicker: 'أعمال مختارة',
@@ -383,6 +412,12 @@ const ar: AppDict = {
     certifications: 'الشهادات',
     education: 'التعليم',
     grades: ['ممتاز', 'مكتمل', 'مكتمل', 'مكتمل'],
+    photoSlot: 'الصورة قريبًا',
+    current: 'مستمر',
+    certsSub: 'دورات وشهادات موثّقة حصلت عليها',
+    eduSub: 'حيث أصقل مهاراتي',
+    focus: 'مجالات التركيز',
+    eduFocus: ['تطوير متكامل', 'هندسة الجوال', 'التفكير المنتَجي'],
   },
   contact: {
     kicker: 'تواصل معي',
@@ -394,7 +429,11 @@ const ar: AppDict = {
     footerNote: 'بُني بـ Next.js وThree.js و☕',
     copy: 'نسخ',
     copied: 'تم النسخ!',
+    emailDirect: 'راسلني مباشرة',
+    sendEmail: 'إرسال بريد',
+    available: 'متاح',
   },
+  statsBand: { years: 'سنوات بناء', projects: 'مشاريع منجزة', tech: 'تقنيات', certs: 'شهادات' },
   exp: [
     {
       role: 'مدرّب ورشة',

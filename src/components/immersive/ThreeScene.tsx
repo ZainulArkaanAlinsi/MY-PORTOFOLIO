@@ -69,6 +69,11 @@ export default function ThreeScene() {
 
     // --- Centerpiece group ---
     const group = new THREE.Group();
+    // push it back a touch so it reads as an ambient backdrop, not a shape
+    // fighting the headline for attention. On wide screens shift it to the
+    // right so it haloes the portrait instead of crossing the left-aligned copy.
+    group.position.z = -0.7;
+    group.position.x = isMobile ? 0 : 2.6;
     scene.add(group);
 
     // Warm pearlescent core — glassy, catches the copper/gold/cardinal lights
@@ -193,7 +198,10 @@ export default function ThreeScene() {
 
       group.rotation.y += prefersReduced ? 0.0008 : 0.0035;
       group.rotation.x = Math.sin(t * 0.2) * 0.15;
-      group.position.y = Math.sin(t * 0.6) * 0.25;
+      // seat the centerpiece so its rings frame the composition rather than
+      // crossing the copy — lower & centered on phones, mid-right on desktop
+      // where it sits behind the portrait
+      group.position.y = (isMobile ? -1.25 : -0.15) + Math.sin(t * 0.6) * 0.25;
 
       ring.rotation.z += 0.004;
       ring2.rotation.z -= 0.003;

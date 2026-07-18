@@ -43,7 +43,6 @@ import {
   tools,
 } from "@/data/portfolio";
 
-
 /* ===== Inline brand icons (lucide@1.16 has no Github/Linkedin) ===== */
 const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...props}>
@@ -68,8 +67,6 @@ const CERT_ACCENTS = [
   { color: "#f97316", badge: "🌐" },
   { color: "#a855f7", badge: "🎨" },
 ];
-
-
 
 /* ===== GLSL Shader Sources ===== */
 const VERTEX_SHADER = `
@@ -233,27 +230,30 @@ export default function PortfolioClient({
     return () => cancelAnimationFrame(id);
   }, []);
 
-  useEffect(() => {
-    if (!prayerEnabled) return;
-    if (!activeSection) return;
-    const label = `Praying for ${activeSection}`;
-    requestAnimationFrame(() => {
-      setPrayerText(label);
-      setPrayerVisible(true);
-    });
-    const audio = prayerAudioRef.current;
-    if (audio && userInteracted) {
-      try {
-        audio.currentTime = 0;
-        void audio.play();
-      } catch {
-        // ignore playback errors (autoplay restrictions)
+  useEffect(
+    () => {
+      if (!prayerEnabled) return;
+      if (!activeSection) return;
+      const label = `Praying for ${activeSection}`;
+      requestAnimationFrame(() => {
+        setPrayerText(label);
+        setPrayerVisible(true);
+      });
+      const audio = prayerAudioRef.current;
+      if (audio && userInteracted) {
+        try {
+          audio.currentTime = 0;
+          void audio.play();
+        } catch {
+          // ignore playback errors (autoplay restrictions)
+        }
       }
-    }
-    const t = setTimeout(() => setPrayerVisible(false), 3000);
-    return () => clearTimeout(t);
-  // Keep dependency array size/order stable (Next.js dev hot reload can otherwise warn)
-  }, [activeSection, prayerEnabled, userInteracted] as const);
+      const t = setTimeout(() => setPrayerVisible(false), 3000);
+      return () => clearTimeout(t);
+      // Keep dependency array size/order stable (Next.js dev hot reload can otherwise warn)
+    },
+    [activeSection, prayerEnabled, userInteracted] as const,
+  );
 
   const fullTitle = profile.title;
 
@@ -267,13 +267,7 @@ export default function PortfolioClient({
     totalCommits,
   } = initialGitHubStats;
 
-
   // (Intentionally no mount-only setState; GSAP-like behaviors run in effects below.)
-
-
-
-
-
 
   /* Typing effect */
   useEffect(() => {
@@ -368,7 +362,11 @@ export default function PortfolioClient({
     const gl = canvas.getContext("webgl");
     if (!gl) return;
 
-    const createShader = (gl: WebGLRenderingContext, type: number, source: string) => {
+    const createShader = (
+      gl: WebGLRenderingContext,
+      type: number,
+      source: string,
+    ) => {
       const shader = gl.createShader(type);
       if (!shader) return null;
       gl.shaderSource(shader, source);
@@ -384,7 +382,9 @@ export default function PortfolioClient({
     gl.linkProgram(program);
     gl.useProgram(program);
 
-    const vertices = new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]);
+    const vertices = new Float32Array([
+      -1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1,
+    ]);
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
@@ -436,7 +436,14 @@ export default function PortfolioClient({
 
   /* Scroll progress + active section — rAF-throttled, cached section refs */
   useEffect(() => {
-    const ids = ["hero", "about", "expertise", "experience", "github", "projects"];
+    const ids = [
+      "hero",
+      "about",
+      "expertise",
+      "experience",
+      "github",
+      "projects",
+    ];
     const sectionEls = ids
       .map((id) => document.getElementById(id))
       .filter((el): el is HTMLElement => el !== null);
@@ -496,7 +503,6 @@ export default function PortfolioClient({
       window.removeEventListener("scroll", onScroll);
     };
   }, [motionEnabled, scrollParallaxY]); // include scrollParallaxY to satisfy lint (used in effect)
-  
 
   /* Reveal on scroll — IntersectionObserver replaces per-scroll querySelectorAll */
   useEffect(() => {
@@ -517,7 +523,7 @@ export default function PortfolioClient({
           }
         }
       },
-      { rootMargin: "0px 0px -80px 0px" }
+      { rootMargin: "0px 0px -80px 0px" },
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
@@ -648,7 +654,11 @@ export default function PortfolioClient({
             className="md:hidden p-2 rounded-lg bg-white/10 backdrop-blur border border-white/20 transition-all hover:bg-white/20"
             aria-label="Toggle menu"
           >
-            {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {menuOpen ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <Menu className="w-5 h-5" />
+            )}
           </button>
         </nav>
 
@@ -715,7 +725,11 @@ export default function PortfolioClient({
         >
           <div className="w-28 h-28 sm:w-32 sm:h-32 bg-white/8 backdrop-blur-xl rounded-full border border-white/15 flex items-center justify-center shadow-2xl hover:bg-white/12 hover:scale-105 transition-all duration-300 cursor-default">
             <div className="text-center font-black text-[10px] sm:text-[11px] text-white/85 uppercase leading-tight tracking-wide">
-              IDN<br />Boarding<br />School
+              IDN
+              <br />
+              Boarding
+              <br />
+              School
             </div>
           </div>
         </div>
@@ -740,7 +754,8 @@ export default function PortfolioClient({
           }}
         >
           <div className="px-4 py-2 bg-white/8 backdrop-blur-xl border border-white/15 rounded-xl text-[9px] font-bold text-emerald-300 shadow-xl flex items-center gap-1.5 hover:bg-white/12 hover:scale-105 transition-all cursor-default">
-            <Sparkles className="w-3.5 h-3.5" /> {profile.yearsExperience}+ Years
+            <Sparkles className="w-3.5 h-3.5" /> {profile.yearsExperience}+
+            Years
           </div>
         </div>
 
@@ -762,9 +777,7 @@ export default function PortfolioClient({
               Hello, I am
             </p>
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight leading-[0.95]">
-              <span className="hero-title">
-                {profile.name.toUpperCase()}
-              </span>
+              <span className="hero-title">{profile.name.toUpperCase()}</span>
             </h1>
             <p className="text-white/50 text-xs sm:text-base mt-3 font-medium min-h-[1.6em]">
               {typedText}
@@ -794,15 +807,28 @@ export default function PortfolioClient({
         />
 
         {/* ===== ABOUT (Updated layout) ===== */}
-        <Section id="about" eyebrow="01 — About" title="A bit about me." accent="blue">
+        <Section
+          id="about"
+          eyebrow="01 — About"
+          title="A bit about me."
+          accent="blue"
+        >
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
             <div className="flex flex-col items-center lg:items-start">
               <div className="w-44 h-44 rounded-full overflow-hidden border border-white/6">
-                <Image src={profile.avatar} alt={profile.name} width={176} height={176} className="object-cover" />
+                <Image
+                  src={profile.avatar}
+                  alt={profile.name}
+                  width={176}
+                  height={176}
+                  className="object-cover"
+                />
               </div>
               <h2 className="mt-4 text-xl font-extrabold">{profile.name}</h2>
               <div className="text-zinc-400 mt-1 text-sm">{profile.title}</div>
-              <div className="text-zinc-400 mt-2 text-sm">{profile.location}</div>
+              <div className="text-zinc-400 mt-2 text-sm">
+                {profile.location}
+              </div>
             </div>
 
             <div className="lg:col-span-2">
@@ -812,35 +838,61 @@ export default function PortfolioClient({
 
               <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="bg-white/3 p-4 rounded-lg">
-                  <div className="text-xs text-zinc-300 font-semibold">Hours Coding</div>
-                  <div className="text-2xl font-bold"><AnimatedCounter target={stats.hoursCoding} suffix="+" /></div>
+                  <div className="text-xs text-zinc-300 font-semibold">
+                    Hours Coding
+                  </div>
+                  <div className="text-2xl font-bold">
+                    <AnimatedCounter target={stats.hoursCoding} suffix="+" />
+                  </div>
                 </div>
                 <div className="bg-white/3 p-4 rounded-lg">
-                  <div className="text-xs text-zinc-300 font-semibold">Projects</div>
-                  <div className="text-2xl font-bold"><AnimatedCounter target={stats.projectsCompleted} /></div>
+                  <div className="text-xs text-zinc-300 font-semibold">
+                    Projects
+                  </div>
+                  <div className="text-2xl font-bold">
+                    <AnimatedCounter target={stats.projectsCompleted} />
+                  </div>
                 </div>
                 <div className="bg-white/3 p-4 rounded-lg">
-                  <div className="text-xs text-zinc-300 font-semibold">Technologies</div>
-                  <div className="text-2xl font-bold"><AnimatedCounter target={stats.technologiesMastered} /></div>
+                  <div className="text-xs text-zinc-300 font-semibold">
+                    Technologies
+                  </div>
+                  <div className="text-2xl font-bold">
+                    <AnimatedCounter target={stats.technologiesMastered} />
+                  </div>
                 </div>
               </div>
 
               <div className="mt-6">
-                <h3 className="text-sm font-semibold text-zinc-300">Tools & Skills</h3>
+                <h3 className="text-sm font-semibold text-zinc-300">
+                  Tools & Skills
+                </h3>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {tools.map((t) => (
-                    <span key={t} className="px-2 py-1 bg-white/5 rounded text-sm text-zinc-200">{t}</span>
+                    <span
+                      key={t}
+                      className="px-2 py-1 bg-white/5 rounded text-sm text-zinc-200"
+                    >
+                      {t}
+                    </span>
                   ))}
                 </div>
               </div>
 
               <div className="mt-6">
-                <h3 className="text-sm font-semibold text-zinc-300">Certifications</h3>
+                <h3 className="text-sm font-semibold text-zinc-300">
+                  Certifications
+                </h3>
                 <ul className="mt-2 space-y-2">
                   {certifications.map((c) => (
                     <li key={c.title} className="bg-white/3 p-3 rounded">
-                      <div className="font-semibold">{c.title} <span className="text-xs text-zinc-400">{c.year}</span></div>
-                      <div className="text-sm text-zinc-300">{c.issuer ?? ''}</div>
+                      <div className="font-semibold">
+                        {c.title}{" "}
+                        <span className="text-xs text-zinc-400">{c.year}</span>
+                      </div>
+                      <div className="text-sm text-zinc-300">
+                        {c.issuer ?? ""}
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -1100,7 +1152,8 @@ export default function PortfolioClient({
                 Explore my work by discipline — hover to preview, click to open.
               </p>
               <p className="text-zinc-600 text-xs mt-1 inline-flex items-center gap-1.5">
-                <Target className="w-3 h-3" /> {totalPublicRepos} repositories, grouped across 7 areas.
+                <Target className="w-3 h-3" /> {totalPublicRepos} repositories,
+                grouped across 7 areas.
               </p>
             </div>
             <a
@@ -1170,15 +1223,17 @@ export default function PortfolioClient({
                   icon={<Mail className="w-4 h-4" />}
                   label="Email"
                   value={profile.email}
-                    onCopy={() => copyToClipboard(profile.email, "Email")}
-                    isCopied={copyFeedback === "Email"}
+                  onCopy={() => copyToClipboard(profile.email, "Email")}
+                  isCopied={copyFeedback === "Email"}
                 />
                 <ContactRow
                   icon={<Phone className="w-4 h-4" />}
                   label="Phone"
                   value={profile.phone}
-                    onCopy={() => copyToClipboard(profile.phone.replace(/\s+/g, ""), "Phone")}
-                    isCopied={copyFeedback === "Phone"}
+                  onCopy={() =>
+                    copyToClipboard(profile.phone.replace(/\s+/g, ""), "Phone")
+                  }
+                  isCopied={copyFeedback === "Phone"}
                 />
                 <ContactRow
                   icon={<MapPin className="w-4 h-4" />}
@@ -1204,7 +1259,6 @@ export default function PortfolioClient({
       </main>
 
       <CinematicFooter />
-
     </div>
   );
 }
@@ -1274,8 +1328,10 @@ const SECTION_BG: Record<
     textDark: "text-white",
   },
   contact: {
-    light: "bg-gradient-to-br from-blue-50/70 via-white to-white",
-    dark: "bg-gradient-to-br from-blue-400/10 via-[#0b1120] to-[#0b1120]",
+    light:
+      "bg-[radial-gradient(circle_at_top_right,_rgba(59,130,246,.15),transparent_35%),radial-gradient(circle_at_bottom_left,_rgba(6,182,212,.15),transparent_35%),linear-gradient(to_bottom_right,#ffffff,#f8fbff)]",
+
+    dark: "bg-[radial-gradient(circle_at_top_right,_rgba(59,130,246,.20),transparent_35%),radial-gradient(circle_at_bottom_left,_rgba(139,92,246,.18),transparent_40%),linear-gradient(to_bottom_right,#020617,#0b1120,#020617)]",
     textLight: "text-zinc-900",
     textDark: "text-white",
   },
@@ -1366,32 +1422,81 @@ function ContactRow({
 }) {
   const content = (
     <>
-      <span className="w-10 h-10 rounded-lg border border-white/10 bg-white/5 flex items-center justify-center shrink-0 text-blue-300">
-        {icon}
-      </span>
+      <div className="relative">
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/30 via-cyan-400/20 to-purple-500/20 blur-lg opacity-0 group-hover:opacity-100 transition duration-500" />
+
+        <div className="relative flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500/20 via-cyan-400/10 to-blue-500/10 border border-white/10 text-cyan-300 shadow-lg">
+          {icon}
+        </div>
+      </div>
+
       <div className="flex-1 min-w-0">
-        <div className="text-[10px] uppercase tracking-wider text-zinc-500 font-bold">
+        <div className="uppercase tracking-[0.25em] text-[10px] font-bold text-zinc-500">
           {label}
         </div>
-        <div className="text-sm text-white font-semibold truncate">{value}</div>
+
+        <div className="text-white font-semibold truncate mt-1">{value}</div>
       </div>
+
       {onCopy ? (
         <button
           onClick={(e) => {
             e.preventDefault();
             onCopy();
           }}
-          className={`p-2 rounded-md transition-all ${isCopied ? "text-emerald-400 bg-emerald-500/10" : "text-zinc-500 hover:text-white hover:bg-white/10"}`}
+          className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 ${
+            isCopied
+              ? "bg-emerald-500/15 text-emerald-400"
+              : "bg-white/5 text-zinc-500 hover:bg-blue-500/10 hover:text-blue-300"
+          }`}
         >
-          {isCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+          {isCopied ? (
+            <Check className="w-4 h-4" />
+          ) : (
+            <Copy className="w-4 h-4" />
+          )}
         </button>
       ) : (
-        href && <ArrowUpRight className="w-4 h-4 text-zinc-500 shrink-0" />
+        href && (
+          <ArrowUpRight className="w-5 h-5 text-zinc-500 group-hover:text-cyan-300 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-300" />
+        )
       )}
     </>
   );
-  const base =
-    "flex items-center gap-3 rounded-xl border border-white/10 bg-white/3 px-4 py-3 hover:border-blue-400/30 hover:bg-white/5 transition-colors";
+
+  const base = `
+group
+relative
+overflow-hidden
+flex
+items-center
+gap-4
+
+rounded-2xl
+
+border
+border-white/10
+
+bg-white/[0.04]
+backdrop-blur-2xl
+
+px-5
+py-4
+
+transition-all
+duration-500
+ease-out
+
+hover:-translate-y-1
+hover:scale-[1.02]
+
+hover:border-cyan-400/40
+
+hover:bg-white/[0.06]
+
+hover:shadow-[0_20px_60px_rgba(59,130,246,.18)]
+`;
+
   return href ? (
     <a
       href={href}
@@ -1399,9 +1504,15 @@ function ContactRow({
       rel="noopener noreferrer"
       className={base}
     >
-      {content}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-gradient-to-r from-blue-500/5 via-cyan-500/5 to-purple-500/5" />
+
+      <div className="relative flex items-center gap-4 w-full">{content}</div>
     </a>
   ) : (
-    <div className={base}>{content}</div>
+    <div className={base}>
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-gradient-to-r from-blue-500/5 via-cyan-500/5 to-purple-500/5" />
+
+      <div className="relative flex items-center gap-4 w-full">{content}</div>
+    </div>
   );
 }

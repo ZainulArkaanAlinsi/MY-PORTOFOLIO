@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Layers, Server, Smartphone } from 'lucide-react';
 import { skillGroups } from '@/data/portfolio';
 import TechIcon from './TechIcon';
+import LanguageDeck from './LanguageDeck';
 import { useT } from '@/i18n/provider';
 
 const RADIUS = 46;
@@ -34,6 +35,7 @@ export default function SkillStudio() {
         <div className="w-[min(560px,92vw)]">
           <div className="dev-screen">
             <span className="dev-cam" />
+            <span className="dev-glare" />
             <div className="flex flex-col bg-[var(--surface)] p-5 text-slate-800 sm:p-6">
               {/* window bar */}
               <div className="mb-4 flex items-center justify-between">
@@ -127,12 +129,22 @@ export default function SkillStudio() {
               </div>
             </div>
           </div>
-          <div className="dev-deck mx-auto" />
+          {/* base — hinge + aluminium bottom case */}
+          <div className="dev-base">
+            <div className="dev-hinge" />
+            <div className="dev-deck" />
+          </div>
         </div>
 
         {/* ===== PHONE (companion) ===== */}
-        <div className="dev-phone z-20 w-[176px] shrink-0 lg:-ml-16 lg:mb-10">
+        <div className="dev-phone-wrap z-20 w-[176px] shrink-0 lg:-ml-8 lg:mb-10">
+          {/* titanium side buttons */}
+          <span className="dev-btn dev-btn-vol-1" />
+          <span className="dev-btn dev-btn-vol-2" />
+          <span className="dev-btn dev-btn-power" />
+          <div className="dev-phone">
           <span className="dev-island" />
+          <span className="dev-glare" />
           <div
             className="flex flex-col px-4 pb-5 pt-9 text-white"
             style={{ background: 'linear-gradient(165deg, #ad734e, #6d4730 65%, #451d07)' }}
@@ -182,7 +194,13 @@ export default function SkillStudio() {
               </div>
             </div>
           </div>
+          </div>
         </div>
+      </div>
+
+      {/* ===== LANGUAGES — fanned, flippable card deck ===== */}
+      <div className="relative z-10 mt-10 sm:mt-14">
+        <LanguageDeck />
       </div>
     </div>
   );

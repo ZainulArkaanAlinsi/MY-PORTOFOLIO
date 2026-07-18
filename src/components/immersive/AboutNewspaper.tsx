@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { MapPin, Briefcase, Star, Sparkle } from 'lucide-react';
-import { profile, experience, stats, tools } from '@/data/portfolio';
+import { MapPin, Briefcase, Star, Sparkle, Clock, Rocket, Layers } from 'lucide-react';
+import { profile, stats } from '@/data/portfolio';
 import AnimatedCounter from '@/components/AnimatedCounter';
 import Typewriter from './Typewriter';
-import TechIcon from './TechIcon';
+import LanyardCard from './LanyardCard';
+import ToolSphere from './ToolSphere';
 import { useApp } from '@/i18n/provider';
 
 const DATE_LOCALE: Record<string, string> = { id: 'id-ID', en: 'en-GB', ar: 'ar' };
@@ -95,57 +95,19 @@ export default function AboutNewspaper() {
             </div>
           </article>
 
-          {/* portrait + fact rail */}
+          {/* lanyard ID card + fact rail */}
           <aside className="lg:col-span-5">
             <div className="space-y-10">
-              <figure data-reveal className="group relative">
-                <div className="gradient-border overflow-hidden p-1.5">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={profile.avatar}
-                    alt={profile.name}
-                    className="aspect-4/5 w-full rounded-[0.9rem] object-cover transition-[filter] duration-700 ease-out [filter:grayscale(0.4)_contrast(1.05)_sepia(0.12)] group-hover:[filter:none]"
-                    data-parallax="0.08"
-                  />
-                  <span className="pointer-events-none absolute right-3 top-3 rounded-full bg-[color:var(--rebel)]/75 px-2.5 py-1 font-body text-[9px] font-bold uppercase tracking-[0.2em] text-[color:var(--merino)] opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-                    {t.about.frontPage}
-                  </span>
-                </div>
-
-                <div className="glass animate-float absolute -left-4 -top-4 rounded-2xl px-4 py-2.5">
-                  <p className="font-display text-xs font-bold text-[color:var(--santa-fe)]">
-                    Flutter · Next.js
-                  </p>
-                </div>
-                <div className="glass absolute -bottom-5 -right-4 rounded-2xl px-4 py-3">
-                  <p className="font-display text-sm font-bold text-[color:var(--rebel)]">
-                    {profile.shortName}
-                  </p>
-                  <p className="font-body text-xs text-slate-500">{t.availability}</p>
-                </div>
-
-                {/* draggable polaroid */}
-                <motion.div
-                  drag
-                  dragSnapToOrigin
-                  dragElastic={0.2}
-                  whileDrag={{ scale: 1.06, rotate: 0, zIndex: 50 }}
-                  className="grab absolute -bottom-10 -left-8 hidden w-28 -rotate-6 rounded-sm bg-white p-2 pb-6 shadow-xl shadow-[rgba(69,29,7,0.3)] sm:block"
-                  style={{ touchAction: 'none' }}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/arkaan22.png"
-                    alt=""
-                    aria-hidden
-                    className="aspect-square w-full object-cover"
-                    draggable={false}
-                  />
-                  <figcaption className="font-body absolute inset-x-0 bottom-1 text-center text-[9px] font-semibold uppercase tracking-wider text-slate-400">
-                    {t.about.dragMe}
-                  </figcaption>
-                </motion.div>
-              </figure>
+              <div data-reveal>
+                <LanyardCard
+                  photo={profile.avatar}
+                  name={profile.name.split(' ')[0]}
+                  lastName={profile.name.split(' ').slice(1).join(' ')}
+                  role={t.hero.role}
+                  brand={profile.handle}
+                  dragHint={t.about.dragMe}
+                />
+              </div>
 
               {/* fact file */}
               <div data-reveal data-spotlight className="glass-news spotlight rounded-3xl p-7">
@@ -189,66 +151,79 @@ export default function AboutNewspaper() {
           </footer>
         </blockquote>
 
-        {/* ===== DAILY TOOLS ===== */}
-        <div data-reveal data-spotlight className="glass-news spotlight mt-20 rounded-3xl p-7 sm:p-9">
-          <p className="font-body mb-6 text-center text-[11px] font-bold uppercase tracking-[0.3em] text-[color:var(--santa-fe)]">
-            {t.about.dailyTools}
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-9 gap-y-6">
-            {tools.map((tool) => (
-              <div
-                key={tool}
-                className="flex w-16 flex-col items-center gap-2 transition-transform duration-300 hover:-translate-y-1.5"
-              >
-                <TechIcon name={tool} size={34} className="transition-transform duration-300 hover:scale-110" />
-                <span className="font-body text-center text-[10px] leading-tight text-slate-500">{tool}</span>
-              </div>
-            ))}
+        {/* ===== DAILY TOOLS — interactive 3D tool sphere ===== */}
+        <div
+          data-reveal
+          className="relative mt-20 overflow-hidden rounded-[2rem] border border-[rgba(255,255,255,0.07)] bg-[linear-gradient(160deg,#2c1a0f,#150d07)] p-7 text-center shadow-[0_40px_70px_-40px_rgba(69,29,7,0.7)] sm:p-10"
+        >
+          {/* faint grid + vignette so the tiles read like they float in space */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0 opacity-[0.13]"
+            style={{
+              backgroundImage:
+                'linear-gradient(rgba(219,210,148,0.55) 1px,transparent 1px),linear-gradient(90deg,rgba(219,210,148,0.55) 1px,transparent 1px)',
+              backgroundSize: '42px 42px',
+            }}
+          />
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,transparent,rgba(0,0,0,0.6))]"
+          />
+          <div className="relative">
+            <p className="font-body text-[11px] font-bold uppercase tracking-[0.3em] text-[color:var(--santa-fe)]">
+              {t.about.dailyTools}
+            </p>
+            <ToolSphere />
+            <p className="font-body -mt-1 inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.24em] text-[rgba(245,235,226,0.5)]">
+              <span aria-hidden>✦</span> {t.about.dragMe}
+            </p>
           </div>
         </div>
 
-        {/* ===== CAREER DISPATCHES ===== */}
-        <div className="mt-24">
-          <div data-reveal className="mb-10 flex items-center gap-4">
-            <h4 className="font-serif text-2xl font-black uppercase tracking-tight text-[color:var(--rebel)]">
-              {t.about.recentDispatches}
-            </h4>
-            <span className="h-px flex-1 bg-[var(--line)]" />
-          </div>
-
-          <div data-reveal-stagger className="grid gap-6 sm:grid-cols-3">
-            {experience.slice(0, 3).map((exp, i) => (
-              <article key={`${exp.company}-${i}`} data-stagger-item data-spotlight className="glass-news spotlight flex flex-col rounded-3xl p-7">
-                <div className="mb-3 flex items-center justify-between">
-                  <span className="font-body text-[10px] font-bold uppercase tracking-[0.3em] text-[color:var(--cardinal)]">
-                    {t.about.kickers[i] ?? 'Notes'}
-                  </span>
-                  <span className="font-body text-[11px] font-semibold text-slate-400">{exp.period}</span>
-                </div>
-                <h5 className="font-serif text-xl font-black leading-tight text-[color:var(--rebel)]">
-                  {t.exp[i]?.role ?? exp.role}
-                </h5>
-                <p className="font-body mt-0.5 text-sm font-semibold text-[color:var(--santa-fe)]">{exp.company}</p>
-                <p className="font-body mt-3 text-sm leading-relaxed text-slate-600">
-                  {t.exp[i]?.description ?? exp.description}
-                </p>
-              </article>
-            ))}
-          </div>
-        </div>
-
-        {/* ===== STAT STRIP ===== */}
-        <div data-reveal-stagger className="mt-16 grid grid-cols-3 gap-6">
+        {/* ===== STAT STRIP — editorial counter cards ===== */}
+        <div data-reveal-stagger className="mt-16 grid grid-cols-3 gap-3 sm:gap-6">
           {[
-            { target: profile.yearsExperience, suffix: '+', label: t.about.statYears },
-            { target: stats.projectsCompleted, suffix: '+', label: t.about.statProjects },
-            { target: stats.technologiesMastered, suffix: '+', label: t.about.statTech },
-          ].map((s) => (
-            <div key={s.label} data-stagger-item data-spotlight className="glass-news spotlight rounded-3xl px-4 py-7 text-center">
-              <div className="text-gradient font-display text-4xl font-black sm:text-5xl">
+            { target: profile.yearsExperience, suffix: '+', label: t.about.statYears, Icon: Clock },
+            { target: stats.projectsCompleted, suffix: '+', label: t.about.statProjects, Icon: Rocket },
+            { target: stats.technologiesMastered, suffix: '+', label: t.about.statTech, Icon: Layers },
+          ].map((s, i) => (
+            <div
+              key={s.label}
+              data-stagger-item
+              data-spotlight
+              className="stat-card group spotlight relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(160deg,var(--surface),var(--surface-2))] px-3 py-5 shadow-[0_20px_44px_-26px_rgba(69,29,7,0.45)] transition-[transform,box-shadow] duration-300 hover:-translate-y-1.5 hover:shadow-[0_30px_54px_-24px_rgba(69,29,7,0.5)] sm:rounded-3xl sm:px-6 sm:py-8"
+            >
+              {/* oversized ghost numeral */}
+              <span
+                aria-hidden
+                className="font-display pointer-events-none absolute -right-2 -top-7 select-none text-[6.5rem] font-black leading-none text-[rgba(173,115,78,0.07)] sm:-right-3 sm:-top-8 sm:text-[8rem]"
+              >
+                {i + 1}
+              </span>
+
+              {/* icon chip + index */}
+              <div className="relative flex items-center justify-between">
+                <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[rgba(209,35,35,0.1)] text-[color:var(--cardinal)] transition-colors duration-300 group-hover:bg-[rgba(209,35,35,0.16)] sm:h-11 sm:w-11">
+                  <s.Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                </span>
+                <span className="font-mono hidden text-[10px] font-semibold uppercase tracking-[0.25em] text-slate-400 sm:inline">
+                  0{i + 1}<span className="text-slate-300"> / 03</span>
+                </span>
+              </div>
+
+              {/* animated number */}
+              <div className="font-display relative mt-5 text-4xl font-black tabular-nums text-[color:var(--cardinal)] sm:mt-7 sm:text-6xl">
                 <AnimatedCounter target={s.target} suffix={s.suffix} />
               </div>
-              <div className="font-body mt-2 text-[11px] uppercase tracking-[0.2em] text-slate-500">{s.label}</div>
+
+              {/* accent bar (widens on hover) */}
+              <div className="mt-3 h-1 w-9 rounded-full bg-[color:var(--cardinal)] transition-all duration-300 group-hover:w-16" />
+
+              {/* label */}
+              <div className="font-body relative mt-3 text-[9px] font-semibold uppercase tracking-[0.08em] text-[color:var(--muted)] sm:text-[11px] sm:tracking-[0.2em]">
+                {s.label}
+              </div>
             </div>
           ))}
         </div>

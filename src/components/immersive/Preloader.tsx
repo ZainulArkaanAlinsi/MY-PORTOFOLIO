@@ -2,27 +2,31 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useT } from '@/i18n/provider';
 
+/**
+ * Playful doodle preloader — a sketchy progress bar with a snail riding the
+ * fill edge, a percentage that trails it, and a bouncy "Loading……" caption.
+ * When it reaches 100 the whole curtain slides up to reveal the hero.
+ */
 export default function Preloader({ onDone }: { onDone: () => void }) {
   const [count, setCount] = useState(0);
   const [leaving, setLeaving] = useState(false);
-  const t = useT();
 
   useEffect(() => {
     let current = 0;
+    let timer: number;
     const tick = () => {
-      // ease-out increments toward 100
-      const step = Math.max(1, Math.round((100 - current) * 0.06));
+      // ease-out increments toward 100 (kept a touch slow so the snail shows)
+      const step = Math.max(1, Math.round((100 - current) * 0.045));
       current = Math.min(100, current + step);
       setCount(current);
       if (current < 100) {
-        timer = window.setTimeout(tick, 60);
+        timer = window.setTimeout(tick, 62);
       } else {
-        window.setTimeout(() => setLeaving(true), 350);
+        window.setTimeout(() => setLeaving(true), 500);
       }
     };
-    let timer = window.setTimeout(tick, 200);
+    timer = window.setTimeout(tick, 220);
     return () => window.clearTimeout(timer);
   }, []);
 
@@ -36,17 +40,39 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
         if (leaving) onDone();
       }}
     >
-      <div className="font-display text-7xl font-black tabular-nums text-gradient sm:text-8xl">
-        {count}
-      </div>
-      <div className="mt-8 h-px w-56 overflow-hidden bg-slate-900/10 sm:w-72">
+      <div className="relative w-[280px] -rotate-[1.5deg] sm:w-[360px]">
+        {/* percentage + little arrow that trail the snail */}
         <div
-          className="h-full bg-linear-to-r from-blue-500 to-cyan-400 transition-[width] duration-100 ease-out"
-          style={{ width: `${count}%` }}
-        />
+          className="absolute -top-11 flex items-start gap-0.5"
+          style={{ left: `${count}%`, transform: 'translateX(-8%)' }}
+        >
+          <span className="font-display text-lg font-black tabular-nums text-[color:var(--santa-fe)]">
+            {count}%
+          </span>
+          <span className="mt-2 text-sm text-[color:var(--santa-fe)]">↙</span>
+        </div>
+
+        {/* snail riding the leading edge of the fill */}
+        <div
+          className="absolute -top-4 z-10 text-3xl leading-none transition-[left] duration-150 ease-linear"
+          style={{ left: `${count}%`, transform: 'translateX(-62%) scaleX(-1)' }}
+          aria-hidden="true"
+        >
+          🐌
+        </div>
+
+        {/* sketchy track */}
+        <div className="relative h-6 w-full overflow-hidden rounded-full border-[3px] border-[color:var(--foreground)] bg-[color:var(--surface)]">
+          <div
+            className="h-full rounded-full bg-[color:var(--muted)] transition-[width] duration-150 ease-linear"
+            style={{ width: `${count}%` }}
+          />
+        </div>
       </div>
-      <p className="font-body mt-5 text-[11px] uppercase tracking-[0.4em] text-slate-400">
-        {t.preloader}
+
+      <p className="mt-9 font-display text-2xl font-black uppercase tracking-[0.28em] text-[color:var(--foreground)]">
+        Loading
+        <span className="animate-pulse text-[color:var(--santa-fe)]">……</span>
       </p>
     </motion.div>
   );

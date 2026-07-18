@@ -266,6 +266,12 @@ html.dark .grain {
 .animate-marquee-left { animation: marquee-left 32s linear infinite; }
 .animate-marquee-right { animation: marquee-right 32s linear infinite; }
 
+/* soft fade at both ends of a marquee row */
+.marquee-fade {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+
 /* little nudging arrow that hints the work gallery scrolls sideways */
 @keyframes marquee-hint {
   0%, 100% { transform: translateX(0); }
@@ -420,6 +426,90 @@ html.dark .spotlight::after {
   pointer-events: none;
   z-index: 0;
 }
+
+/* Hero legibility veil — a soft radial wash of the page colour sits between
+   the busy WebGL centerpiece and the hero copy, so the name/role read crisp
+   while the 3D still glows through at the edges. Static (no motion cost). */
+.hero-veil {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(1280px, 98vw);
+  height: 84%;
+  z-index: 5;
+  pointer-events: none;
+  background: radial-gradient(
+    56% 60% at 50% 48%,
+    rgba(247, 239, 230, 0.85) 0%,
+    rgba(247, 239, 230, 0.68) 34%,
+    rgba(247, 239, 230, 0.32) 56%,
+    rgba(247, 239, 230, 0) 78%
+  );
+}
+html.dark .hero-veil {
+  background: radial-gradient(
+    56% 60% at 50% 48%,
+    rgba(22, 15, 10, 0.86) 0%,
+    rgba(22, 15, 10, 0.7) 34%,
+    rgba(22, 15, 10, 0.34) 56%,
+    rgba(22, 15, 10, 0) 78%
+  );
+}
+/* Phones: the hero column is taller, so widen + strengthen the veil to keep
+   the 3D centerpiece a soft ambient wash behind the longer copy. */
+@media (pointer: coarse) {
+  .hero-veil {
+    height: 94%;
+    background: radial-gradient(
+      72% 62% at 50% 50%,
+      rgba(247, 239, 230, 0.9) 0%,
+      rgba(247, 239, 230, 0.75) 42%,
+      rgba(247, 239, 230, 0.4) 64%,
+      rgba(247, 239, 230, 0) 82%
+    );
+  }
+  html.dark .hero-veil {
+    background: radial-gradient(
+      72% 62% at 50% 50%,
+      rgba(22, 15, 10, 0.9) 0%,
+      rgba(22, 15, 10, 0.76) 42%,
+      rgba(22, 15, 10, 0.42) 64%,
+      rgba(22, 15, 10, 0) 82%
+    );
+  }
+}
+
+/* Stats band — big animated numbers on frosted tiles. A gradient hairline on
+   top and a slow sheen give the row a premium, "dashboard" feel. */
+.stat-tile {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.stat-tile::before {
+  content: "";
+  position: absolute;
+  inset-inline: 14%;
+  top: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--santa-fe), var(--cardinal), transparent);
+  opacity: 0.75;
+}
+.stat-num {
+  background: linear-gradient(135deg, #8f5d3e 0%, #ad734e 46%, #c0492e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-variant-numeric: tabular-nums;
+}
+html.dark .stat-num {
+  background: linear-gradient(135deg, #dbc9a0 0%, #d3a078 46%, #e35454 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 /* oversized watermark number behind a section */
 .section-watermark {
   font-family: var(--font-display), sans-serif;
@@ -478,6 +568,229 @@ html.dark .spotlight::after {
   z-index: 1;
   pointer-events: none;
   margin-top: -7px;
+}
+
+/* ===================================================================
+   CREDENTIAL WALL / EDUCATION  (Journey — framed photo slots)
+   Matted "print" wells that reserve generous, good-looking space for
+   the real certificate scans / campus photos the user drops in later.
+   =================================================================== */
+/* inset print well — soft mat board with a subtle top light */
+.photo-well {
+  background:
+    radial-gradient(120% 90% at 50% -10%, rgba(173, 115, 78, 0.08), transparent 62%),
+    linear-gradient(135deg, var(--surface), var(--surface-2));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 0 0 1px rgba(69, 29, 7, 0.05);
+}
+html.dark .photo-well {
+  background:
+    radial-gradient(120% 90% at 50% -10%, rgba(219, 210, 148, 0.06), transparent 62%),
+    linear-gradient(135deg, var(--surface), var(--surface-2));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* diagonal light-sweep that crosses a frame once on hover */
+.frame-sheen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.frame-sheen::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 45%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transform: translateX(-180%) skewX(-15deg);
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.group:hover .frame-sheen::before {
+  transform: translateX(320%) skewX(-15deg);
+}
+
+/* ===================================================================
+   RETRO CRT  (hero — warm amber phosphor terminal)
+   =================================================================== */
+.crt-screen {
+  background:
+    radial-gradient(120% 120% at 50% -10%, rgba(255, 180, 80, 0.06), transparent 60%),
+    #160c05;
+  box-shadow:
+    inset 0 0 55px rgba(0, 0, 0, 0.9),
+    inset 0 0 14px rgba(255, 176, 80, 0.14);
+}
+.crt-text {
+  color: #ffb45a;
+  text-shadow: 0 0 6px rgba(255, 160, 60, 0.5), 0 0 2px rgba(255, 205, 130, 0.4);
+}
+.crt-text-dim {
+  color: rgba(255, 180, 90, 0.55);
+}
+.crt-text-ok {
+  color: #cfe08a;
+  text-shadow: 0 0 6px rgba(180, 200, 90, 0.5);
+}
+/* interlaced scanlines */
+.crt-scanlines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0) 0 2px, rgba(0, 0, 0, 0.26) 2px 3px);
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  opacity: 0.6;
+  z-index: 2;
+}
+/* travelling scan glow */
+.crt-sweep::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -35%;
+  height: 35%;
+  background: linear-gradient(to bottom, rgba(255, 190, 90, 0.07), transparent);
+  animation: crt-sweep 6s linear infinite;
+  pointer-events: none;
+  z-index: 3;
+}
+@keyframes crt-sweep {
+  0% { top: -35%; }
+  100% { top: 100%; }
+}
+.crt-flicker { animation: crt-flicker 4s infinite steps(1); }
+@keyframes crt-flicker {
+  0%, 96%, 100% { opacity: 1; }
+  97% { opacity: 0.9; }
+  98% { opacity: 0.98; }
+  99% { opacity: 0.93; }
+}
+.crt-caret { animation: crt-blink 1.05s steps(1) infinite; }
+@keyframes crt-blink {
+  0%, 50% { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
+
+/* scroll cue — dot glides down the capsule and fades, capsule breathes */
+.scroll-dot { animation: scroll-dot 1.9s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+@keyframes scroll-dot {
+  0% { opacity: 0; transform: translateY(0); }
+  20% { opacity: 1; }
+  70% { opacity: 1; transform: translateY(12px); }
+  100% { opacity: 0; transform: translateY(14px); }
+}
+.scroll-cue { animation: scroll-cue-float 2.6s ease-in-out infinite; }
+@keyframes scroll-cue-float {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, 4px); }
+}
+
+/* ===================================================================
+   SCRAPBOOK HERO  (playful desk collage — warm, not pink)
+   =================================================================== */
+/* graph-paper desk the computer sits on */
+.grid-paper {
+  background-color: var(--merino);
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+/* polaroid photo card */
+.polaroid {
+  background: var(--surface);
+  padding: 7px 7px 24px;
+  border-radius: 3px;
+  box-shadow:
+    0 14px 30px -14px rgba(69, 29, 7, 0.55),
+    0 3px 8px -3px rgba(69, 29, 7, 0.3);
+}
+.polaroid .frame {
+  display: block;
+  overflow: hidden;
+  border-radius: 1px;
+}
+.polaroid img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.polaroid figcaption {
+  margin-top: 8px;
+  text-align: center;
+}
+/* frosted glass slab the computer sits on — blurs the grid paper behind it.
+   The one static backdrop-filter here; animated scraps stay blur-free so
+   nothing re-rasterizes a blur every frame while scrolling. */
+.glass-slab {
+  background: linear-gradient(135deg, rgba(255, 252, 247, 0.55), rgba(245, 235, 226, 0.3));
+  backdrop-filter: blur(10px) saturate(135%);
+  -webkit-backdrop-filter: blur(10px) saturate(135%);
+  border: 1px solid rgba(255, 252, 247, 0.72);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 34px 64px -34px rgba(69, 29, 7, 0.42);
+}
+/* sticky note (solid paper-yellow) with a folded corner — no blur (it bobs) */
+.sticky-note {
+  position: relative;
+  background: var(--deco);
+  border: 1px solid rgba(255, 252, 247, 0.35);
+  box-shadow: 0 10px 22px -10px rgba(69, 29, 7, 0.5);
+}
+.sticky-note::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  border-width: 0 0 14px 14px;
+  border-style: solid;
+  border-color: transparent transparent rgba(69, 29, 7, 0.14) rgba(0, 0, 0, 0);
+}
+/* strip of translucent tape */
+.tape {
+  position: absolute;
+  height: 20px;
+  width: 58px;
+  background: rgba(245, 235, 226, 0.5);
+  border-left: 1px dashed rgba(69, 29, 7, 0.14);
+  border-right: 1px dashed rgba(69, 29, 7, 0.14);
+  box-shadow: 0 1px 2px rgba(69, 29, 7, 0.14);
+}
+/* pushpin head */
+.pushpin {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #ff7a6a, var(--cardinal));
+  box-shadow: 0 2px 3px rgba(69, 29, 7, 0.45), inset 0 -1px 2px rgba(0, 0, 0, 0.25);
+}
+/* starburst seal (the </> sticker) */
+.starburst {
+  clip-path: polygon(
+    50% 0%, 61% 20%, 84% 15%, 79% 39%, 100% 50%, 79% 61%,
+    84% 85%, 61% 80%, 50% 100%, 39% 80%, 16% 85%, 21% 61%,
+    0% 50%, 21% 39%, 16% 15%, 39% 20%
+  );
+}
+/* resume paper feeding out of the slot — solid (it bobs, so no blur) */
+.resume-strip {
+  background:
+    repeating-linear-gradient(var(--surface) 0 15px, #f6ede0 15px 16px);
+  box-shadow: 0 16px 34px -16px rgba(69, 29, 7, 0.5);
+}
+/* gentle idle bob for pinned scraps (staggered via inline delay) */
+.scrap-bob { animation: scrap-bob 6s ease-in-out infinite; }
+@keyframes scrap-bob {
+  0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+  50% { transform: translateY(-6px) rotate(var(--rot, 0deg)); }
 }
 
 /* ===================================================================
@@ -657,71 +970,161 @@ html.dark .spotlight::after {
   transition: stroke-dashoffset 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ---- Flat device frames (precise, no fragile 3D) ---- */
+/* ---- Device mockups — realistic laptop + phone (flat, no fragile 3D) ---- */
+
+/* LAPTOP — the lid / display */
 .dev-screen {
   position: relative;
-  border: 14px solid #241910;
-  border-radius: 22px;
-  background: #120d09;
+  border: 12px solid #221710;
+  border-top-width: 15px;
+  border-radius: 20px 20px 7px 7px;
+  background: #0e0a06;
   overflow: hidden;
   box-shadow:
-    0 50px 90px -34px rgba(69, 29, 7, 0.55),
-    0 12px 26px -12px rgba(69, 29, 7, 0.3);
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 54px 92px -34px rgba(69, 29, 7, 0.55),
+    0 14px 28px -14px rgba(69, 29, 7, 0.32);
 }
+/* webcam dot centred in the top bezel */
 .dev-cam {
   position: absolute;
-  top: 5px;
+  top: -10px;
   left: 50%;
   transform: translateX(-50%);
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background: #4a3526;
-  z-index: 10;
+  background: radial-gradient(circle at 40% 35%, #7a5a44, #241910 70%);
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.06);
+  z-index: 12;
 }
-/* laptop hinge / deck */
+/* diagonal glass glare — sells the screen as glass without hurting legibility */
+.dev-glare {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  background: linear-gradient(
+    118deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.06) 13%,
+    transparent 30%
+  );
+  mix-blend-mode: soft-light;
+}
+
+/* LAPTOP — base assembly (hinge + aluminium bottom case) */
+.dev-base {
+  position: relative;
+}
+/* hinge band the lid closes onto */
+/* hinge — full-width dark strip the lid closes onto (no gap to the screen) */
+.dev-hinge {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  height: 7px;
+  border-radius: 0 0 4px 4px;
+  background: linear-gradient(#241812, #100b06);
+}
+/* aluminium bottom case — a wide, rounded slab with a lit top edge, a shaded
+   underside (implies thickness) and a front finger-groove */
 .dev-deck {
   position: relative;
-  left: -6%;
-  width: 112%;
-  height: 16px;
-  background: linear-gradient(#e9dccb, #cdb6a0);
-  border-radius: 0 0 16px 16px;
-  clip-path: polygon(1.5% 0, 98.5% 0, 100% 100%, 0 100%);
-  box-shadow: 0 20px 30px -16px rgba(69, 29, 7, 0.4);
+  left: -7%;
+  width: 114%;
+  height: 21px;
+  border-radius: 2px 2px 12px 12px;
+  background: linear-gradient(180deg, #f6ead9 0%, #e3ceb7 34%, #cbb197 72%, #b4957b 100%);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -4px 7px -3px rgba(69, 29, 7, 0.42),
+    0 24px 32px -18px rgba(69, 29, 7, 0.5);
 }
+/* front finger-groove notch (used to lift the lid) */
 .dev-deck::before {
   content: "";
   position: absolute;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 22%;
-  height: 5px;
+  width: 18%;
+  height: 6px;
   border-radius: 0 0 8px 8px;
-  background: rgba(69, 29, 7, 0.22);
+  background: linear-gradient(#b1937a, #866a54);
 }
-/* phone */
+html.dark .dev-deck {
+  background: linear-gradient(180deg, #ead9c4 0%, #d3ba9f 34%, #b89b80 72%, #9e8067 100%);
+}
+html.dark .dev-screen,
+html.dark .dev-phone {
+  border-color: #2b1e15;
+}
+html.dark .dev-screen {
+  box-shadow:
+    0 0 0 1px rgba(245, 235, 226, 0.06),
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 54px 92px -30px rgba(0, 0, 0, 0.72),
+    0 14px 28px -14px rgba(0, 0, 0, 0.5);
+}
+html.dark .dev-phone {
+  box-shadow:
+    0 0 0 1px rgba(245, 235, 226, 0.07),
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 44px 72px -24px rgba(0, 0, 0, 0.72),
+    0 12px 24px -10px rgba(0, 0, 0, 0.5);
+}
+
+/* PHONE */
+.dev-phone-wrap {
+  position: relative;
+}
 .dev-phone {
   position: relative;
-  border: 9px solid #241910;
-  border-radius: 40px;
-  background: #120d09;
+  z-index: 2;
+  border: 8px solid #201510;
+  border-radius: 46px;
+  background: #0e0a06;
   overflow: hidden;
   box-shadow:
-    0 40px 70px -26px rgba(69, 29, 7, 0.6),
-    0 10px 22px -10px rgba(69, 29, 7, 0.35);
+    0 0 0 1px rgba(255, 255, 255, 0.07) inset,
+    0 44px 72px -26px rgba(69, 29, 7, 0.6),
+    0 12px 24px -10px rgba(69, 29, 7, 0.35);
+}
+/* titanium side buttons — on the wrapper so overflow:hidden never clips them */
+.dev-btn {
+  position: absolute;
+  z-index: 1;
+  width: 3px;
+  border-radius: 3px;
+  background: linear-gradient(#3a2a1e, #17100b);
+}
+.dev-btn-power {
+  right: -3px;
+  top: 33%;
+  height: 14%;
+}
+.dev-btn-vol-1 {
+  left: -3px;
+  top: 25%;
+  height: 8%;
+}
+.dev-btn-vol-2 {
+  left: -3px;
+  top: 36%;
+  height: 8%;
 }
 .dev-island {
   position: absolute;
   top: 10px;
   left: 50%;
   transform: translateX(-50%);
-  width: 52px;
+  width: 50px;
   height: 15px;
   border-radius: 999px;
-  background: #0c0805;
-  z-index: 10;
+  background: #0a0705;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+  z-index: 12;
 }
 
 /* ===================================================================
@@ -819,6 +1222,11 @@ html.dark .text-stroke { -webkit-text-stroke-color: rgba(245, 235, 226, 0.22); }
     -webkit-backdrop-filter: none;
     background: rgba(255, 250, 243, 0.85);
   }
+  .glass-slab {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: linear-gradient(135deg, rgba(255, 252, 247, 0.85), rgba(245, 235, 226, 0.7));
+  }
   .glass-news,
   .glass-news:hover {
     backdrop-filter: none;
@@ -858,6 +1266,13 @@ html.dark .text-stroke { -webkit-text-stroke-color: rgba(245, 235, 226, 0.22); }
   }
   .shine-card::before { transition: none !important; display: none; }
   .cta-shine::after { animation: none !important; display: none; }
+  .frame-sheen::before { transition: none !important; display: none; }
+  .crt-flicker { animation: none !important; }
+  .crt-caret { animation: none !important; }
+  .crt-sweep::before { animation: none !important; display: none; }
+  .scroll-dot { animation: none !important; }
+  .scroll-cue { animation: none !important; }
+  .scrap-bob { animation: none !important; }
   .spotlight::after { transition: none !important; }
   .glow-card,
   .glow-card:hover { transition: none !important; transform: none !important; }
