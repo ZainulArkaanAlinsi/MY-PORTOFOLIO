@@ -44,10 +44,11 @@ export default function RetroComputer3D() {
     const camera = new THREE.PerspectiveCamera(30, width / height, 0.1, 100);
     camera.position.set(1.2, 1.85, 8.8);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: !isMobile, alpha: true });
-    // Kept light: capped DPR (fewer fragments = the biggest scroll-cost lever),
-    // no realtime shadow pass (fake contact blob instead), IBL baked once.
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.3 : 1.5));
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    // The canvas is small (and paused off-screen), so a crisp DPR is affordable
+    // even on phones — DPR 1.3 made it look pixelated ("pecah") on hi-DPI screens.
+    // Cap at 2 (mobile) / 1.75 (desktop): sharp, still no realtime shadow pass.
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 2 : 1.75));
     renderer.setSize(width, height);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;

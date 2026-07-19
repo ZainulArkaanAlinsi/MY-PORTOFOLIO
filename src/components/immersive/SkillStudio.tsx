@@ -76,7 +76,7 @@ export default function SkillStudio() {
               </div>
 
               {/* skill bars — hover / tap to mirror on the phone */}
-              <div key={active} className="grid grid-cols-2 gap-x-3 gap-y-2">
+              <div key={active} className="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2">
                 {items.map((s, i) => {
                   const on = selected.name === s.name;
                   return (
@@ -93,16 +93,16 @@ export default function SkillStudio() {
                       }`}
                       style={{ animationDelay: `${i * 0.06}s` }}
                     >
-                      <div className="mb-1.5 flex items-center justify-between">
+                      <div className="mb-1.5 flex items-center justify-between gap-2">
                         <span
-                          className={`flex items-center gap-2 text-[13px] font-bold ${
+                          className={`flex min-w-0 items-center gap-2 text-[13px] font-bold ${
                             on ? 'text-[color:var(--cardinal)]' : 'text-[color:var(--rebel)]'
                           }`}
                         >
                           <TechIcon name={s.name} size={16} />
-                          {s.name}
+                          <span className="truncate">{s.name}</span>
                         </span>
-                        <span className="font-mono text-[11px] text-[color:var(--cardinal)]">{s.level}%</span>
+                        <span className="shrink-0 font-mono text-[11px] text-[color:var(--cardinal)]">{s.level}%</span>
                       </div>
                       <div className="h-2 overflow-hidden rounded-full bg-[rgba(69,29,7,0.1)]">
                         <div

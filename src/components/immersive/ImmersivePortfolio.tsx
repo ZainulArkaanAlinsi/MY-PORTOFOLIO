@@ -495,7 +495,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
             className="liquid-target relative z-10 text-center font-display font-black leading-[0.82] tracking-[-0.02em]"
             style={fancyFx ? { filter: 'url(#liquid)' } : undefined}
           >
-            <span className="block text-stroke-accent text-[clamp(40px,8.5vw,104px)]">
+            <span className="block text-[color:var(--rebel)] text-[clamp(40px,8.5vw,104px)]">
               <SplitText text={profile.shortName} />
             </span>
             <span className="em-serif animated-gradient-text mt-1 block text-[clamp(26px,5.5vw,60px)]">
@@ -1118,7 +1118,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                 <a
                   href={`mailto:${profile.email}`}
                   data-cursor="hover"
-                  className="font-display mt-2 break-all text-xl font-black tracking-tight transition-colors hover:text-[color:var(--santa-fe)] sm:text-2xl"
+                  className="font-display mt-2 break-all text-base font-black tracking-tight transition-colors hover:text-[color:var(--santa-fe)] sm:text-2xl"
                 >
                   {profile.email}
                 </a>
