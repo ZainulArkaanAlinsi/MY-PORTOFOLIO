@@ -247,10 +247,12 @@ export const featuredProjects: readonly FeaturedProject[] = [
     year: "2025",
     category: "Mobile App",
     summary:
-      "A Flutter app for a reading room / library — browse the catalogue, borrow books, and keep track of reading in a clean, focused mobile UI.",
+      "A Flutter app for a library / reading room — create an account, browse the catalogue, borrow a title and read it in the app's own reader, with the catalogue and accounts served over a REST API.",
     impact:
-      "Made borrowing and tracking books simple straight from a phone.",
-    stack: ["Flutter", "Dart", "Firebase"],
+      "Put the whole loop — find a book, borrow it, read it — on a phone, with nothing to hand back at a counter.",
+    // Not Firebase: this app has no Firebase dependency at all. It talks to a
+    // REST API through `http` and keeps session state in shared_preferences.
+    stack: ["Flutter", "Dart", "REST API"],
     accent: "from-violet-400 to-blue-500",
     github: `${GH}/peminjaman_tempat_baca-buku`,
   },
@@ -259,9 +261,9 @@ export const featuredProjects: readonly FeaturedProject[] = [
     year: "2025",
     category: "Mobile App",
     summary:
-      "A Flutter news reader that pulls the latest headlines from selected countries via a live news API — browse, search, and read full articles.",
+      "A Flutter news reader pulling live headlines from selected countries — trending and latest feeds, search, saved favourites, and the full article one tap away.",
     impact:
-      "Delivered fresh, country-filtered headlines with a smooth, readable flow.",
+      "Delivered fresh, country-filtered headlines with a smooth, readable flow — and a place to keep the ones worth coming back to.",
     stack: ["Flutter", "Dart", "REST API"],
     accent: "from-emerald-400 to-cyan-400",
     github: `${GH}/NEWS_APP_2025`,
@@ -271,9 +273,9 @@ export const featuredProjects: readonly FeaturedProject[] = [
     year: "2025",
     category: "Mobile App",
     summary:
-      "A clean Flutter Qur'an app for reading surahs on mobile, with the interface continually being refined for a calmer reading experience.",
+      "A Flutter Qur'an app for reading and listening — surah text alongside audio recitation, with search and bookmarks, in a calm interface that keeps being refined.",
     impact:
-      "A calm, focused Qur'an reading experience for daily use.",
+      "A quiet place to read or listen daily, and to pick up exactly where the last session ended.",
     stack: ["Flutter", "Dart", "REST API"],
     accent: "from-violet-400 to-emerald-400",
     github: `${GH}/Qur-an_App`,
