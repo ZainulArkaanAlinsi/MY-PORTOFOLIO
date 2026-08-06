@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { Menu, X, Mail, Download, ArrowUpRight } from 'lucide-react';
 import { profile } from '@/data/portfolio';
+import { lockScroll, unlockScroll } from '@/lib/scroll-lock';
 import { useT } from '@/i18n/provider';
 
 type NavLink = { label: string; href: string };
@@ -21,17 +22,16 @@ export default function MobileNav({ links, active }: { links: NavLink[]; active?
   const itemsRef = useRef<HTMLDivElement>(null);
   const mounted = useRef(false);
 
-  // lock body scroll + close on Escape while open
+  // lock scrolling + close on Escape while open
   useEffect(() => {
     if (!open) return;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    lockScroll();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false);
     };
     window.addEventListener('keydown', onKey);
     return () => {
-      document.body.style.overflow = prevOverflow;
+      unlockScroll();
       window.removeEventListener('keydown', onKey);
     };
   }, [open]);
@@ -103,19 +103,22 @@ export default function MobileNav({ links, active }: { links: NavLink[]; active?
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? 'Close menu' : 'Open menu'}
         aria-expanded={open}
-        className="flex h-8 w-8 items-center justify-center rounded-full border border-[rgba(69,29,7,0.12)] bg-[var(--surface)]/60 text-slate-600 transition-colors hover:text-[color:var(--santa-fe)] lg:hidden"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-[rgba(69,29,7,0.12)] bg-[var(--surface)]/60 text-slate-600 transition-colors hover:text-[color:var(--santa-fe)] lg:hidden"
       >
-        {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+        {open ? <X className="h-4.5 w-4.5" /> : <Menu className="h-4.5 w-4.5" />}
       </button>
 
+      {/* `mnav-panel` hides the panel in CSS from the very first paint: GSAP
+          only gets to hide it in an effect, which left a full-screen blurred
+          sheet covering the page until hydration finished. `inert` keeps the
+          closed menu's links out of the tab order and away from the pointer. */}
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-hidden={!open}
-        className={`fixed inset-0 z-[70] flex flex-col overflow-hidden bg-[color:var(--background)]/95 px-6 pb-10 pt-24 backdrop-blur-xl lg:hidden ${
-          open ? '' : 'pointer-events-none'
-        }`}
+        inert={!open}
+        className="mnav-panel fixed inset-0 z-[70] flex flex-col overflow-hidden bg-[color:var(--background)]/95 px-6 pb-10 pt-24 backdrop-blur-xl lg:hidden"
       >
         <div className="dot-grid pointer-events-none absolute inset-0 opacity-50" />
         <div className="pointer-events-none absolute -right-16 top-10 h-64 w-64 rounded-full bg-[color:var(--santa-fe)]/15 blur-3xl" />

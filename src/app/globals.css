@@ -165,6 +165,18 @@ html.dark .grain {
 }
 
 /* ===================================================================
+   MOBILE NAV PANEL
+   Initial hidden state lives here, not in JS: the panel is server-rendered
+   full-screen, and GSAP can only hide it once its effect runs — which left a
+   blurred sheet over the whole page until hydration. GSAP's inline styles
+   (autoAlpha) override these on open, so it stays in charge afterwards.
+   =================================================================== */
+.mnav-panel {
+  visibility: hidden;
+  opacity: 0;
+}
+
+/* ===================================================================
    CUSTOM CURSOR (magnetic — hero & interactive elements)
    =================================================================== */
 .cursor-none,

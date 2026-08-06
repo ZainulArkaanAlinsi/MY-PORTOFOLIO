@@ -22,23 +22,63 @@ import { useApp } from '@/i18n/provider';
  * fake contact shadow, cap DPR + ~60fps, build the env map once, render straight
  * to the canvas (transparent bg), and pause the loop entirely off-screen.
  */
-export default function RetroComputer3D() {
+export default function RetroComputer3D({ active = true }: { active?: boolean }) {
   const mountRef = useRef<HTMLDivElement | null>(null);
   const { t } = useApp();
   const tRef = useRef(t);
   const redrawRef = useRef<((cursor?: boolean) => void) | null>(null);
   const [showHint, setShowHint] = useState(true);
+  // Orbiting is a mouse-only affordance: a one-finger drag on a phone has to
+  // stay a page scroll (see `canOrbit` below), so the hint would be a lie.
+  const [canOrbit, setCanOrbit] = useState(false);
+  const [booted, setBooted] = useState(false);
+
+  // Mouse pointers get the grab cursor and the "drag to rotate" chip; touch
+  // devices get neither, because orbiting is disabled there so swipes scroll.
+  // Deferred a frame so this never sets state straight from an effect body.
+  useEffect(() => {
+    const id = requestAnimationFrame(() =>
+      setCanOrbit(!window.matchMedia('(pointer: coarse)').matches)
+    );
+    return () => cancelAnimationFrame(id);
+  }, []);
+
+  // Booting the scene (env map + two procedural textures + ~60 meshes) is a
+  // solid block of main-thread work. Running it during load starved every timer
+  // and animation frame on the page — the preloader could not even finish
+  // counting. It now waits for `active` (the preloader being gone) and then for
+  // an idle slot, so the CRT fades in over an already-interactive hero.
+  useEffect(() => {
+    if (!active) return;
+    const ric = (window as typeof window & {
+      requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    });
+    const go = () => setBooted(true);
+    if (ric.requestIdleCallback) {
+      const id = ric.requestIdleCallback(go, { timeout: 800 });
+      return () => ric.cancelIdleCallback?.(id);
+    }
+    const id = window.setTimeout(go, 200);
+    return () => clearTimeout(id);
+  }, [active]);
 
   useEffect(() => {
+    if (!booted) return;
     const mount = mountRef.current;
     if (!mount) return;
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const isMobile =
-      window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768;
+    // Touch devices never orbit: OrbitControls takes a pointer capture and sets
+    // `touch-action: none`, which turned this 330px-tall block into a dead zone
+    // where the page could not be scrolled at all.
+    const coarse = window.matchMedia('(pointer: coarse)').matches;
+    const isMobile = coarse || window.innerWidth < 768;
 
     let width = mount.clientWidth;
     let height = mount.clientHeight;
+    // a zero-size mount would make camera.aspect NaN and blank the canvas
+    if (width < 1 || height < 1) return;
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(30, width / height, 0.1, 100);
@@ -451,6 +491,14 @@ export default function RetroComputer3D() {
 
     // ---- controls (rotate only; limits keep the pretty front in view) ----
     const controls = new OrbitControls(camera, renderer.domElement);
+    // OrbitControls forces `touch-action: none` on its element. On a phone that
+    // swallows every vertical swipe that starts on the computer, so the page
+    // cannot be scrolled past the hero. Hand scrolling back to the browser.
+    if (coarse) {
+      controls.enabled = false;
+      renderer.domElement.style.touchAction = 'pan-y';
+      mount.style.touchAction = 'pan-y';
+    }
     controls.enableDamping = true;
     controls.dampingFactor = 0.09;
     controls.enablePan = false;
@@ -478,13 +526,6 @@ export default function RetroComputer3D() {
     controls.addEventListener('end', () => {
       if (!reduced) swayTarget = 1;
     });
-
-    // blinking caret
-    let cursorOn = true;
-    const blink = window.setInterval(() => {
-      cursorOn = !cursorOn;
-      draw(cursorOn);
-    }, 540);
 
     // ---- render loop ----
     // Desktop runs at the display's native refresh (rAF follows the monitor).
@@ -529,14 +570,30 @@ export default function RetroComputer3D() {
     );
     io.observe(mount);
 
+    // blinking caret — skipped while the loop is parked (off-screen / hidden
+    // tab) so we don't keep repainting and re-uploading a texture nobody sees
+    let cursorOn = true;
+    const blink = window.setInterval(() => {
+      if (!running) return;
+      cursorOn = !cursorOn;
+      draw(cursorOn);
+    }, 540);
+
+    // Track the element, not the window: on phones the address bar sliding away
+    // fires `resize` constantly (re-laying out the canvas for nothing), while a
+    // container that changes width without a window resize was never picked up.
     const onResize = () => {
-      width = mount.clientWidth;
-      height = mount.clientHeight;
+      const w = mount.clientWidth;
+      const h = mount.clientHeight;
+      if (w < 1 || h < 1 || (w === width && h === height)) return;
+      width = w;
+      height = h;
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
     };
-    window.addEventListener('resize', onResize);
+    const ro = new ResizeObserver(onResize);
+    ro.observe(mount);
 
     // auto-dismiss the drag hint after a beat even without interaction
     const hintTimer = window.setTimeout(dismissHint, 4200);
@@ -547,8 +604,8 @@ export default function RetroComputer3D() {
       clearInterval(blink);
       clearTimeout(hintTimer);
       io.disconnect();
+      ro.disconnect();
       document.removeEventListener('visibilitychange', onVis);
-      window.removeEventListener('resize', onResize);
       controls.dispose();
       redrawRef.current = null;
       scene.traverse((o) => {
@@ -568,7 +625,7 @@ export default function RetroComputer3D() {
       renderer.dispose();
       if (renderer.domElement.parentNode === mount) mount.removeChild(renderer.domElement);
     };
-  }, []);
+  }, [booted]);
 
   useEffect(() => {
     tRef.current = t;
@@ -577,15 +634,19 @@ export default function RetroComputer3D() {
 
   return (
     <div className="relative mx-auto w-full">
+      {/* `touch-action` is set from the effect: `pan-y` on touch devices so a
+          swipe here scrolls the page instead of being swallowed by the canvas. */}
       <div
         ref={mountRef}
-        className="relative mx-auto h-[330px] w-full cursor-grab touch-none active:cursor-grabbing sm:h-[420px]"
+        className={`relative mx-auto h-[330px] w-full transition-opacity duration-700 sm:h-[min(420px,40vh)] ${
+          booted ? 'opacity-100' : 'opacity-0'
+        } ${canOrbit ? 'cursor-grab touch-none active:cursor-grabbing' : ''}`}
       />
       {/* auto-hiding drag affordance — a chip, not a permanent caption */}
       <div
         aria-hidden
         className={`pointer-events-none absolute left-1/2 top-3 -translate-x-1/2 rounded-full bg-[color:var(--rebel)]/8 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.22em] text-slate-500 backdrop-blur-sm transition-opacity duration-700 ${
-          showHint ? 'opacity-100' : 'opacity-0'
+          showHint && canOrbit ? 'opacity-100' : 'opacity-0'
         }`}
       >
         <span className="animate-pulse">⟳</span> {t.hero.dragRotate}

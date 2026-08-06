@@ -35,8 +35,10 @@ export default function LanguageDeck() {
 
   return (
     <div className="flex flex-col items-center">
+      {/* Narrower on phones: the cards fan 64px to the right, so at 240px wide
+          the back card ran past the screen edge and got clipped. */}
       <div
-        className="relative h-[300px] w-[240px] cursor-pointer select-none"
+        className="relative h-[290px] w-[205px] cursor-pointer select-none sm:h-[300px] sm:w-[240px]"
         style={{ perspective: '1200px' }}
         onClick={cycle}
         role="button"

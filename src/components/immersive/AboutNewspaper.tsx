@@ -13,11 +13,15 @@ const DATE_LOCALE: Record<string, string> = { id: 'id-ID', en: 'en-GB', ar: 'ar'
 
 export default function AboutNewspaper() {
   const { t, lang } = useApp();
+  // Pinned to Asia/Jakarta: this masthead is the Bekasi edition, and without a
+  // fixed zone the server (UTC) and a reader in WIB disagree about the date for
+  // seven hours every evening — a hydration mismatch on the headline.
   const today = new Date().toLocaleDateString(DATE_LOCALE[lang] ?? 'en-GB', {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
     year: 'numeric',
+    timeZone: 'Asia/Jakarta',
   });
 
   // Live "edition" clock — ticks every second. Client-only (set after mount)
@@ -30,6 +34,7 @@ export default function AboutNewspaper() {
           hour: '2-digit',
           minute: '2-digit',
           second: '2-digit',
+          timeZone: 'Asia/Jakarta',
         })
       );
     tick();

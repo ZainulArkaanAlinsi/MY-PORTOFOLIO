@@ -35,11 +35,15 @@ export default function RepoShot({
       className={`overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-[0_24px_50px_-30px_rgba(69,29,7,0.5)] ${className}`}
     >
       {/* browser chrome */}
+      {/* `min-w-0` is load-bearing: a flex item defaults to `min-width: auto`,
+          so `truncate` could not shrink the URL pill and the whole card grew to
+          454px inside a 390px phone — the preview was cut off at the screen
+          edge. `shrink-0` keeps the traffic lights round while it truncates. */}
       <div className="flex items-center gap-1.5 border-b border-[rgba(69,29,7,0.1)] bg-[var(--surface-2)] px-3.5 py-2.5">
-        <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--santa-fe)]" />
-        <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--deco)]" />
-        <span className="h-2.5 w-2.5 rounded-full bg-[color:var(--cardinal)]" />
-        <span className="ml-3 truncate rounded-md bg-[var(--surface)] px-2 py-0.5 font-mono text-[10px] text-slate-400">
+        <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[color:var(--santa-fe)]" />
+        <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[color:var(--deco)]" />
+        <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[color:var(--cardinal)]" />
+        <span className="ml-3 min-w-0 truncate rounded-md bg-[var(--surface)] px-2 py-0.5 font-mono text-[10px] text-slate-400">
           {or ? `github.com/${or.owner}/${or.repo}` : 'preview'}
         </span>
       </div>

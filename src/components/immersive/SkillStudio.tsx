@@ -31,8 +31,11 @@ export default function SkillStudio() {
       <div className="glow-orb bottom-[4%] right-[12%] h-80 w-80 bg-cyan-200/50" />
 
       <div className="relative flex flex-col items-center justify-center gap-12 lg:flex-row lg:items-end lg:gap-0">
-        {/* ===== LAPTOP ===== */}
-        <div className="w-[min(560px,92vw)]">
+        {/* ===== LAPTOP =====
+            86vw, not 92vw: `.dev-deck` is drawn 114% wide (the aluminium base
+            is wider than the lid), so at 92vw both of its corners ran off the
+            screen and were shaved flat by the page's overflow clip. */}
+        <div className="w-[min(560px,86vw)]">
           <div className="dev-screen">
             <span className="dev-cam" />
             <span className="dev-glare" />

@@ -20,7 +20,7 @@ export default function LangThemeControls() {
               data-cursor="hover"
               aria-label={l.name}
               aria-pressed={on}
-              className={`rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-wider transition-colors ${
+              className={`flex min-h-[32px] min-w-[34px] items-center justify-center rounded-full px-2 text-[10px] font-bold uppercase tracking-wider transition-colors ${
                 on
                   ? 'bg-[color:var(--santa-fe)] text-white'
                   : 'text-slate-500 hover:text-[color:var(--santa-fe)]'
@@ -37,7 +37,7 @@ export default function LangThemeControls() {
         onClick={toggleTheme}
         data-cursor="hover"
         aria-label="Toggle dark mode"
-        className="flex h-8 w-8 items-center justify-center rounded-full border border-[rgba(69,29,7,0.12)] bg-[var(--surface)]/60 text-slate-600 transition-colors hover:text-[color:var(--santa-fe)]"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-[rgba(69,29,7,0.12)] bg-[var(--surface)]/60 text-slate-600 transition-colors hover:text-[color:var(--santa-fe)]"
       >
         {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
       </button>

@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
+import { registerLenis } from '@/lib/scroll-lock';
 
 /**
  * Buttery smooth scrolling via Lenis, wired into GSAP.
@@ -29,6 +30,8 @@ export default function SmoothScroll() {
       smoothWheel: true,
       wheelMultiplier: 1,
     });
+    // let the mobile menu (and anything else) lock scrolling through Lenis
+    registerLenis(lenis);
 
     // keep ScrollTrigger in lock-step with the smoothed scroll
     const onScroll = () => ScrollTrigger.update();
@@ -64,6 +67,7 @@ export default function SmoothScroll() {
       document.removeEventListener('click', onClick);
       gsap.ticker.remove(onTick);
       lenis.off('scroll', onScroll);
+      registerLenis(null);
       lenis.destroy();
       gsap.ticker.lagSmoothing(500, 33);
     };

@@ -46,8 +46,13 @@ const LANGUAGE_COLORS: Record<string, string> = {
   Flutter: '#1389FD',
 };
 
+// The real account. Used as the default and as a rescue when a misconfigured
+// GITHUB_USERNAME 404s — a wrong value in the environment used to silently
+// downgrade the whole Work section to placeholder repos.
+const DEFAULT_USERNAME = 'ZainulArkaanAlinsi';
+
 export async function getGithubProjects(): Promise<Project[]> {
-  const username = process.env.GITHUB_USERNAME || 'ZainulArkaanAlinsi';
+  const username = process.env.GITHUB_USERNAME || DEFAULT_USERNAME;
   const token = process.env.GITHUB_TOKEN;
 
   const headers: Record<string, string> = {
@@ -58,17 +63,29 @@ export async function getGithubProjects(): Promise<Project[]> {
     headers.Authorization = `token ${token}`;
   }
 
-  try {
+  const fetchRepos = async (user: string) => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 6000);
+    try {
+      return await fetch(`https://api.github.com/users/${user}/repos?sort=updated&per_page=30`, {
+        headers,
+        signal: controller.signal,
+        next: { revalidate: 3600 },
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  };
 
-    const res = await fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=30`, {
-      headers,
-      signal: controller.signal,
-      next: { revalidate: 3600 },
-    });
+  try {
+    let res = await fetchRepos(username);
 
-    clearTimeout(timeoutId);
+    if (res.status === 404 && username !== DEFAULT_USERNAME) {
+      console.warn(
+        `GITHUB_USERNAME="${username}" does not exist on GitHub — retrying with ${DEFAULT_USERNAME}.`
+      );
+      res = await fetchRepos(DEFAULT_USERNAME);
+    }
 
     if (!res.ok) {
       throw new Error(`GitHub API returned status ${res.status}`);

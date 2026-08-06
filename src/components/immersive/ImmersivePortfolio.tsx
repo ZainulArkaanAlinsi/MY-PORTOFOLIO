@@ -187,6 +187,14 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
     { icon: Download, label: t.contact.resume, value: 'PDF', href: profile.cv, external: false, download: true },
   ];
 
+  // Failsafe: whatever happens inside the preloader, the visitor gets the page.
+  // A curtain that never lifts is the worst possible failure mode here.
+  useEffect(() => {
+    if (ready) return;
+    const id = window.setTimeout(() => setReady(true), 4000);
+    return () => clearTimeout(id);
+  }, [ready]);
+
   // Enable GPU-heavy flourishes (the liquid hero-title filter) only on
   // capable, non-touch, wide screens — keeps phones smooth.
   useEffect(() => {
@@ -443,10 +451,13 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
         </div>
       </nav>
 
-      {/* ===== HERO — retro-terminal statement + warm CRT over a dot grid ===== */}
+      {/* ===== HERO — retro-terminal statement + warm CRT over a dot grid =====
+          `sm:pt-20`: on a 1366×768 laptop the poster ran long enough to push
+          "View Projects" below the fold. Together with the 3D stage being capped
+          at 40vh, the whole hero now fits a short laptop screen. */}
       <header
         id="top"
-        className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-6 pb-16 pt-28 text-center sm:pt-24"
+        className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden px-6 pb-16 pt-28 text-center sm:pt-20"
       >
         <div className="dot-grid pointer-events-none absolute inset-0 opacity-50" />
         {/* soft warm glows — no hard shapes */}
@@ -514,8 +525,15 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
           {/* POSTER STAGE — scrapbook desk: the interactive computer pinned into
               a warm collage (graph-paper slab, polaroids, sticky notes, a code
               sticker + a resume feeding out of the slot). Scraps are decorative
-              and desktop-only so mobile stays calm (low cognitive load). */}
-          <div className="relative mt-3 w-full">
+              and desktop-only so mobile stays calm (low cognitive load).
+
+              `order-last` below `xl`: the computer sat between the role and the
+              buttons, which pushed "View Projects" clean off a 390×664 phone —
+              a visitor landed with nothing to act on. Now the read is name →
+              role → buttons, with the desk below as the reward. From `xl` (where
+              the scraps and the full poster composition live) the original
+              order returns. */}
+          <div className="relative order-last mt-10 w-full xl:order-none xl:mt-3">
             {/* graph-paper desk slab */}
             <div
               aria-hidden
@@ -530,8 +548,9 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
             />
 
             {/* the interactive computer */}
+            {/* booted only once the preloader is gone — see RetroComputer3D */}
             <div data-hero-line className="relative z-10 mx-auto w-full max-w-[560px]">
-              <RetroComputer3D />
+              <RetroComputer3D active={ready} />
             </div>
 
             {/* resume feeding out of the front slot */}
@@ -552,8 +571,12 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
               </div>
             </div>
 
-            {/* ===== scrapbook scraps — desktop only, decorative ===== */}
-            <div aria-hidden className="pointer-events-none absolute inset-0 z-20 hidden lg:block">
+            {/* ===== scrapbook scraps — desktop only, decorative =====
+                `xl`, not `lg`: the collage stacks three scraps down each side and
+                needs the stage to be reasonably tall. In a 1024-wide window the
+                scraps switched on while the stage was at its shortest, and they
+                collided. Below `xl` the same facts appear in the meta line. */}
+            <div aria-hidden className="pointer-events-none absolute inset-0 z-20 hidden xl:block">
               {/* years — taped index card (static: it's a glass blur, so no bob) */}
               <div
                 className="glass absolute left-[1%] top-[6%] -rotate-[5deg] rounded-xl px-4 py-2.5 text-center"
@@ -605,9 +628,12 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                 </div>
               </div>
 
-              {/* scene polaroid — warm 'journey' */}
+              {/* scene polaroid — warm 'journey'. The right-hand column stacks
+                  three scraps, and the stage is only ~307px tall on a 1366×768
+                  laptop, so this one is sized and placed to clear the sticky
+                  note above it and the projects card below at every height. */}
               <div
-                className="scrap-bob absolute right-[3%] top-[44%] w-24"
+                className="scrap-bob absolute right-[3%] top-[38%] w-20"
                 style={{ ['--rot' as string]: '7deg', animationDelay: '1.3s' }}
               >
                 <figure className="polaroid">
@@ -634,7 +660,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
 
               {/* projects — taped index card (static: it's a glass blur, so no bob) */}
               <div
-                className="glass absolute right-[1%] top-[74%] rotate-[4deg] rounded-xl px-4 py-2.5 text-center"
+                className="glass absolute right-[1%] top-[80%] rotate-[4deg] rounded-xl px-4 py-2.5 text-center"
               >
                 <p className="stat-num font-display text-2xl font-black leading-none">{stats.projectsCompleted}+</p>
                 <p className="font-mono mt-1 text-[9px] uppercase tracking-[0.2em] text-slate-400">projects</p>
@@ -642,10 +668,11 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
             </div>
           </div>
 
-          {/* meta (mobile only) */}
+          {/* meta — carries the location / years / edition facts whenever the
+              scrapbook scraps that normally show them are hidden (below xl) */}
           <div
             data-hero-line
-            className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 lg:hidden"
+            className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 xl:hidden"
           >
             <span>{profile.location}</span>
             <span className="text-[color:var(--santa-fe)]">·</span>
@@ -758,8 +785,14 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                   data-reveal
                   className="group grid items-center gap-8 md:grid-cols-2 md:gap-12 lg:gap-16"
                 >
-                  {/* preview — matte gradient frame with a subtle cursor tilt */}
-                  <div className={`relative isolate ${flip ? 'md:order-2' : ''}`}>
+                  {/* preview — matte gradient frame with a subtle cursor tilt.
+                      `min-w-0`: a grid item defaults to `min-width: auto`, so the
+                      repo URL in the preview's chrome bar (white-space: nowrap)
+                      blew the single mobile column out to 454px inside a 342px
+                      grid — the card was silently sliced off at the screen edge.
+                      Zeroing it lets the track take the container width and the
+                      URL truncate as intended. */}
+                  <div className={`relative isolate min-w-0 ${flip ? 'md:order-2' : ''}`}>
                     <span className="section-watermark pointer-events-none absolute -top-12 -left-2 -z-10 text-[7rem] leading-none sm:text-[10rem]">
                       {String(i + 1).padStart(2, '0')}
                     </span>
@@ -774,7 +807,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                   </div>
 
                   {/* details */}
-                  <div className={`relative ${flip ? 'md:order-1' : ''}`}>
+                  <div className={`relative min-w-0 ${flip ? 'md:order-1' : ''}`}>
                     <div className={`mb-5 h-1.5 w-16 rounded-full bg-linear-to-r ${p.accent}`} />
                     <div className="mb-3 flex flex-wrap items-center gap-3">
                       {i === 0 && (
