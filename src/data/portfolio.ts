@@ -219,20 +219,16 @@ export const featuredProjects: readonly FeaturedProject[] = [
   {
     name: "Absensi Karyawan JNE Martapura",
     year: "2026",
-    category: "Web · Admin Dashboard",
+    category: "Mobile + Web · Attendance System",
     summary:
-      "A web-based employee attendance system for the JNE Martapura branch. Staff attendance across working days is recorded and monitored by admins through a real-time dashboard.",
+      "A face-recognition and GPS attendance system for JNE, built with a team of three. Staff clock in from a Flutter Android app that verifies their face and location, while HR follows the day live on a Next.js dashboard, all on a Firebase Firestore + Cloud Functions backend.",
     impact:
-      "Replaced manual attendance with a monitored dashboard — admins track daily presence and recaps at a glance.",
-    stack: ["Next.js", "TypeScript", "Tailwind CSS", "REST API"],
+      "Turned attendance into something provable rather than reported — a check-in has to match a face and a place, and HR gets the daily recap without chasing anyone.",
+    stack: ["Flutter", "Next.js", "Firebase", "TypeScript"],
     accent: "from-blue-500 to-cyan-400",
-    // The preview card prints this URL in full (it only truncates on phones),
-    // so the old "JNT" slug showed the wrong courier's name right under a
-    // heading that says JNE. Requires the GitHub repo to be renamed to match —
-    // GitHub keeps a permanent redirect from the old name, so renaming is safe.
-    // The repo is also private today, which 404s "View Code" for visitors and
-    // makes the preview fall back to GitHub's generic card.
-    github: `${GH}/ABSENSI-KARYAWAN-JNE-MARTAPURA`,
+    // Lives under the collaborator's account, not `GH` — this one was built
+    // with two other people (see the repo's contributors).
+    github: "https://github.com/NabihanN06/jne_attandance",
   },
   {
     name: "Hotel Booking Website",

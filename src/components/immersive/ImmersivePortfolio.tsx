@@ -798,9 +798,13 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                     </span>
                     <TiltFrame>
                       <div className="gradient-border p-2 shadow-[0_34px_64px_-30px_rgba(69,29,7,0.55)] sm:p-2.5">
+                        {/* 2/1 at every width — that is exactly the ratio
+                            GitHub renders its OpenGraph cards at, and the old
+                            16/10 desktop frame cropped the sides off, slicing
+                            the owner and repo name in half on every preview. */}
                         <RepoShot
                           url={p.github}
-                          imgClassName="aspect-[2/1] object-top transition-transform duration-700 group-hover:scale-[1.05] sm:aspect-[16/10] sm:object-center"
+                          imgClassName="aspect-[2/1] object-center transition-transform duration-700 group-hover:scale-[1.05]"
                         />
                       </div>
                     </TiltFrame>
