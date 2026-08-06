@@ -119,7 +119,7 @@ const en: AppDict = {
     liveDemo: 'Live demo',
     categories: ['Web · Admin Dashboard', 'Web App', 'Mobile App', 'Mobile App', 'Mobile App'],
     summaries: [
-      'A web-based employee attendance system for the J&T Martapura branch. Staff attendance across working days is recorded and monitored by admins through a real-time dashboard.',
+      'A web-based employee attendance system for the JNE Martapura branch. Staff attendance across working days is recorded and monitored by admins through a real-time dashboard.',
       'A hotel room-booking platform built with Laravel — detailed room info, online and offline reservations, and tools that help the business reach more customers.',
       'A Flutter app for a reading room / library — browse the catalogue, borrow books, and keep track of reading in a clean, focused mobile UI.',
       'A Flutter news reader that pulls the latest headlines from selected countries via a live news API — browse, search, and read full articles.',
@@ -255,7 +255,7 @@ const id: AppDict = {
     liveDemo: 'Demo',
     categories: ['Web · Dashboard Admin', 'Aplikasi Web', 'Aplikasi Mobile', 'Aplikasi Mobile', 'Aplikasi Mobile'],
     summaries: [
-      'Sistem absensi karyawan berbasis web untuk cabang J&T Martapura. Kehadiran staf di hari kerja dicatat dan dipantau admin lewat dashboard real-time.',
+      'Sistem absensi karyawan berbasis web untuk cabang JNE Martapura. Kehadiran staf di hari kerja dicatat dan dipantau admin lewat dashboard real-time.',
       'Platform pemesanan kamar hotel dengan Laravel — info kamar lengkap, reservasi online & offline, serta fitur yang membantu bisnis menjangkau lebih banyak pelanggan.',
       'Aplikasi Flutter untuk ruang baca / perpustakaan — telusuri katalog, pinjam buku, dan pantau bacaan dalam UI mobile yang bersih dan fokus.',
       'Pembaca berita Flutter yang menarik kabar terbaru dari negara tertentu via API berita live — telusuri, cari, dan baca artikel lengkap.',
@@ -391,7 +391,7 @@ const ar: AppDict = {
     liveDemo: 'عرض حي',
     categories: ['ويب · لوحة تحكم', 'تطبيق ويب', 'تطبيق جوال', 'تطبيق جوال', 'تطبيق جوال'],
     summaries: [
-      'نظام حضور موظفين عبر الويب لفرع J&T مارتابورا. يُسجَّل حضور الموظفين في أيام العمل ويُراقَب من قِبل المسؤول عبر لوحة تحكم لحظية.',
+      'نظام حضور موظفين عبر الويب لفرع JNE مارتابورا. يُسجَّل حضور الموظفين في أيام العمل ويُراقَب من قِبل المسؤول عبر لوحة تحكم لحظية.',
       'منصّة لحجز غرف الفنادق مبنية بـ Laravel — معلومات تفصيلية عن الغرف، وحجوزات أونلاين وأوفلاين، وأدوات تساعد العمل على الوصول لعملاء أكثر.',
       'تطبيق Flutter لقاعة قراءة / مكتبة — تصفّح الفهرس، واستعارة الكتب، ومتابعة القراءة بواجهة جوال نظيفة ومركّزة.',
       'قارئ أخبار بـ Flutter يجلب آخر العناوين من دول مختارة عبر واجهة أخبار حيّة — تصفّح وبحث وقراءة المقالات كاملة.',

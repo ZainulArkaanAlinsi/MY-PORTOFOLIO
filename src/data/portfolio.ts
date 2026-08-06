@@ -217,16 +217,22 @@ export type FeaturedProject = {
 
 export const featuredProjects: readonly FeaturedProject[] = [
   {
-    name: "Absensi Karyawan JNT Martapura",
+    name: "Absensi Karyawan JNE Martapura",
     year: "2026",
     category: "Web · Admin Dashboard",
     summary:
-      "A web-based employee attendance system for the J&T Martapura branch. Staff attendance across working days is recorded and monitored by admins through a real-time dashboard.",
+      "A web-based employee attendance system for the JNE Martapura branch. Staff attendance across working days is recorded and monitored by admins through a real-time dashboard.",
     impact:
       "Replaced manual attendance with a monitored dashboard — admins track daily presence and recaps at a glance.",
     stack: ["Next.js", "TypeScript", "Tailwind CSS", "REST API"],
     accent: "from-blue-500 to-cyan-400",
-    github: `${GH}/ABSENSI-KARYAWAN-JNT-MARTAPURA`,
+    // The preview card prints this URL in full (it only truncates on phones),
+    // so the old "JNT" slug showed the wrong courier's name right under a
+    // heading that says JNE. Requires the GitHub repo to be renamed to match —
+    // GitHub keeps a permanent redirect from the old name, so renaming is safe.
+    // The repo is also private today, which 404s "View Code" for visitors and
+    // makes the preview fall back to GitHub's generic card.
+    github: `${GH}/ABSENSI-KARYAWAN-JNE-MARTAPURA`,
   },
   {
     name: "Hotel Booking Website",
