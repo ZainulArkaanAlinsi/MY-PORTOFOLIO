@@ -38,7 +38,7 @@ import LangThemeControls from './LangThemeControls';
 import MobileNav from './MobileNav';
 import SmoothScroll from './SmoothScroll';
 import SplitText from './SplitText';
-import CopyEmailButton from './CopyEmailButton';
+import ContactPostcard from './ContactPostcard';
 import TiltFrame from './TiltFrame';
 import { useT } from '@/i18n/provider';
 
@@ -415,7 +415,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
 
       {/* ===== NAV ===== */}
       <nav className="fixed inset-x-0 top-0 z-50 mx-auto mt-4 flex max-w-6xl items-center justify-between gap-4 px-3">
-        <div className="glass flex w-full items-center justify-between gap-4 rounded-full px-5 py-2.5">
+        <div className="liquid-glass flex w-full items-center justify-between gap-4 rounded-full px-5 py-2.5">
           <a href="#top" className="font-display text-sm font-extrabold tracking-tight">
             {profile.handle}
           </a>
@@ -473,7 +473,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
           {/* terminal header bar */}
           <div
             data-hero-line
-            className="mb-6 hidden w-full items-center gap-3 font-mono text-[10px] uppercase tracking-[0.22em] text-slate-400 sm:flex"
+            className="mb-4 hidden w-full items-center gap-3 font-mono text-[10px] uppercase tracking-[0.22em] text-slate-400 sm:flex"
           >
             <span className="text-[color:var(--santa-fe)]">/ portfolio &rsquo;26</span>
             <span className="text-slate-300">{'//'}</span>
@@ -489,7 +489,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
           {/* availability */}
           <p
             data-hero-line
-            className="glass-soft mb-5 inline-flex items-center gap-2 rounded-full px-4 py-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-slate-600"
+            className="liquid-glass mb-4 inline-flex items-center gap-2 rounded-full px-4 py-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-slate-600"
           >
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
@@ -579,7 +579,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
             <div aria-hidden className="pointer-events-none absolute inset-0 z-20 hidden xl:block">
               {/* years — taped index card (static: it's a glass blur, so no bob) */}
               <div
-                className="glass absolute left-[1%] top-[6%] -rotate-[5deg] rounded-xl px-4 py-2.5 text-center"
+                className="liquid-glass absolute left-[1%] top-[6%] -rotate-[5deg] rounded-xl px-4 py-2.5 text-center"
               >
                 <p className="stat-num font-display text-2xl font-black leading-none">{profile.yearsExperience}+</p>
                 <p className="font-mono mt-1 text-[9px] uppercase tracking-[0.2em] text-slate-400">years building</p>
@@ -660,7 +660,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
 
               {/* projects — taped index card (static: it's a glass blur, so no bob) */}
               <div
-                className="glass absolute right-[1%] top-[80%] rotate-[4deg] rounded-xl px-4 py-2.5 text-center"
+                className="liquid-glass absolute right-[1%] top-[80%] rotate-[4deg] rounded-xl px-4 py-2.5 text-center"
               >
                 <p className="stat-num font-display text-2xl font-black leading-none">{stats.projectsCompleted}+</p>
                 <p className="font-mono mt-1 text-[9px] uppercase tracking-[0.2em] text-slate-400">projects</p>
@@ -682,7 +682,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
           </div>
 
           {/* CTAs — one prominent primary (Fitts), two lighter options (Hick) */}
-          <div data-hero-line className="mt-7 flex flex-wrap items-center justify-center gap-4">
+          <div data-hero-line className="mt-6 flex flex-wrap items-center justify-center gap-4">
             <a
               href="#work"
               data-magnetic
@@ -695,7 +695,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
               href="#contact"
               data-magnetic
               data-cursor="hover"
-              className="glass inline-flex items-center gap-2 rounded-full px-6 py-4 text-sm font-semibold text-slate-700 transition-colors hover:text-blue-600"
+              className="liquid-glass inline-flex items-center gap-2 rounded-full px-6 py-4 text-sm font-semibold text-slate-700 transition-colors hover:text-blue-600"
             >
               <Mail className="h-4 w-4" /> {t.hero.contactMe}
             </a>
@@ -825,7 +825,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                     <p className="font-body mt-4 max-w-prose text-base leading-relaxed text-slate-600">
                       {t.work.summaries[i]}
                     </p>
-                    <div className="glass-soft mt-5 max-w-prose rounded-2xl p-4">
+                    <div className="liquid-glass mt-5 max-w-prose rounded-2xl p-4">
                       <p className="font-body text-sm leading-relaxed text-slate-600">
                         <span className="font-semibold text-blue-600">{t.work.impact}</span>
                         {t.work.impacts[i]}
@@ -1105,72 +1105,60 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
         </div>
       </section>
 
-      {/* ===== 05 · CONTACT — gradient glass panel + conic glow ring ===== */}
-      <section id="contact" className="relative scroll-mt-24 px-6 py-28 sm:px-12 sm:py-44">
-        <div
-          data-reveal
-          className="gradient-border relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] px-6 py-12 sm:px-12 sm:py-16"
-        >
-          <div className="dot-grid pointer-events-none absolute inset-0 opacity-50" />
-          <div className="pointer-events-none absolute -top-24 right-[-4rem] h-80 w-80">
-            <div className="animate-spin-slow h-full w-full rounded-full bg-[conic-gradient(from_0deg,rgba(173,115,78,0.28),rgba(219,210,148,0.2),rgba(209,35,35,0.22),rgba(173,115,78,0.28))] blur-2xl" />
+      {/* ===== 05 · CONTACT — the desk where the post lands =====
+          An airmail postcard addressed to me, with the channels listed beside
+          it like a numbered index. Same paper-and-ink language as the hero. */}
+      <section
+        id="contact"
+        className="relative scroll-mt-24 overflow-hidden px-6 py-28 sm:px-12 sm:py-44"
+      >
+        <div className="line-grid pointer-events-none absolute inset-0 opacity-30" />
+        <div className="glow-orb left-[-6rem] top-32 h-80 w-80 bg-blue-300/40" />
+        <div className="glow-orb bottom-10 right-[-5rem] h-72 w-72 bg-violet-300/30" />
+
+        <div className="relative mx-auto max-w-6xl">
+          {/* top row — kicker + live status */}
+          <div data-reveal className="flex flex-wrap items-center justify-between gap-4">
+            <Kicker num="05" text={t.contact.kicker} color="#ad734e" />
+            <span className="liquid-glass inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.15em] text-slate-500">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+              </span>
+              {t.contact.available} · {profile.location.split(',')[0]} <LocalTime /> WIB
+            </span>
           </div>
 
-          <div className="relative">
-            {/* top row — kicker + live status */}
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <Kicker num="05" text={t.contact.kicker} color="#ad734e" />
-              <span className="glass-soft inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.15em] text-slate-500">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-                </span>
-                {t.contact.available} · {profile.location.split(',')[0]} <LocalTime /> WIB
-              </span>
-            </div>
-
-            {/* heading */}
-            <h2 className="font-display mt-6 max-w-3xl text-[clamp(32px,6vw,68px)] font-black leading-[0.98] tracking-[-0.02em]">
+          {/* heading */}
+          <div data-reveal className="relative mt-2">
+            <h2 className="font-display max-w-3xl text-[clamp(32px,6vw,68px)] font-black leading-[0.98] tracking-[-0.02em]">
               {t.contact.headingPre}
               <span className="em-serif animated-gradient-text"> {t.contact.headingEm}</span>
             </h2>
             <p className="font-body mt-5 max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
               {t.contact.paragraph}
             </p>
+          </div>
 
-            {/* email card + contact links */}
-            <div className="mt-10 grid gap-5 md:grid-cols-5">
-              {/* direct email card */}
-              <div
-                data-spotlight
-                className="glass-news spotlight flex flex-col justify-center rounded-2xl p-6 sm:p-8 md:col-span-3"
-              >
-                <p className="font-body text-[11px] uppercase tracking-[0.25em] text-slate-400">
-                  {t.contact.emailDirect}
-                </p>
-                <a
-                  href={`mailto:${profile.email}`}
-                  data-cursor="hover"
-                  className="font-display mt-2 break-all text-base font-black tracking-tight transition-colors hover:text-[color:var(--santa-fe)] sm:text-2xl"
-                >
-                  {profile.email}
-                </a>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <a
-                    href={`mailto:${profile.email}`}
-                    data-magnetic
-                    data-cursor="hover"
-                    className="cta-shine inline-flex items-center gap-2 rounded-full bg-linear-to-r from-blue-600 to-cyan-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/25 transition-shadow hover:shadow-blue-500/50"
-                  >
-                    <Mail className="h-4 w-4" /> {t.contact.sendEmail}
-                  </a>
-                  <CopyEmailButton />
-                </div>
-              </div>
+          {/* postcard + channel index */}
+          <div className="mt-16 grid gap-14 lg:grid-cols-12 lg:gap-12">
+            <div className="min-w-0 lg:col-span-7">
+              <ContactPostcard />
+            </div>
 
-              {/* contact links */}
-              <div className="grid gap-3 md:col-span-2">
-                {contactLinks.map((l) => {
+            {/* Channels — a numbered index of every way to reach me.
+                Revealed as one panel, NOT with `data-reveal-stagger`: that
+                animates each row up from y+50, and a translated row is still
+                laid out where it was, so the last one visibly slid out through
+                the bottom of the glass card while the stagger played. */}
+            <div data-reveal className="flex min-w-0 flex-col lg:col-span-5">
+              <p className="font-mono mb-5 text-[10px] font-bold uppercase tracking-[0.3em] text-slate-400">
+                {t.nav.contact} · 0{contactLinks.length}
+              </p>
+              {/* flex-1 makes the panel match the postcard's height on desktop,
+                  so the two columns read as a balanced pair */}
+              <div className="liquid-glass flex flex-1 flex-col justify-center rounded-[1.6rem] px-4 sm:px-6">
+                {contactLinks.map((l, i) => {
                   const Icon = l.icon;
                   return (
                     <a
@@ -1179,16 +1167,23 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                       {...(l.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                       {...(l.download ? { download: true } : {})}
                       data-cursor="hover"
-                      className="group flex items-center gap-3.5 rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface)]/50 px-4 py-3 transition-all hover:-translate-y-0.5 hover:border-[color:var(--santa-fe)] hover:bg-[color:var(--surface)]"
+                      className="channel group flex items-center gap-4 border-b border-[color:var(--line)] py-5 pl-4 last:border-b-0 hover:border-[color:var(--santa-fe)]"
                     >
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-cyan-400 text-white">
+                      <span className="font-mono w-5 shrink-0 text-[11px] font-bold tabular-nums text-[color:var(--santa-fe)]">
+                        0{i + 1}
+                      </span>
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[color:var(--line)] bg-[color:var(--surface)] text-[color:var(--santa-fe)] transition-colors duration-300 group-hover:border-transparent group-hover:bg-[color:var(--santa-fe)] group-hover:text-white">
                         <Icon className="h-4 w-4" />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="font-display block text-sm font-bold leading-tight">{l.label}</span>
-                        <span className="font-body block truncate text-xs text-slate-500">{l.value}</span>
+                        <span className="font-display block text-base font-bold leading-tight">
+                          {l.label}
+                        </span>
+                        <span className="font-body block truncate text-xs text-[color:var(--muted)]">
+                          {l.value}
+                        </span>
                       </span>
-                      <ArrowUpRight className="h-4 w-4 shrink-0 text-slate-300 transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[color:var(--santa-fe)]" />
+                      <ArrowUpRight className="h-5 w-5 shrink-0 text-slate-300 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[color:var(--santa-fe)]" />
                     </a>
                   );
                 })}
@@ -1197,7 +1192,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
           </div>
         </div>
 
-        <footer className="font-body mx-auto mt-16 flex max-w-6xl flex-wrap items-center justify-between gap-3 border-t border-slate-900/[0.08] pt-8 text-xs text-slate-400">
+        <footer className="font-body relative mx-auto mt-24 flex max-w-6xl flex-wrap items-center justify-between gap-3 border-t border-slate-900/[0.08] pt-8 text-xs text-slate-400">
           <span>{profile.name}</span>
           <span>© {new Date().getFullYear()} · {t.contact.footerNote}</span>
         </footer>

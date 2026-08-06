@@ -13,30 +13,35 @@ const DATE_LOCALE: Record<string, string> = { id: 'id-ID', en: 'en-GB', ar: 'ar'
 
 export default function AboutNewspaper() {
   const { t, lang } = useApp();
-  // Pinned to Asia/Jakarta: this masthead is the Bekasi edition, and without a
-  // fixed zone the server (UTC) and a reader in WIB disagree about the date for
-  // seven hours every evening — a hydration mismatch on the headline.
-  const today = new Date().toLocaleDateString(DATE_LOCALE[lang] ?? 'en-GB', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-    timeZone: 'Asia/Jakarta',
-  });
-
-  // Live "edition" clock — ticks every second. Client-only (set after mount)
-  // so the seconds never cause an SSR hydration mismatch.
+  // Live "edition" dateline + clock. Both are client-only and both are pinned
+  // to Asia/Jakarta (this is the Bekasi edition). Client-only matters twice
+  // over: the server runs on UTC, and the page is now ISR-cached for an hour,
+  // so a date baked into the HTML could be served after midnight WIB and
+  // disagree with the reader's own clock.
+  const [today, setToday] = useState('');
   const [time, setTime] = useState('');
   useEffect(() => {
-    const tick = () =>
+    const locale = DATE_LOCALE[lang] ?? 'en-GB';
+    const tick = () => {
+      const now = new Date();
+      setToday(
+        now.toLocaleDateString(locale, {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+          timeZone: 'Asia/Jakarta',
+        })
+      );
       setTime(
-        new Date().toLocaleTimeString(DATE_LOCALE[lang] ?? 'en-GB', {
+        now.toLocaleTimeString(locale, {
           hour: '2-digit',
           minute: '2-digit',
           second: '2-digit',
           timeZone: 'Asia/Jakarta',
         })
       );
+    };
     tick();
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
