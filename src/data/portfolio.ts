@@ -9,7 +9,7 @@ export const profile = {
   title: "Full-Stack & Mobile Developer",
   tagline:
     "I design and ship modern web and mobile products with Next.js, Laravel, and Flutter.",
-  bio: "Currently studying at IDN Boarding School's Software Engineering program. I focus on building fast, accessible, and well-architected applications — from polished marketing sites to production-grade dashboards and cross-platform mobile apps.",
+  bio: "Currently studying Software and Game Development (PPLG) at SMK IDN Bogor. I focus on building fast, accessible, and well-architected applications — from polished marketing sites to production-grade dashboards and cross-platform mobile apps.",
   location: "Bekasi, Indonesia",
   email: "zainaril13@gmail.com",
   phone: "+62 852 8254 0833",
@@ -38,9 +38,9 @@ export const education: {
   imageBg?: string;
 }[] = [
   {
-    period: "2023 — Present",
-    school: "IDN Boarding School",
-    program: "Software Engineering Specialist Program",
+    period: "2024 — 2027",
+    school: "SMK IDN Bogor",
+    program: "Software and Game Development (PPLG)",
     description:
       "Intensive program focused on full-stack development, mobile engineering, and product thinking.",
     image: "/education/idn.webp",
@@ -59,7 +59,7 @@ export const experience = [
   },
   {
     period: "2024 — 2025",
-    company: "Ar Rasyad & Al Kahfi School",
+    company: "Ar Rasyid School & Al Kahfi School",
     role: "Workshop Instructor",
     description:
       "Designed and taught a hands-on programming curriculum (HTML, CSS, JavaScript) for junior-high students, including live coding demos and small group projects.",

@@ -5,7 +5,7 @@
     "location": "Bekasi Regency, Indonesia",
     "phone": "+62 852 8254 0833",
     "email": "zainaril13@gmail.com",
-    "profileSummary": "Student at IDN Boarding School focused on full-stack web development. Currently deepening skills in Flutter for mobile development. Committed to writing efficient code and delivering impactful technological solutions.",
+    "profileSummary": "Student at SMK IDN Bogor (Software and Game Development) focused on full-stack web development. Currently deepening skills in Flutter for mobile development. Committed to writing efficient code and delivering impactful technological solutions.",
     "avatar": "/arkan.png"
   },
   "skills": ["PHP", "Laravel", "React.js", "Next.js", "Tailwind CSS", "Flutter", "Firebase", "Responsive Design"],
@@ -17,7 +17,7 @@
     {
       "year": "2024 - 2025",
       "role": "Technology & Programming Workshop Instructor",
-      "company": "Ar Rasyad School & Al Kahfi School",
+      "company": "Ar Rasyid School & Al Kahfi School",
       "description": "Taught basic HTML, CSS, and JS. Engaged students through hands-on coding activities and real-time project building."
     }
   ],

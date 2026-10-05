@@ -78,7 +78,7 @@ const en: AppDict = {
     reportingFrom: 'reporting from',
     standfirst: "Hi — I'm a developer who likes turning rough ideas into real, working software.",
     body: [
-      "Currently studying at IDN Boarding School's Software Engineering program. I focus on building fast, accessible, and well-architected applications — from polished marketing sites to production-grade dashboards and cross-platform mobile apps.",
+      "Currently studying Software and Game Development (PPLG) at SMK IDN Bogor. I focus on building fast, accessible, and well-architected applications — from polished marketing sites to production-grade dashboards and cross-platform mobile apps.",
       'My journey runs from teaching the fundamentals of the web to junior students, to building cross-platform mobile apps and full-stack dashboards used in the real world — attendance systems, booking flows, reader apps, and admin panels.',
       'I care about clean architecture, smooth interaction, and the unglamorous details — error states, offline sync, performance — that decide whether a product feels trustworthy. I work end to end: design, build, deploy, iterate.',
     ],
@@ -187,7 +187,7 @@ const en: AppDict = {
     },
   ],
   edu: {
-    program: 'Software Engineering Specialist Program',
+    program: 'Software and Game Development (PPLG)',
     description: 'Intensive program focused on full-stack development, mobile engineering, and product thinking.',
   },
   languageNames: ['Indonesian', 'Arabic', 'English'],
@@ -221,7 +221,7 @@ const id: AppDict = {
     reportingFrom: 'melaporkan dari',
     standfirst: 'Halo — saya developer yang suka mengubah ide kasar menjadi software nyata yang berfungsi.',
     body: [
-      'Saat ini menempuh program Software Engineering di IDN Boarding School. Saya fokus membangun aplikasi yang cepat, aksesibel, dan ber-arsitektur baik — dari situs marketing yang rapi hingga dashboard skala produksi dan aplikasi mobile lintas platform.',
+      'Saat ini menempuh jurusan Pengembangan Perangkat Lunak dan Gim (PPLG) di SMK IDN Bogor. Saya fokus membangun aplikasi yang cepat, aksesibel, dan ber-arsitektur baik — dari situs marketing yang rapi hingga dashboard skala produksi dan aplikasi mobile lintas platform.',
       'Perjalanan saya bermula dari mengajar dasar-dasar web ke siswa SMP, hingga membangun aplikasi mobile lintas platform dan dashboard full-stack yang dipakai nyata — sistem absensi, alur booking, aplikasi pembaca, dan panel admin.',
       'Saya peduli pada arsitektur yang bersih, interaksi yang mulus, dan detail tak mencolok — error state, sinkronisasi offline, performa — yang menentukan apakah produk terasa tepercaya. Saya bekerja menyeluruh: desain, bangun, deploy, iterasi.',
     ],
@@ -330,7 +330,7 @@ const id: AppDict = {
     },
   ],
   edu: {
-    program: 'Program Spesialis Rekayasa Perangkat Lunak',
+    program: 'Pengembangan Perangkat Lunak dan Gim (PPLG)',
     description: 'Program intensif yang berfokus pada pengembangan full-stack, rekayasa mobile, dan pola pikir produk.',
   },
   languageNames: ['Indonesia', 'Arab', 'Inggris'],
@@ -364,7 +364,7 @@ const ar: AppDict = {
     reportingFrom: 'من',
     standfirst: 'مرحبًا — أنا مطوّر أحبّ تحويل الأفكار الأوّلية إلى برمجيات حقيقية تعمل.',
     body: [
-      'أدرس حاليًا في برنامج هندسة البرمجيات بمدرسة IDN Boarding School. أركّز على بناء تطبيقات سريعة وسهلة الوصول وحسنة البنية — من مواقع تسويقية أنيقة إلى لوحات تحكم بمستوى الإنتاج وتطبيقات جوال متعددة المنصّات.',
+      'أدرس حاليًا تخصص تطوير البرمجيات والألعاب (PPLG) في SMK IDN Bogor. أركّز على بناء تطبيقات سريعة وسهلة الوصول وحسنة البنية — من مواقع تسويقية أنيقة إلى لوحات تحكم بمستوى الإنتاج وتطبيقات جوال متعددة المنصّات.',
       'تمتدّ مسيرتي من تدريس أساسيات الويب للطلاب الصغار، إلى بناء تطبيقات جوال متعددة المنصّات ولوحات تحكم متكاملة تُستخدم فعليًا — أنظمة حضور ومسارات حجز وتطبيقات قراءة ولوحات إدارة.',
       'أهتمّ بالبنية النظيفة والتفاعل السلس والتفاصيل غير اللامعة — حالات الخطأ والمزامنة دون اتصال والأداء — التي تحدّد مدى موثوقية المنتج. أعمل من البداية للنهاية: تصميم، بناء، نشر، تحسين.',
     ],
@@ -473,7 +473,7 @@ const ar: AppDict = {
     },
   ],
   edu: {
-    program: 'برنامج تخصّص هندسة البرمجيات',
+    program: 'تطوير البرمجيات والألعاب (PPLG)',
     description: 'برنامج مكثّف يركّز على التطوير المتكامل وهندسة الجوال والتفكير المنتَجي.',
   },
   languageNames: ['الإندونيسية', 'العربية', 'الإنجليزية'],
