@@ -84,7 +84,7 @@ export default function ToolSphere() {
         el.style.zIndex = String(Math.round(depth * 100));
         // front tiles glow warmer / stronger
         const g = Math.round(depth * 26);
-        el.style.boxShadow = `0 ${6 + g}px ${16 + g * 1.4}px -8px rgba(173,115,78,${0.25 + depth * 0.4})`;
+        el.style.boxShadow = `0 ${6 + g}px ${16 + g * 1.4}px -8px rgba(76,116,175,${0.25 + depth * 0.4})`;
         void y1; // (kept for clarity of the rotation math)
       }
       raf = requestAnimationFrame(tick);
@@ -164,7 +164,7 @@ export default function ToolSphere() {
       {/* soft core glow behind the cloud */}
       <span
         aria-hidden
-        className="pointer-events-none absolute h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(173,115,78,0.35),transparent_70%)] blur-2xl"
+        className="pointer-events-none absolute h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(76,116,175,0.35),transparent_70%)] blur-2xl"
       />
       <div
         ref={worldRef}
@@ -178,7 +178,7 @@ export default function ToolSphere() {
             ref={(el) => {
               tileRefs.current[i] = el;
             }}
-            className="absolute left-1/2 top-1/2 -ml-[30px] -mt-[30px] flex h-[60px] w-[60px] flex-col items-center justify-center gap-1 rounded-2xl border border-white/60 bg-[linear-gradient(150deg,#fffaf3,#f0e2d1)]"
+            className="absolute left-1/2 top-1/2 -ml-[30px] -mt-[30px] flex h-[60px] w-[60px] flex-col items-center justify-center gap-1 rounded-2xl border border-white/60 bg-[linear-gradient(150deg,#f7f9fb,#d8dfe9)]"
             title={tool}
           >
             <TechIcon name={tool} size={26} />

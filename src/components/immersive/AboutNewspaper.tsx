@@ -164,7 +164,7 @@ export default function AboutNewspaper() {
         {/* ===== DAILY TOOLS — interactive 3D tool sphere ===== */}
         <div
           data-reveal
-          className="relative mt-20 overflow-hidden rounded-[2rem] border border-[rgba(255,255,255,0.07)] bg-[linear-gradient(160deg,#2c1a0f,#150d07)] p-7 text-center shadow-[0_40px_70px_-40px_rgba(69,29,7,0.7)] sm:p-10"
+          className="relative mt-20 overflow-hidden rounded-[2rem] border border-[rgba(255,255,255,0.07)] bg-[linear-gradient(160deg,#161c25,#0a0d12)] p-7 text-center shadow-[0_40px_70px_-40px_rgba(25,35,51,0.7)] sm:p-10"
         >
           {/* faint grid + vignette so the tiles read like they float in space */}
           <span
@@ -172,7 +172,7 @@ export default function AboutNewspaper() {
             className="pointer-events-none absolute inset-0 opacity-[0.13]"
             style={{
               backgroundImage:
-                'linear-gradient(rgba(219,210,148,0.55) 1px,transparent 1px),linear-gradient(90deg,rgba(219,210,148,0.55) 1px,transparent 1px)',
+                'linear-gradient(rgba(146,176,221,0.55) 1px,transparent 1px),linear-gradient(90deg,rgba(146,176,221,0.55) 1px,transparent 1px)',
               backgroundSize: '42px 42px',
             }}
           />
@@ -185,7 +185,7 @@ export default function AboutNewspaper() {
               {t.about.dailyTools}
             </p>
             <ToolSphere />
-            <p className="font-body -mt-1 inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.24em] text-[rgba(245,235,226,0.5)]">
+            <p className="font-body -mt-1 inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.24em] text-[rgba(230,234,241,0.5)]">
               <span aria-hidden>✦</span> {t.about.dragMe}
             </p>
           </div>
@@ -202,19 +202,19 @@ export default function AboutNewspaper() {
               key={s.label}
               data-stagger-item
               data-spotlight
-              className="stat-card group spotlight relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(160deg,var(--surface),var(--surface-2))] px-3 py-5 shadow-[0_20px_44px_-26px_rgba(69,29,7,0.45)] transition-[transform,box-shadow] duration-300 hover:-translate-y-1.5 hover:shadow-[0_30px_54px_-24px_rgba(69,29,7,0.5)] sm:rounded-3xl sm:px-6 sm:py-8"
+              className="stat-card group spotlight relative overflow-hidden rounded-2xl border border-[color:var(--line)] bg-[linear-gradient(160deg,var(--surface),var(--surface-2))] px-3 py-5 shadow-[0_20px_44px_-26px_rgba(25,35,51,0.45)] transition-[transform,box-shadow] duration-300 hover:-translate-y-1.5 hover:shadow-[0_30px_54px_-24px_rgba(25,35,51,0.5)] sm:rounded-3xl sm:px-6 sm:py-8"
             >
               {/* oversized ghost numeral */}
               <span
                 aria-hidden
-                className="font-display pointer-events-none absolute -right-2 -top-7 select-none text-[6.5rem] font-black leading-none text-[rgba(173,115,78,0.07)] sm:-right-3 sm:-top-8 sm:text-[8rem]"
+                className="font-display pointer-events-none absolute -right-2 -top-7 select-none text-[6.5rem] font-black leading-none text-[rgba(76,116,175,0.07)] sm:-right-3 sm:-top-8 sm:text-[8rem]"
               >
                 {i + 1}
               </span>
 
               {/* icon chip + index */}
               <div className="relative flex items-center justify-between">
-                <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[rgba(209,35,35,0.1)] text-[color:var(--cardinal)] transition-colors duration-300 group-hover:bg-[rgba(209,35,35,0.16)] sm:h-11 sm:w-11">
+                <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[rgba(34,104,210,0.1)] text-[color:var(--cardinal)] transition-colors duration-300 group-hover:bg-[rgba(34,104,210,0.16)] sm:h-11 sm:w-11">
                   <s.Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                 </span>
                 <span className="font-mono hidden text-[10px] font-semibold uppercase tracking-[0.25em] text-slate-400 sm:inline">

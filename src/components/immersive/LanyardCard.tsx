@@ -114,7 +114,7 @@ export default function LanyardCard({
       <span ref={pivotRef} aria-hidden className="pointer-events-none absolute left-1/2 top-2 h-0 w-0" />
       <span
         aria-hidden
-        className="absolute left-1/2 top-0 z-20 h-3.5 w-3.5 -translate-x-1/2 rounded-full border border-[rgba(69,29,7,0.35)] bg-[linear-gradient(180deg,#e9d9c7,#b79a80)] shadow-[0_2px_4px_rgba(69,29,7,0.35)]"
+        className="absolute left-1/2 top-0 z-20 h-3.5 w-3.5 -translate-x-1/2 rounded-full border border-[rgba(25,35,51,0.35)] bg-[linear-gradient(180deg,#c6d4ea,#7f96b8)] shadow-[0_2px_4px_rgba(25,35,51,0.35)]"
       />
 
       {/* swinging assembly — pivots from the pin (transform-origin top-center) */}
@@ -127,9 +127,9 @@ export default function LanyardCard({
           className="relative -mb-1 h-[116px] w-[42px] overflow-hidden rounded-b-[3px] rounded-t-[10px]"
           style={{
             backgroundImage:
-              'linear-gradient(100deg,#8f5d3e,#ad734e 45%,#6d4730 100%)',
+              'linear-gradient(100deg,#3c5e91,#4c74af 45%,#2e486f 100%)',
             boxShadow:
-              'inset 2px 0 3px rgba(255,255,255,0.18), inset -2px 0 4px rgba(0,0,0,0.28), 0 2px 6px rgba(69,29,7,0.3)',
+              'inset 2px 0 3px rgba(255,255,255,0.18), inset -2px 0 4px rgba(0,0,0,0.28), 0 2px 6px rgba(25,35,51,0.3)',
           }}
         >
           {/* woven texture */}
@@ -183,17 +183,17 @@ export default function LanyardCard({
           className="group relative w-[228px] cursor-grab touch-none overflow-hidden rounded-[1.35rem] active:cursor-grabbing"
           style={{
             boxShadow:
-              '0 30px 50px -18px rgba(69,29,7,0.55), 0 6px 14px -6px rgba(69,29,7,0.4)',
+              '0 30px 50px -18px rgba(25,35,51,0.55), 0 6px 14px -6px rgba(25,35,51,0.4)',
           }}
         >
           {/* punch-hole slot the clasp hooks through */}
           <span
             aria-hidden
-            className="absolute left-1/2 top-2.5 z-20 h-2 w-11 -translate-x-1/2 rounded-full bg-[rgba(20,10,4,0.55)] shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)]"
+            className="absolute left-1/2 top-2.5 z-20 h-2 w-11 -translate-x-1/2 rounded-full bg-[rgba(8,11,16,0.55)] shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)]"
           />
 
           {/* photo — sits on a warm card body */}
-          <div className="relative aspect-[3/3.4] w-full bg-[linear-gradient(160deg,#fbf1e6,#efe0cd)]">
+          <div className="relative aspect-[3/3.4] w-full bg-[linear-gradient(160deg,#ecf0f5,#d5dce7)]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={photo}
@@ -214,15 +214,15 @@ export default function LanyardCard({
           </div>
 
           {/* dark info panel */}
-          <div className="relative bg-[linear-gradient(180deg,#3a2418,#241209)] px-4 pb-4 pt-3.5 text-[color:var(--merino)]">
+          <div className="relative bg-[linear-gradient(180deg,#202732,#0f151e)] px-4 pb-4 pt-3.5 text-[color:var(--merino)]">
             <p className="font-display text-lg font-black leading-tight tracking-tight">
               {name} <span className="text-[color:var(--santa-fe)]">{lastName}</span>
             </p>
-            <p className="font-body mt-0.5 text-[11px] font-medium text-[rgba(245,235,226,0.72)]">
+            <p className="font-body mt-0.5 text-[11px] font-medium text-[rgba(230,234,241,0.72)]">
               {role}
             </p>
-            <div className="mt-3 flex items-center justify-between border-t border-[rgba(245,235,226,0.16)] pt-2.5">
-              <span className="font-mono text-[9px] uppercase tracking-[0.24em] text-[rgba(245,235,226,0.6)]">
+            <div className="mt-3 flex items-center justify-between border-t border-[rgba(230,234,241,0.16)] pt-2.5">
+              <span className="font-mono text-[9px] uppercase tracking-[0.24em] text-[rgba(230,234,241,0.6)]">
                 ID · 2026
               </span>
               <span className="inline-flex items-center gap-1 font-body text-[9px] font-semibold uppercase tracking-[0.2em] text-[color:var(--santa-fe)]">

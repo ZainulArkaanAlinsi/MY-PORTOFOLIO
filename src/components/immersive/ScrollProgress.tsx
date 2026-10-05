@@ -34,7 +34,7 @@ export default function ScrollProgress() {
     <div
       ref={ref}
       aria-hidden="true"
-      className="fixed inset-x-0 top-0 z-[60] h-[3px] origin-left scale-x-0 bg-linear-to-r from-[#ad734e] via-[#d12323] to-[#dbd294]"
+      className="fixed inset-x-0 top-0 z-[60] h-[3px] origin-left scale-x-0 bg-linear-to-r from-[#4c74af] via-[#2268d2] to-[#92b0dd]"
     />
   );
 }

@@ -10,7 +10,7 @@ export default function LangThemeControls() {
   return (
     <div className="flex items-center gap-2">
       {/* language switch */}
-      <div className="flex items-center rounded-full border border-[rgba(69,29,7,0.12)] bg-[var(--surface)]/60 p-0.5">
+      <div className="flex items-center rounded-full border border-[rgba(25,35,51,0.12)] bg-[var(--surface)]/60 p-0.5">
         {LANGS.map((l) => {
           const on = l.code === lang;
           return (
@@ -37,7 +37,7 @@ export default function LangThemeControls() {
         onClick={toggleTheme}
         data-cursor="hover"
         aria-label="Toggle dark mode"
-        className="flex h-9 w-9 items-center justify-center rounded-full border border-[rgba(69,29,7,0.12)] bg-[var(--surface)]/60 text-slate-600 transition-colors hover:text-[color:var(--santa-fe)]"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-[rgba(25,35,51,0.12)] bg-[var(--surface)]/60 text-slate-600 transition-colors hover:text-[color:var(--santa-fe)]"
       >
         {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
       </button>

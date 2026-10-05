@@ -117,8 +117,9 @@ const en: AppDict = {
     viewCode: 'View Code',
     code: 'Code',
     liveDemo: 'Live demo',
-    categories: ['Mobile + Web · Attendance System', 'Web App', 'Mobile App', 'Mobile App', 'Mobile App'],
+    categories: ['Internship · Laravel API + Flutter', 'Mobile + Web · Attendance System', 'Web App', 'Mobile App', 'Mobile App', 'Mobile App'],
     summaries: [
+      'The calibration system for PT Sidik, an ISO/IEC 17025-accredited lab. Technicians fill digital worksheets on a Flutter app; a Laravel + Filament API recomputes every figure (GUM uncertainty, ILAC-G8 decision rules) from raw readings, routes it through review, and issues PDF certificates with a public QR verification page.',
       'A face-recognition and GPS attendance system for JNE, built with a team of three. Staff clock in from a Flutter Android app that verifies their face and location, while HR follows the day live on a Next.js dashboard — all on a Firebase Firestore + Cloud Functions backend.',
       'A hotel room-booking platform built with Laravel — detailed room info, online and offline reservations, and tools that help the business reach more customers.',
       "A Flutter app for a library / reading room — create an account, browse the catalogue, borrow a title and read it in the app's own reader, with the catalogue and accounts served over a REST API.",
@@ -126,6 +127,7 @@ const en: AppDict = {
       'A Flutter Qur’an app for reading and listening — surah text alongside audio recitation, with search and bookmarks, in a calm interface that keeps being refined.',
     ],
     impacts: [
+      'Replaced Excel workbooks and hand-made certificates with one audited flow — output was checked against the lab’s master data and every figure matched.',
       'Turned attendance into something provable rather than reported — a check-in has to match a face and a place, and HR gets the daily recap without chasing anyone.',
       'Turned room booking into a complete online flow while still supporting offline reservations.',
       'Put the whole loop — find a book, borrow it, read it — on a phone, with nothing to hand back at a counter.',
@@ -139,7 +141,7 @@ const en: AppDict = {
     headingEm: 'credentials',
     certifications: 'Certifications',
     education: 'Education',
-    grades: ['Excellent', 'Completed', 'Completed', 'Completed'],
+    grades: ['Excellent', 'Verified', 'Completed', 'Completed', 'Completed', 'Completed', 'Completed'],
     photoSlot: 'Photo coming soon',
     current: 'Ongoing',
     certsSub: 'Verified courses & credentials I have earned',
@@ -163,6 +165,11 @@ const en: AppDict = {
   },
   statsBand: { years: 'Years building', projects: 'Projects shipped', tech: 'Technologies', certs: 'Certifications' },
   exp: [
+    {
+      role: 'Software Development Intern',
+      description:
+        'Building CertiCal for an ISO/IEC 17025-accredited calibration lab: a Laravel + Filament API and a Flutter app that record calibrations, compute measurement uncertainty (GUM) and issue QR-verified PDF certificates, shipped through a tested GitHub Actions pipeline.',
+    },
     {
       role: 'Workshop Instructor',
       description:
@@ -253,8 +260,9 @@ const id: AppDict = {
     viewCode: 'Lihat Kode',
     code: 'Kode',
     liveDemo: 'Demo',
-    categories: ['Mobile + Web · Sistem Absensi', 'Aplikasi Web', 'Aplikasi Mobile', 'Aplikasi Mobile', 'Aplikasi Mobile'],
+    categories: ['Magang · Laravel API + Flutter', 'Mobile + Web · Sistem Absensi', 'Aplikasi Web', 'Aplikasi Mobile', 'Aplikasi Mobile', 'Aplikasi Mobile'],
     summaries: [
+      'Sistem kalibrasi untuk PT Sidik, laboratorium terakreditasi ISO/IEC 17025. Teknisi mengisi lembar kerja digital di aplikasi Flutter; API Laravel + Filament menghitung ulang setiap angka (ketidakpastian GUM, aturan keputusan ILAC-G8) dari data mentah, meneruskannya ke pemeriksaan, lalu menerbitkan sertifikat PDF dengan halaman verifikasi QR publik.',
       'Sistem absensi JNE berbasis face recognition dan GPS, digarap bertiga. Karyawan absen lewat aplikasi Android Flutter yang memverifikasi wajah dan lokasinya, sementara HR memantau harinya secara langsung dari dashboard Next.js — semuanya di atas backend Firebase Firestore + Cloud Functions.',
       'Platform pemesanan kamar hotel dengan Laravel — info kamar lengkap, reservasi online & offline, serta fitur yang membantu bisnis menjangkau lebih banyak pelanggan.',
       'Aplikasi Flutter untuk perpustakaan / ruang baca — buat akun, telusuri katalog, pinjam buku, lalu baca langsung di reader bawaan aplikasinya; katalog dan akun dilayani lewat REST API.',
@@ -262,6 +270,7 @@ const id: AppDict = {
       'Aplikasi Qur’an Flutter untuk membaca sekaligus mendengarkan — teks surah berdampingan dengan murottal, dilengkapi pencarian dan bookmark, dalam UI tenang yang terus dipoles.',
     ],
     impacts: [
+      'Menggantikan workbook Excel dan sertifikat manual dengan satu alur yang teraudit — hasilnya dicocokkan dengan data master lab dan semua angkanya sama.',
       'Mengubah absensi dari sekadar dilaporkan jadi bisa dibuktikan — satu absen harus cocok wajah dan lokasinya, dan HR dapat rekap harian tanpa perlu menagih.',
       'Mengubah pemesanan kamar jadi alur online lengkap sambil tetap mendukung reservasi offline.',
       'Memindahkan seluruh alurnya — cari buku, pinjam, baca — ke HP, tanpa perlu balik ke meja perpustakaan.',
@@ -275,7 +284,7 @@ const id: AppDict = {
     headingEm: 'kredensial',
     certifications: 'Sertifikat',
     education: 'Pendidikan',
-    grades: ['Sangat Baik', 'Selesai', 'Selesai', 'Selesai'],
+    grades: ['Sangat Baik', 'Terverifikasi', 'Selesai', 'Selesai', 'Selesai', 'Selesai', 'Selesai'],
     photoSlot: 'Foto menyusul',
     current: 'Berjalan',
     certsSub: 'Kursus & kredensial terverifikasi yang saya raih',
@@ -299,6 +308,11 @@ const id: AppDict = {
   },
   statsBand: { years: 'Tahun berkarya', projects: 'Proyek dirilis', tech: 'Teknologi', certs: 'Sertifikat' },
   exp: [
+    {
+      role: 'Software Development Intern',
+      description:
+        'Membangun CertiCal untuk laboratorium kalibrasi terakreditasi ISO/IEC 17025: API Laravel + Filament dan aplikasi Flutter yang mencatat kalibrasi, menghitung ketidakpastian pengukuran (GUM), dan menerbitkan sertifikat PDF berverifikasi QR, dirilis lewat pipeline GitHub Actions yang teruji.',
+    },
     {
       role: 'Instruktur Workshop',
       description:
@@ -389,8 +403,9 @@ const ar: AppDict = {
     viewCode: 'عرض الكود',
     code: 'الكود',
     liveDemo: 'عرض حي',
-    categories: ['جوال وويب · نظام حضور', 'تطبيق ويب', 'تطبيق جوال', 'تطبيق جوال', 'تطبيق جوال'],
+    categories: ['تدريب عملي · Laravel API + Flutter', 'جوال وويب · نظام حضور', 'تطبيق ويب', 'تطبيق جوال', 'تطبيق جوال', 'تطبيق جوال'],
     summaries: [
+      'نظام المعايرة لشركة PT Sidik، وهو مختبر معتمد وفق ISO/IEC 17025. يملأ الفنيون أوراق العمل الرقمية في تطبيق Flutter، وتعيد واجهة Laravel + Filament حساب كل رقم (عدم اليقين وفق GUM وقواعد القرار ILAC-G8) من القراءات الخام، ثم تمرره للمراجعة وتصدر شهادات PDF مع صفحة تحقق عامة عبر رمز QR.',
       'نظام حضور لـ JNE يعتمد على التعرّف على الوجه وتحديد الموقع، أنجزناه بفريق من ثلاثة. يسجّل الموظفون حضورهم من تطبيق أندرويد بـ Flutter يتحقّق من وجوههم وموقعهم، بينما تتابع الموارد البشرية اليوم لحظيًا عبر لوحة تحكم بـ Next.js — كل ذلك على خلفية Firebase Firestore وCloud Functions.',
       'منصّة لحجز غرف الفنادق مبنية بـ Laravel — معلومات تفصيلية عن الغرف، وحجوزات أونلاين وأوفلاين، وأدوات تساعد العمل على الوصول لعملاء أكثر.',
       'تطبيق Flutter لمكتبة / قاعة قراءة — أنشئ حسابًا، وتصفّح الفهرس، واستعر كتابًا واقرأه داخل قارئ التطبيق نفسه، مع فهرس وحسابات تُقدَّم عبر واجهة REST.',
@@ -398,6 +413,7 @@ const ar: AppDict = {
       'تطبيق قرآن بـ Flutter للقراءة والاستماع — نصّ السور إلى جانب التلاوة الصوتية، مع بحث وعلامات مرجعية، بواجهة هادئة يتواصل تحسينها.',
     ],
     impacts: [
+      'استبدل ملفات Excel والشهادات اليدوية بمسار واحد خاضع للتدقيق — وطوبقت النتائج مع بيانات المختبر المرجعية فتطابقت كل الأرقام.',
       'حوّل الحضور من مجرّد بلاغ إلى أمر قابل للإثبات — كل تسجيل يجب أن يطابق وجهًا ومكانًا، وتحصل الموارد البشرية على الملخّص اليومي دون مطالبة أحد.',
       'حوّل حجز الغرف إلى مسار أونلاين كامل مع دعم الحجوزات دون اتصال.',
       'نقل المسار كاملًا — البحث عن كتاب واستعارته وقراءته — إلى الهاتف، دون العودة إلى مكتب المكتبة.',
@@ -411,7 +427,7 @@ const ar: AppDict = {
     headingEm: 'الشهادات',
     certifications: 'الشهادات',
     education: 'التعليم',
-    grades: ['ممتاز', 'مكتمل', 'مكتمل', 'مكتمل'],
+    grades: ['ممتاز', 'موثّق', 'مكتمل', 'مكتمل', 'مكتمل', 'مكتمل', 'مكتمل'],
     photoSlot: 'الصورة قريبًا',
     current: 'مستمر',
     certsSub: 'دورات وشهادات موثّقة حصلت عليها',
@@ -435,6 +451,11 @@ const ar: AppDict = {
   },
   statsBand: { years: 'سنوات بناء', projects: 'مشاريع منجزة', tech: 'تقنيات', certs: 'شهادات' },
   exp: [
+    {
+      role: 'متدرب تطوير برمجيات',
+      description:
+        'بناء نظام CertiCal لمختبر معايرة معتمد وفق ISO/IEC 17025: واجهة Laravel + Filament وتطبيق Flutter لتسجيل المعايرات وحساب عدم اليقين (GUM) وإصدار شهادات PDF موثقة برمز QR، عبر خط GitHub Actions مُختبَر.',
+    },
     {
       role: 'مدرّب ورشة',
       description:

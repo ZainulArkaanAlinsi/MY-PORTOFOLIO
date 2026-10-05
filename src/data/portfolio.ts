@@ -33,6 +33,9 @@ export const education: {
   // Foto sekolah/kampus. Isi path-nya nanti, mis. "/education/idn.jpg"
   // (taruh file-nya di folder /public). Kosongkan untuk pakai placeholder.
   image?: string;
+  // Set for a logo (not a photo): the image is contained, centred on this
+  // colour, instead of cropped to fill the panel.
+  imageBg?: string;
 }[] = [
   {
     period: "2023 — Present",
@@ -40,11 +43,20 @@ export const education: {
     program: "Software Engineering Specialist Program",
     description:
       "Intensive program focused on full-stack development, mobile engineering, and product thinking.",
-    image: "",
+    image: "/education/idn.webp",
+    imageBg: "#5c86f6",
   },
 ];
 
 export const experience = [
+  {
+    period: "2026 — Present",
+    company: "PT Sidik (PT Sistem Dirgantara Inovasi Teknologi)",
+    role: "Software Development Intern",
+    description:
+      "Building CertiCal for an ISO/IEC 17025-accredited calibration lab: a Laravel + Filament API and a Flutter app that record calibrations, compute measurement uncertainty (GUM) and issue QR-verified PDF certificates, shipped through a tested GitHub Actions pipeline.",
+    tags: ["Laravel", "Flutter", "MySQL", "GitHub Actions"],
+  },
   {
     period: "2024 — 2025",
     company: "Ar Rasyad & Al Kahfi School",
@@ -155,25 +167,48 @@ export const certifications: {
   issuer: string;
   grade: string;
   link: string;
-  // Foto/scan sertifikatnya. Isi path-nya nanti, mis. "/certs/fullstack.jpg"
-  // (taruh file-nya di folder /public). Kosongkan untuk pakai placeholder.
+  // Scan of the certificate in /public. Credentials without one are listed
+  // compactly under the framed ones instead of showing an empty frame.
   image?: string;
 }[] = [
   {
     year: "2025",
     title: "Fullstack Web Development",
-    issuer: "Flexible Kickstart Journal",
+    issuer: "Rakamin Academy · Flexible Kickstart Journey",
     grade: "Excellent",
-    link: "https://www.linkedin.com/in/zainul-arkaan-3bb51731a/details/certifications/",
-    image: "",
+    link: "/certs/rakamin-fullstack-full.webp",
+    image: "/certs/rakamin-fullstack.webp",
+  },
+  {
+    year: "2026",
+    title: "Node.js (Intermediate)",
+    issuer: "HackerRank",
+    grade: "Verified",
+    link: "https://www.hackerrank.com/certificates/932a4c3d18e1",
+    image: "/certs/hackerrank-nodejs.webp",
+  },
+  {
+    year: "2026",
+    title: "Cyber Security: Understand Threats and Prevent Attacks",
+    issuer: "Alison",
+    grade: "Completed",
+    link: "https://alison.com/verify/4cd1189e9f",
+    image: "/certs/alison-cybersecurity.webp",
   },
   {
     year: "2025",
-    title: "Flutter & Firebase Developer",
-    issuer: "Certified Program",
+    title: "Introduction to JavaScript",
+    issuer: "Great Learning Academy",
+    grade: "Completed",
+    link: "https://www.mygreatlearning.com/certificate/KBJQAIAL",
+    image: "/certs/greatlearning-js.webp",
+  },
+  {
+    year: "2025",
+    title: "Flutter & Firebase Mobile Developer",
+    issuer: "Rakamin Academy · Flexible Kickstart Journey",
     grade: "Completed",
     link: "https://www.linkedin.com/in/zainul-arkaan-3bb51731a/details/certifications/",
-    image: "",
   },
   {
     year: "2025",
@@ -181,7 +216,6 @@ export const certifications: {
     issuer: "Dicoding Indonesia",
     grade: "Completed",
     link: "https://www.linkedin.com/in/zainul-arkaan-3bb51731a/details/certifications/",
-    image: "",
   },
   {
     year: "2024",
@@ -189,7 +223,6 @@ export const certifications: {
     issuer: "Dicoding Indonesia",
     grade: "Completed",
     link: "https://www.linkedin.com/in/zainul-arkaan-3bb51731a/details/certifications/",
-    image: "",
   },
 ];
 
@@ -213,9 +246,24 @@ export type FeaturedProject = {
   accent: string; // gradient accent per card
   github: string;
   demo?: string;
+  // 2:1 cover in /public/work. Falls back to the repo's GitHub card.
+  image?: string;
 };
 
 export const featuredProjects: readonly FeaturedProject[] = [
+  {
+    name: "SIDIK Calibration (CertiCal)",
+    year: "2026",
+    category: "Internship · Laravel API + Flutter",
+    summary:
+      "The calibration system for PT Sidik, an ISO/IEC 17025-accredited lab. Technicians fill digital worksheets on a Flutter app; a Laravel + Filament API recomputes every figure (GUM uncertainty, ILAC-G8 decision rules) from raw readings, routes it through review, and issues PDF certificates with a public QR verification page.",
+    impact:
+      "Replaced Excel workbooks and hand-made certificates with one audited flow — output was checked against the lab's master data and every figure matched.",
+    stack: ["Laravel", "Flutter", "MySQL", "Filament"],
+    accent: "from-blue-600 to-cyan-500",
+    github: `${GH}/sidik-calibration-api`,
+    image: "/work/sidik.webp",
+  },
   {
     name: "Absensi Karyawan JNE Martapura",
     year: "2026",
@@ -229,6 +277,7 @@ export const featuredProjects: readonly FeaturedProject[] = [
     // Lives under the collaborator's account, not `GH` — this one was built
     // with two other people (see the repo's contributors).
     github: "https://github.com/NabihanN06/jne_attandance",
+    image: "/work/jne.webp",
   },
   {
     name: "Hotel Booking Website",
@@ -241,6 +290,7 @@ export const featuredProjects: readonly FeaturedProject[] = [
     stack: ["Laravel", "PHP", "MySQL"],
     accent: "from-cyan-400 to-emerald-400",
     github: `${GH}/laravel-booking-website`,
+    image: "/work/hotel.webp",
   },
   {
     name: "E-Libro",
@@ -255,6 +305,7 @@ export const featuredProjects: readonly FeaturedProject[] = [
     stack: ["Flutter", "Dart", "REST API"],
     accent: "from-violet-400 to-blue-500",
     github: `${GH}/peminjaman_tempat_baca-buku`,
+    image: "/work/elibro.webp",
   },
   {
     name: "News App",
@@ -267,9 +318,10 @@ export const featuredProjects: readonly FeaturedProject[] = [
     stack: ["Flutter", "Dart", "REST API"],
     accent: "from-emerald-400 to-cyan-400",
     github: `${GH}/NEWS_APP_2025`,
+    image: "/work/news.webp",
   },
   {
-    name: "Qur'an App",
+    name: "MyQuran",
     year: "2025",
     category: "Mobile App",
     summary:
@@ -279,5 +331,6 @@ export const featuredProjects: readonly FeaturedProject[] = [
     stack: ["Flutter", "Dart", "REST API"],
     accent: "from-violet-400 to-emerald-400",
     github: `${GH}/Qur-an_App`,
+    image: "/work/quran.webp",
   },
 ] as const;
