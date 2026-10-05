@@ -24,7 +24,7 @@ export default function Marquee() {
   return (
     <section
       aria-hidden="true"
-      className="relative flex items-stretch overflow-hidden border-y border-[rgba(255,255,255,0.06)] bg-[linear-gradient(90deg,#0d1118,#202732)] text-[color:var(--merino)]"
+      className="relative flex items-stretch overflow-hidden border-y border-[rgba(255,255,255,0.06)] bg-[linear-gradient(90deg,#131312,#2b2b27)] text-[color:var(--merino)]"
     >
       {/* sticky live tag */}
       <span className="relative z-10 flex shrink-0 items-center gap-2 bg-[color:var(--cardinal)] px-4 font-body text-[11px] font-bold uppercase tracking-[0.2em] text-white sm:px-5">
@@ -41,7 +41,7 @@ export default function Marquee() {
           {run.map((item, i) => (
             <span
               key={i}
-              className="mx-6 inline-flex items-center gap-6 whitespace-nowrap font-body text-sm font-semibold uppercase tracking-[0.14em] text-[rgba(230,234,241,0.85)]"
+              className="mx-6 inline-flex items-center gap-6 whitespace-nowrap font-body text-sm font-semibold uppercase tracking-[0.14em] text-[rgba(236,236,235,0.85)]"
             >
               {item}
               <span className="text-[color:var(--santa-fe)]">✦</span>

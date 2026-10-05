@@ -68,10 +68,10 @@ export default function LanguageDeck() {
               onDragEnd={front ? onDragEnd : undefined}
               whileDrag={{ cursor: 'grabbing' }}
             >
-              <div className="glow-card flex h-full w-full flex-col rounded-[1.6rem] border border-[var(--line)] bg-[linear-gradient(160deg,var(--surface),var(--surface-2))] p-6 shadow-[0_22px_46px_-24px_rgba(25,35,51,0.55)]">
+              <div className="glow-card flex h-full w-full flex-col rounded-[1.6rem] border border-[var(--line)] bg-[linear-gradient(160deg,var(--surface),var(--surface-2))] p-6 shadow-[0_22px_46px_-24px_rgba(40,40,36,0.55)]">
                 {/* top row */}
                 <div className="flex items-start justify-between">
-                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#3c5e91,#4c74af_55%,#92b0dd)] text-white shadow-[0_8px_18px_-10px_var(--santa-fe)]">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#44896e,#56a587_55%,#9ad6bf)] text-white shadow-[0_8px_18px_-10px_var(--santa-fe)]">
                     <Languages className="h-5 w-5" />
                   </span>
                   <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-400">
@@ -82,7 +82,7 @@ export default function LanguageDeck() {
                 {/* progress ring */}
                 <div className="relative mx-auto my-4 h-[104px] w-[104px]">
                   <svg viewBox="0 0 100 100" className="h-full w-full -rotate-90">
-                    <circle cx="50" cy="50" r={R} fill="none" stroke="rgba(25,35,51,0.1)" strokeWidth="7" />
+                    <circle cx="50" cy="50" r={R} fill="none" stroke="rgba(40,40,36,0.1)" strokeWidth="7" />
                     <circle
                       cx="50"
                       cy="50"
@@ -96,8 +96,8 @@ export default function LanguageDeck() {
                     />
                     <defs>
                       <linearGradient id="lang-grad" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stopColor="#4c74af" />
-                        <stop offset="100%" stopColor="#92b0dd" />
+                        <stop offset="0%" stopColor="#56a587" />
+                        <stop offset="100%" stopColor="#9ad6bf" />
                       </linearGradient>
                     </defs>
                   </svg>
@@ -127,7 +127,7 @@ export default function LanguageDeck() {
           <span
             key={l.name}
             className={`h-1.5 rounded-full transition-all ${
-              order[0] === li ? 'w-5 bg-[color:var(--santa-fe)]' : 'w-1.5 bg-[rgba(76,116,175,0.3)]'
+              order[0] === li ? 'w-5 bg-[color:var(--santa-fe)]' : 'w-1.5 bg-[rgba(86,165,135,0.3)]'
             }`}
           />
         ))}

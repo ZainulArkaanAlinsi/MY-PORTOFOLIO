@@ -102,7 +102,7 @@ export default function MobileNav({ links, active }: { links: NavLink[]; active?
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? 'Close menu' : 'Open menu'}
         aria-expanded={open}
-        className="flex h-9 w-9 items-center justify-center rounded-full border border-[rgba(25,35,51,0.12)] bg-[var(--surface)]/60 text-slate-600 transition-colors hover:text-[color:var(--santa-fe)] lg:hidden"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-[rgba(40,40,36,0.12)] bg-[var(--surface)]/60 text-slate-600 transition-colors hover:text-[color:var(--santa-fe)] lg:hidden"
       >
         {open ? <X className="h-4.5 w-4.5" /> : <Menu className="h-4.5 w-4.5" />}
       </button>
@@ -120,13 +120,12 @@ export default function MobileNav({ links, active }: { links: NavLink[]; active?
         className="mnav-panel fixed inset-0 z-[70] flex flex-col overflow-hidden bg-[color:var(--background)]/95 px-6 pb-10 pt-24 backdrop-blur-xl lg:hidden"
       >
         <div className="dot-grid pointer-events-none absolute inset-0 opacity-50" />
-        <div className="pointer-events-none absolute -right-16 top-10 h-64 w-64 rounded-full bg-[color:var(--santa-fe)]/15 blur-3xl" />
 
         <button
           type="button"
           onClick={() => setOpen(false)}
           aria-label="Close menu"
-          className="absolute right-6 top-7 flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(25,35,51,0.14)] bg-[var(--surface)]/70 text-slate-600 transition-colors hover:text-[color:var(--cardinal)]"
+          className="absolute right-6 top-7 flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(40,40,36,0.14)] bg-[var(--surface)]/70 text-slate-600 transition-colors hover:text-[color:var(--cardinal)]"
         >
           <X className="h-5 w-5" />
         </button>
@@ -184,7 +183,7 @@ export default function MobileNav({ links, active }: { links: NavLink[]; active?
               href={profile.cv}
               download
               onClick={() => setOpen(false)}
-              className="ml-3 inline-flex items-center gap-2 rounded-full border border-[rgba(25,35,51,0.16)] px-5 py-3.5 text-sm font-semibold text-slate-700"
+              className="ml-3 inline-flex items-center gap-2 rounded-full border border-[rgba(40,40,36,0.16)] px-5 py-3.5 text-sm font-semibold text-slate-700"
             >
               <Download className="h-4 w-4" /> {t.nav.resume}
             </a>

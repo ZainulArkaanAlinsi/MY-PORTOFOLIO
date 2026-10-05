@@ -74,7 +74,7 @@ function Kicker({ num, text, color }: { num: string; text: string; color: string
 // Four mounting-corner ticks that frame a photo well like a matted print —
 // reinforces the "drop your real photo here" affordance on placeholders.
 function PhotoCorners() {
-  const base = 'absolute h-5 w-5 border-[rgba(76,116,175,0.45)]';
+  const base = 'absolute h-5 w-5 border-[rgba(86,165,135,0.45)]';
   return (
     <span aria-hidden className="pointer-events-none">
       <span className={`${base} left-3 top-3 rounded-tl-lg border-l-2 border-t-2`} />
@@ -105,7 +105,7 @@ function AwardSeal({
         viewBox="0 0 64 64"
         aria-hidden
       >
-        <circle cx="32" cy="32" r="30" fill="none" stroke="rgba(76,116,175,0.45)" strokeWidth="1.5" strokeDasharray="2 6" strokeLinecap="round" />
+        <circle cx="32" cy="32" r="30" fill="none" stroke="rgba(86,165,135,0.45)" strokeWidth="1.5" strokeDasharray="2 6" strokeLinecap="round" />
       </svg>
       <span
         className="flex items-center justify-center rounded-full text-white shadow-[0_12px_28px_-12px_var(--santa-fe)]"
@@ -415,7 +415,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
 
       {/* ===== NAV ===== */}
       <nav className="fixed inset-x-0 top-0 z-50 mx-auto mt-4 flex max-w-6xl items-center justify-between gap-4 px-3">
-        <div className="liquid-glass flex w-full items-center justify-between gap-4 rounded-full px-5 py-2.5">
+        <div className="nav-solid flex w-full items-center justify-between gap-4 rounded-full px-5 py-2.5">
           <a href="#top" className="font-display text-sm font-extrabold tracking-tight">
             {profile.handle}
           </a>
@@ -461,8 +461,6 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
       >
         <div className="dot-grid pointer-events-none absolute inset-0 opacity-50" />
         {/* soft warm glows — no hard shapes */}
-        <div className="animate-blob pointer-events-none absolute left-[5%] top-[18%] h-56 w-56 bg-linear-to-br from-blue-400/20 via-cyan-300/20 to-violet-400/15 blur-2xl sm:h-72 sm:w-72" />
-        <div className="pointer-events-none absolute right-[10%] top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(76,116,175,0.16),transparent_70%)] blur-2xl sm:h-[26rem] sm:w-[26rem]" />
         <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-transparent via-transparent to-[color:var(--background)]" />
 
         {/* Poster centerpiece: giant name → 3D computer star → role → CTAs,
@@ -492,7 +490,6 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
             className="liquid-glass mb-4 inline-flex items-center gap-2 rounded-full px-4 py-1.5 font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-slate-600"
           >
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
             </span>
             {t.availability}
@@ -540,7 +537,6 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
               className="grid-paper pointer-events-none absolute inset-x-2 bottom-0 top-28 rounded-3xl border border-[color:var(--line)] opacity-70 sm:inset-x-8"
             />
             {/* warm glow behind the screen */}
-            <div className="pointer-events-none absolute inset-x-1/4 top-8 h-48 rounded-full bg-[radial-gradient(circle,rgba(76,116,175,0.22),transparent_68%)] blur-2xl" />
             {/* frosted glass display slab — blurs the grid paper behind the computer */}
             <div
               aria-hidden
@@ -638,8 +634,8 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
               >
                 <figure className="polaroid">
                   <span className="tape left-1/2 -top-2 -translate-x-1/2 -rotate-[8deg]" />
-                  <span className="frame relative block aspect-square bg-[linear-gradient(to_bottom,#9dbbe8,#6d95d1_55%,#32568c)]">
-                    <span className="absolute right-2 top-2 h-4 w-4 rounded-full bg-[#d2dbe8]/90" />
+                  <span className="frame relative block aspect-square bg-[linear-gradient(to_bottom,#a8ddc9,#77c7a8_55%,#3b8367)]">
+                    <span className="absolute right-2 top-2 h-4 w-4 rounded-full bg-[#dededc]/90" />
                   </span>
                   <figcaption className="font-body text-[10px] font-semibold uppercase tracking-wider text-slate-400">
                     Journey
@@ -735,7 +731,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
         <div className="mx-auto max-w-6xl">
           <div data-reveal className="mb-14 text-center">
             <div className="flex justify-center">
-              <Kicker num="02" text={t.skills.kicker} color="#4c74af" />
+              <Kicker num="02" text={t.skills.kicker} color="#56a587" />
             </div>
             <h2 className="font-display text-[clamp(32px,5.5vw,64px)] font-bold tracking-tight text-balance">
               {t.skills.headingPre} <span className="em-serif animated-gradient-text">{t.skills.headingEm}</span>
@@ -758,7 +754,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
           {/* header */}
           <div data-reveal className="mb-16 flex flex-wrap items-end justify-between gap-4 sm:mb-24">
             <div>
-              <Kicker num="03" text={t.work.kicker} color="#2268d2" />
+              <Kicker num="03" text={t.work.kicker} color="#44b087" />
               <h2 className="font-display text-[clamp(32px,5.5vw,64px)] font-bold tracking-tight text-balance">
                 {t.work.headingPre} <span className="em-serif animated-gradient-text">{t.work.headingEm}</span>
               </h2>
@@ -776,7 +772,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
           </div>
 
           {/* alternating showcase rows */}
-          <div className="space-y-24 sm:space-y-32">
+          <div className="space-y-20 sm:space-y-28">
             {featuredProjects.map((p, i) => {
               const flip = i % 2 === 1;
               return (
@@ -793,11 +789,8 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                       Zeroing it lets the track take the container width and the
                       URL truncate as intended. */}
                   <div className={`relative isolate min-w-0 ${flip ? 'md:order-2' : ''}`}>
-                    <span className="section-watermark pointer-events-none absolute -top-12 -left-2 -z-10 text-[7rem] leading-none sm:text-[10rem]">
-                      {String(i + 1).padStart(2, '0')}
-                    </span>
                     <TiltFrame>
-                      <div className="gradient-border p-2 shadow-[0_34px_64px_-30px_rgba(25,35,51,0.55)] sm:p-2.5">
+                      <div className="gradient-border p-2 shadow-[0_34px_64px_-30px_rgba(40,40,36,0.55)] sm:p-2.5">
                         {/* 2/1 at every width — that is exactly the ratio
                             GitHub renders its OpenGraph cards at, and the old
                             16/10 desktop frame cropped the sides off, slicing
@@ -825,7 +818,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
 
                   {/* details */}
                   <div className={`relative min-w-0 ${flip ? 'md:order-1' : ''}`}>
-                    <div className={`mb-5 h-1.5 w-16 rounded-full bg-linear-to-r ${p.accent}`} />
+                    <div className="mb-5 h-0.5 w-10 bg-[color:var(--santa-fe)]" />
                     <div className="mb-3 flex flex-wrap items-center gap-3">
                       {i === 0 && (
                         <span className="rounded-full bg-blue-500/10 px-3 py-1 text-xs font-semibold text-blue-600">
@@ -891,12 +884,11 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
       {/* ===== 04 · JOURNEY — glowing timeline + node icons ===== */}
       <section id="journey" className="relative scroll-mt-24 overflow-hidden px-6 py-28 sm:px-12 sm:py-44">
         <div className="line-grid pointer-events-none absolute inset-0 opacity-40" />
-        <div className="glow-orb right-[-5rem] top-24 h-72 w-72 bg-emerald-300/40" />
 
         <div className="relative mx-auto max-w-6xl">
           <div data-reveal className="mb-14 text-center">
             <div className="flex justify-center">
-              <Kicker num="04" text={t.journey.kicker} color="#385c91" />
+              <Kicker num="04" text={t.journey.kicker} color="#41886d" />
             </div>
             <h2 className="font-display text-[clamp(32px,5.5vw,64px)] font-bold tracking-tight text-balance">
               {t.journey.headingPre} <span className="em-serif animated-gradient-text">{t.journey.headingEm}</span>
@@ -927,10 +919,6 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                     i % 2 === 0 ? 'md:-right-[10px] md:left-auto' : 'md:-left-[10px]'
                   }`}
                 >
-                  <span
-                    aria-hidden
-                    className="absolute -inset-0.5 -z-10 animate-ping rounded-full bg-blue-400/50"
-                  />
                   <Briefcase className="h-2.5 w-2.5" />
                 </span>
                 <div data-spotlight className="glass glow-card spotlight rounded-2xl p-5 text-left">
@@ -962,7 +950,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
           <div className="mt-24">
             <div className="mb-10 flex flex-col items-center gap-2 text-center">
               <div className="flex items-center gap-2.5">
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#3c5e91,#4c74af_46%,#2a68c4)] text-white shadow-[0_8px_20px_-10px_var(--santa-fe)]">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#44896e,#56a587_46%,#43ab83)] text-white shadow-[0_8px_20px_-10px_var(--santa-fe)]">
                   <Award className="h-5 w-5" />
                 </span>
                 <h3 className="font-display text-xl font-bold sm:text-2xl">{t.journey.certifications}</h3>
@@ -1037,7 +1025,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
           <div className="mt-24">
             <div className="mb-10 flex flex-col items-center gap-2 text-center">
               <div className="flex items-center gap-2.5">
-                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#213f6d,#4c74af_55%,#4b7fcc)] text-white shadow-[0_8px_20px_-10px_var(--santa-fe)]">
+                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[linear-gradient(135deg,#29654e,#56a587_55%,#59be97)] text-white shadow-[0_8px_20px_-10px_var(--santa-fe)]">
                   <GraduationCap className="h-5 w-5" />
                 </span>
                 <h3 className="font-display text-xl font-bold sm:text-2xl">{t.journey.education}</h3>
@@ -1073,7 +1061,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
                             <AwardSeal
                               icon={GraduationCap}
-                              gradient="linear-gradient(135deg,#213f6d,#4c74af 55%,#4b7fcc)"
+                              gradient="linear-gradient(135deg,#29654e,#56a587 55%,#59be97)"
                               size={80}
                             />
                             <span className="inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.22em] text-[color:var(--muted)]">
@@ -1084,7 +1072,6 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                       )}
                       <span className="absolute left-3 top-3 inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[color:var(--background)]/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--foreground)] backdrop-blur">
                         <span className="relative flex h-2 w-2">
-                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--santa-fe)] opacity-70" />
                           <span className="relative inline-flex h-2 w-2 rounded-full bg-[color:var(--santa-fe)]" />
                         </span>
                         {t.journey.current}
@@ -1096,7 +1083,7 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
                   <div className="relative overflow-hidden p-6 sm:p-9 md:col-span-3">
                     <GraduationCap
                       aria-hidden
-                      className="pointer-events-none absolute -right-5 -top-5 h-32 w-32 text-[rgba(76,116,175,0.07)]"
+                      className="pointer-events-none absolute -right-5 -top-5 h-32 w-32 text-[rgba(86,165,135,0.07)]"
                     />
                     <span className="font-body inline-flex items-center gap-1.5 rounded-full border border-[var(--line)] px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[color:var(--santa-fe)]">
                       <CalendarDays className="h-3.5 w-3.5" /> {ed.period}
@@ -1137,16 +1124,13 @@ export default function ImmersivePortfolio({ projects }: { projects: Project[] }
         className="relative scroll-mt-24 overflow-hidden px-6 py-28 sm:px-12 sm:py-44"
       >
         <div className="line-grid pointer-events-none absolute inset-0 opacity-30" />
-        <div className="glow-orb left-[-6rem] top-32 h-80 w-80 bg-blue-300/40" />
-        <div className="glow-orb bottom-10 right-[-5rem] h-72 w-72 bg-violet-300/30" />
 
         <div className="relative mx-auto max-w-6xl">
           {/* top row — kicker + live status */}
           <div data-reveal className="flex flex-wrap items-center justify-between gap-4">
-            <Kicker num="05" text={t.contact.kicker} color="#4c74af" />
+            <Kicker num="05" text={t.contact.kicker} color="#56a587" />
             <span className="liquid-glass inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.15em] text-slate-500">
               <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
               </span>
               {t.contact.available} · {profile.location.split(',')[0]} <LocalTime /> WIB

@@ -43,8 +43,8 @@ export const metadata: Metadata = {
 // deep espresso) so the site feels native on phones.
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#eaeef3" },
-    { media: "(prefers-color-scheme: dark)", color: "#0d0f13" },
+    { media: "(prefers-color-scheme: light)", color: "#efefee" },
+    { media: "(prefers-color-scheme: dark)", color: "#11110f" },
   ],
 };
 

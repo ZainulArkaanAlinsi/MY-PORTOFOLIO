@@ -68,7 +68,7 @@ export default function SkillStudio() {
                       className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
                         on
                           ? 'bg-[color:var(--santa-fe)] text-white'
-                          : 'text-slate-500 hover:bg-[rgba(76,116,175,0.08)] hover:text-[color:var(--santa-fe)]'
+                          : 'text-slate-500 hover:bg-[rgba(86,165,135,0.08)] hover:text-[color:var(--santa-fe)]'
                       }`}
                     >
                       <Icon className="h-3.5 w-3.5" />
@@ -92,7 +92,7 @@ export default function SkillStudio() {
                       data-cursor="hover"
                       aria-pressed={on}
                       className={`animate-mock-in rounded-lg p-2 text-left transition-colors ${
-                        on ? 'bg-[rgba(76,116,175,0.12)]' : 'hover:bg-[rgba(76,116,175,0.06)]'
+                        on ? 'bg-[rgba(86,165,135,0.12)]' : 'hover:bg-[rgba(86,165,135,0.06)]'
                       }`}
                       style={{ animationDelay: `${i * 0.06}s` }}
                     >
@@ -107,10 +107,10 @@ export default function SkillStudio() {
                         </span>
                         <span className="shrink-0 font-mono text-[11px] text-[color:var(--cardinal)]">{s.level}%</span>
                       </div>
-                      <div className="h-2 overflow-hidden rounded-full bg-[rgba(25,35,51,0.1)]">
+                      <div className="h-2 overflow-hidden rounded-full bg-[rgba(40,40,36,0.1)]">
                         <div
-                          className={`animate-grow-bar h-full rounded-full bg-linear-to-r from-[#4c74af] to-[#92b0dd] ${
-                            on ? 'shadow-[0_0_10px_rgba(76,116,175,0.7)]' : ''
+                          className={`animate-grow-bar h-full rounded-full bg-linear-to-r from-[#56a587] to-[#9ad6bf] ${
+                            on ? 'shadow-[0_0_10px_rgba(86,165,135,0.7)]' : ''
                           }`}
                           style={{ width: `${s.level}%`, animationDelay: `${0.15 + i * 0.05}s` }}
                         />
@@ -121,7 +121,7 @@ export default function SkillStudio() {
               </div>
 
               {/* footer */}
-              <div className="mt-5 flex items-center justify-between border-t border-[rgba(25,35,51,0.08)] pt-3">
+              <div className="mt-5 flex items-center justify-between border-t border-[rgba(40,40,36,0.08)] pt-3">
                 <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-slate-400">
                   {catLabel(active)} · {t.skills.operational}
                 </span>
@@ -150,7 +150,7 @@ export default function SkillStudio() {
           <span className="dev-glare" />
           <div
             className="flex flex-col px-4 pb-5 pt-9 text-white"
-            style={{ background: 'linear-gradient(165deg, #4c74af, #2e486f 65%, #192333)' }}
+            style={{ background: 'linear-gradient(165deg, #56a587, #356955 65%, #282824)' }}
           >
             <p className="font-body text-[10px] uppercase tracking-[0.25em] text-white/55">
               {catLabel(active)}
@@ -171,7 +171,7 @@ export default function SkillStudio() {
                     cy="60"
                     r={RADIUS}
                     fill="none"
-                    stroke="#e6eaf1"
+                    stroke="#ececeb"
                     strokeWidth="9"
                     strokeLinecap="round"
                     className="ring-progress"

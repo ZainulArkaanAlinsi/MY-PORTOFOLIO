@@ -246,7 +246,7 @@ export type FeaturedProject = {
   accent: string; // gradient accent per card
   github: string;
   demo?: string;
-  // 2:1 cover in /public/work. Falls back to the repo's GitHub card.
+  // 2:1 cover in /public/covers. Falls back to the repo's GitHub card.
   image?: string;
 };
 
@@ -262,7 +262,7 @@ export const featuredProjects: readonly FeaturedProject[] = [
     stack: ["Laravel", "Flutter", "MySQL", "Filament"],
     accent: "from-blue-600 to-cyan-500",
     github: `${GH}/sidik-calibration-api`,
-    image: "/work/sidik.webp",
+    image: "/covers/sidik.webp",
   },
   {
     name: "Absensi Karyawan JNE Martapura",
@@ -277,7 +277,7 @@ export const featuredProjects: readonly FeaturedProject[] = [
     // Lives under the collaborator's account, not `GH` — this one was built
     // with two other people (see the repo's contributors).
     github: "https://github.com/NabihanN06/jne_attandance",
-    image: "/work/jne.webp",
+    image: "/covers/jne.webp",
   },
   {
     name: "Hotel Booking Website",
@@ -290,7 +290,7 @@ export const featuredProjects: readonly FeaturedProject[] = [
     stack: ["Laravel", "PHP", "MySQL"],
     accent: "from-cyan-400 to-emerald-400",
     github: `${GH}/laravel-booking-website`,
-    image: "/work/hotel.webp",
+    image: "/covers/hotel.webp",
   },
   {
     name: "E-Libro",
@@ -305,7 +305,7 @@ export const featuredProjects: readonly FeaturedProject[] = [
     stack: ["Flutter", "Dart", "REST API"],
     accent: "from-violet-400 to-blue-500",
     github: `${GH}/peminjaman_tempat_baca-buku`,
-    image: "/work/elibro.webp",
+    image: "/covers/elibro.webp",
   },
   {
     name: "News App",
@@ -318,7 +318,7 @@ export const featuredProjects: readonly FeaturedProject[] = [
     stack: ["Flutter", "Dart", "REST API"],
     accent: "from-emerald-400 to-cyan-400",
     github: `${GH}/NEWS_APP_2025`,
-    image: "/work/news.webp",
+    image: "/covers/news.webp",
   },
   {
     name: "MyQuran",
@@ -331,6 +331,6 @@ export const featuredProjects: readonly FeaturedProject[] = [
     stack: ["Flutter", "Dart", "REST API"],
     accent: "from-violet-400 to-emerald-400",
     github: `${GH}/Qur-an_App`,
-    image: "/work/quran.webp",
+    image: "/covers/quran.webp",
   },
 ] as const;
