@@ -93,7 +93,6 @@ export default function MobileNav({ links, active }: { links: NavLink[]; active?
   const socials: NavLink[] = [
     { label: 'GitHub', href: profile.social.github },
     { label: 'LinkedIn', href: profile.social.linkedin },
-    { label: 'Website', href: profile.social.website },
   ];
 
   return (
