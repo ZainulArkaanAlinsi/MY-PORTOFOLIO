@@ -157,7 +157,7 @@ Penerapannya:
 | Hosting | Vercel, project `my-portofolio` |
 
 - Next.js versi ini punya perubahan besar. Baca `node_modules/next/dist/docs/` sebelum menulis kode (lihat `AGENTS.md`).
-- Env server: `GITHUB_TOKEN` (fetch repo), `GITHUB_WEBHOOK_SECRET` (opsional).
+- Env server: `GITHUB_TOKEN` (opsional, fetch repo; belum di-set di Vercel), `GITHUB_WEBHOOK_SECRET` (wajib agar webhook aktif; tanpa ini endpoint menjawab 503).
 
 ### Deploy
 - Push ke `main` = deploy produksi otomatis di Vercel.
@@ -201,7 +201,7 @@ Sebutkan tiga hal:
 | # | Item | Status |
 |---|------|--------|
 | 1 | Route demo `/classic`, `/scroll-demo`, `/skills-demo`, `/skills-grid`, `/about` sudah dihapus beserta komponen yang hanya dipakai route itu. | Selesai (6 Okt 2026) |
-| 2 | Webhook `src/app/api/webhooks/github/route.ts` hanya mengecek panjang signature, tidak memverifikasi HMAC. Siapa pun bisa memicu revalidasi cache. Dampak kecil, tapi sebaiknya diperbaiki. | **[Terbuka]** |
+| 2 | Webhook `src/app/api/webhooks/github/route.ts` sekarang memverifikasi HMAC-SHA256 dan menolak request jika `GITHUB_WEBHOOK_SECRET` tidak di-set (503). Di Vercel secret belum di-set dan hook GitHub belum dibuat, jadi endpoint tertutup; halaman tetap segar lewat ISR 1 jam. Aktifkan hanya jika perlu refresh instan. | Selesai (6 Okt 2026) |
 | 3 | `profile.social.website` (`zainularkaan.dev`) masih ada di data tapi tidak dipakai. Domain ini dimiliki atau tidak? | **[Terbuka]** |
 | 4 | Angka statistik (`yearsExperience: 3`, `projectsCompleted: 18`, `technologiesMastered: 12`, `hoursCoding: 1200`) dan persentase skill perlu dikonfirmasi agar tidak termasuk "statistik palsu". | **[Terbuka]** |
 | 5 | Pengalaman "Independent Projects" dan "Self-directed Learning" masih ada. Apakah tetap sesuai CV terbaru? | **[Terbuka]** |
@@ -222,4 +222,5 @@ Sebutkan tiga hal:
 | 5 Okt 2026 | Link Website dihapus dari menu. |
 | 5 Okt 2026 | CV, pendidikan, dan pengalaman disesuaikan dengan CV terbaru. |
 | 6 Okt 2026 | PRD ini dibuat. |
+| 6 Okt 2026 | Webhook GitHub memverifikasi HMAC-SHA256 dan tertutup jika secret tidak ada. |
 | 6 Okt 2026 | Route demo dan komponen lamanya dihapus (`PortfolioClient`, `components/ui/`, `components/gitstats/`, `data/profile.json`, `getGithubUserStats`). |
